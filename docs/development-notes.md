@@ -78,3 +78,20 @@ This document records architectural decisions, assumptions, and clarifications m
   - Visual analytics with Recharts (Risk Band Distribution and Pattern Signature frequency).
   - Flagship Scenario 9 hero banner with 1-click &quot;Explore Flagship Graph&quot; CTA.
   - Connected to live backend API at `http://localhost:8000`.
+
+## 6. Investigation Graph, Timeline & Case Dossier (Steps 9 & 10)
+- **Date:** MVP Order Steps 9 & 10
+- **Investigation Graph (`apps/web/src/components/graph/InvestigationGraph.tsx`):**
+  - Built with `@xyflow/react` (React Flow 12) featuring custom nodes (`AccountNode`, `DeviceNode`, `EntityNode`) and custom edges (`TransactionEdge`).
+  - Scoped strictly to the active investigation's entities and transactions.
+  - Interactive features: search & filter highlight, hide/show non-transaction hardware nodes, node click entity inspection drawer (Section 19), edge click transaction inspector, minimap, and zoom controls.
+- **Investigation Timeline (`apps/web/src/components/timeline/InvestigationTimeline.tsx`):**
+  - Chronological transaction feed with burst annotations and elapsed time counters.
+  - Interactive playback scrubber allowing investigators to step through transactions chronologically.
+  - Filters for high-value transactions ($\ge \text{₹}1\text{L}$) and account search.
+- **Full Case Dossier Page (`apps/web/src/app/investigations/[id]/page.tsx`):**
+  - Header displaying Risk Score + Band badge, Case Status updater, and Case Genesis trigger drawer (Section 5F).
+  - 5 Interactive tabs: **Network Graph**, **Timeline Flow**, **Patterns & Risk Breakdown**, **Evidence Locker**, and **Case Notes & Audit Trail**.
+- **Scenario 9 Flagship Case Verification:**
+  - Graph correctly visualizes the combined Star (5 mules) + Chain (2-hop layering) + Cycle (circular kickback) + Shared Device (`dev_flagship_shared_01`).
+  - Timeline strictly preserves deterministic transaction sequence from origin disbursement to final kickback.
