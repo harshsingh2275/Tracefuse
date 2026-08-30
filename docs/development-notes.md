@@ -41,3 +41,24 @@ This document records architectural decisions, assumptions, and clarifications m
   - Generates evidence-backed reasons list and maps scores to bands (Low, Medium, High, Critical).
 - **Test Suite (`tests/test_analytics.py`):**
   - 20 unit and integration tests passing covering all 8 detectors, zero false-positives on benign data, Follow the Money multi-hop paths, and risk guard rail mechanics.
+
+## 4. Backend API Layer & Endpoints (Step 7)
+- **Date:** MVP Order Step 7
+- **FastAPI Endpoints Implemented (Section 18):**
+  - `GET /dashboard/summary`: Top-level operational metrics (`suspicious_networks`, `high_risk_accounts`, `flagged_transactions`, `amount_under_investigation`, `active_investigations`, `escalated_cases`).
+  - `GET /investigations`: Paginated/filterable investigation queue sorted by risk score.
+  - `GET /investigations/{id}`: Detailed investigation dossier with computed patterns, risk breakdown, entity profiles, notes, actions, and Case Genesis trigger summary.
+  - `GET /investigations/{id}/graph`: Scoped React Flow payload (`nodes`, `edges`) with node risk badges and edge amount scaling.
+  - `GET /investigations/{id}/timeline`: Ordered event sequence with burst tags.
+  - `GET /investigations/{id}/evidence`: Structured evidence list linking detector firings to concrete transaction IDs.
+  - `POST /investigations/{id}/follow-money`: Multi-hop BFS fund provenance tracing with FIFO queue model.
+  - `POST /investigations/{id}/ask`: Grounded AI Assistant (Groq LLM) with strict JSON context injection, citation extraction, deterministic offline fallback, and rate limiting (10 req/min).
+  - `PATCH /investigations/{id}/status`: State machine transitions (`new` -> `investigating` -> `escalated` -> `resolved`) + `CaseAction` audit trail.
+  - `POST /investigations/{id}/notes`: Case note append.
+  - `GET /investigations/{id}/report`: Printable compliance handoff report.
+  - `GET /accounts/{id}`: Account entity profile, associated hardware devices, identifiers, and inflow/outflow totals.
+  - `GET /transactions/{id}`: Individual transaction inspection with counterparty names.
+- **Contract Synchronization:**
+  - All response schemas mirrored in `@tracefuse/shared` TypeScript definitions (`packages/shared/index.ts`).
+- **Test Suite (`tests/test_api.py`):**
+  - 15 integration tests covering every endpoint, error handling (404/422), rate limiting, and state transitions. Total test suite across all modules: 35 passing tests.
