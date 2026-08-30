@@ -2,6 +2,17 @@
 TraceFuse API Main Application
 FastAPI Modular Monolith backend for Financial Crime Investigation Cockpit.
 """
+import sys
+import os
+
+# Ensure both workspace root and apps/api are in sys.path
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+API_DIR = os.path.abspath(os.path.dirname(__file__))
+if API_DIR not in sys.path:
+    sys.path.insert(0, API_DIR)
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse

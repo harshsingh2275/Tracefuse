@@ -62,3 +62,19 @@ This document records architectural decisions, assumptions, and clarifications m
   - All response schemas mirrored in `@tracefuse/shared` TypeScript definitions (`packages/shared/index.ts`).
 - **Test Suite (`tests/test_api.py`):**
   - 15 integration tests covering every endpoint, error handling (404/422), rate limiting, and state transitions. Total test suite across all modules: 35 passing tests.
+
+## 5. Login Gate & Overview Dashboard (Section 3, 6, 23)
+- **Date:** MVP Order Step 8
+- **Authentication Gate (`apps/web/src/app/login/page.tsx`):**
+  - Financial Crime Cockpit dark-terminal login screen.
+  - Supports demo passcode `demo2026` and single-click judge sign-in button for instant evaluation.
+  - Sets secure session cookie `tracefuse_session=authenticated_analyst`.
+- **Strict Next.js Middleware Protection (`apps/web/src/middleware.ts`):**
+  - Edge server-side request interception checking `tracefuse_session`.
+  - Unauthenticated requests to `/`, `/dashboard`, `/investigations`, or any sub-route are immediately redirected to `/login` with `307/302 Temporary Redirect` before any UI or HTML is rendered.
+- **Overview Dashboard (`apps/web/src/app/dashboard/page.tsx`):**
+  - 6 Top-level metrics cards (Suspicious Networks, High-Risk Accounts, Flagged Transactions, Flow Under Investigation, Active Cases, Escalated Cases).
+  - Suspicious cases table with search, status tabs (`all`, `new`, `investigating`, `escalated`, `resolved`), risk score sorting, and pattern badges.
+  - Visual analytics with Recharts (Risk Band Distribution and Pattern Signature frequency).
+  - Flagship Scenario 9 hero banner with 1-click &quot;Explore Flagship Graph&quot; CTA.
+  - Connected to live backend API at `http://localhost:8000`.
