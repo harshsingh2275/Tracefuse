@@ -100,7 +100,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         text: res.answer,
         citations: res.citations,
         grounded: res.grounded,
-        model: res.model,
+        model: res.model || "TraceFuse Grounded Engine",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         fallbackUsed: res.fallback_used,
       };
@@ -110,9 +110,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       const errorMsg: Message = {
         id: `err_${Date.now()}`,
         sender: "assistant",
-        text: `Error contacting investigation copilot: ${err instanceof Error ? err.message : String(err)}`,
+        text: "I encountered an issue querying the grounded case intelligence. Please try again.",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        grounded: false,
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
@@ -124,36 +123,36 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
 
   return (
     <div
-      className={`fixed z-50 bg-[#111622] border border-[#233148] rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ${
+      className={`fixed z-50 bg-white border border-border-warm rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ${
         isExpanded
           ? "bottom-4 right-4 left-4 sm:left-auto sm:w-[700px] h-[85vh]"
           : "bottom-4 right-4 w-full sm:w-[460px] h-[600px] max-w-[calc(100vw-2rem)]"
       } ${className}`}
     >
       {/* Header */}
-      <div className="p-4 bg-[#182030] border-b border-[#233148] rounded-t-2xl flex items-center justify-between gap-3">
+      <div className="p-4 bg-slate-50 border-b border-border-warm rounded-t-2xl flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30">
-            <Sparkles className="w-4 h-4 text-blue-400" />
+          <div className="p-2 rounded-xl bg-navy-subtle text-navy border border-navy/20">
+            <Sparkles className="w-4 h-4 text-navy" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-mono text-sm font-bold text-white">Grounded AI Copilot</h3>
-              <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-medium flex items-center gap-1">
-                <CheckCircle2 className="w-2.5 h-2.5" />
+              <h3 className="font-serif text-sm font-bold text-ink-primary">Grounded AI Copilot</h3>
+              <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-sans font-medium flex items-center gap-1">
+                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-700" />
                 Grounded
               </span>
             </div>
-            <p className="text-[10px] text-gray-400 font-mono truncate max-w-[240px]">
+            <p className="text-[10px] text-ink-secondary font-mono truncate max-w-[240px]">
               Case Scope: {investigationId}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 text-gray-400">
+        <div className="flex items-center gap-1 text-ink-secondary">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1.5 hover:text-white hover:bg-gray-800 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 hover:text-ink-primary hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer"
             title={isExpanded ? "Collapse" : "Expand"}
           >
             {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -170,14 +169,14 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                 },
               ])
             }
-            className="p-1.5 hover:text-white hover:bg-gray-800 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 hover:text-ink-primary hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer"
             title="Clear Chat"
           >
             <Trash2 className="w-4 h-4" />
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 hover:text-white hover:bg-gray-800 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 hover:text-ink-primary hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer"
             title="Close"
           >
             <X className="w-4 h-4" />
@@ -186,7 +185,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       </div>
 
       {/* Messages Thread */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 font-sans text-xs">
+      <div className="flex-1 p-4 overflow-y-auto space-y-4 font-sans text-xs bg-white">
         {messages.map((msg) => {
           const isUser = msg.sender === "user";
           return (
@@ -195,7 +194,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}
             >
               {!isUser && (
-                <div className="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-7 h-7 rounded-lg bg-navy-subtle border border-navy/20 text-navy flex items-center justify-center shrink-0 mt-0.5">
                   <Bot className="w-4 h-4" />
                 </div>
               )}
@@ -203,8 +202,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <div
                 className={`max-w-[85%] rounded-2xl p-3.5 space-y-2 leading-relaxed ${
                   isUser
-                    ? "bg-blue-600 text-white font-medium rounded-tr-none shadow-md shadow-blue-600/20"
-                    : "bg-[#0a0d14] border border-[#1f293d] text-gray-200 rounded-tl-none shadow-md"
+                    ? "bg-navy text-white font-medium rounded-tr-none shadow-md shadow-navy/20"
+                    : "bg-slate-50 border border-border-warm text-ink-primary rounded-tl-none shadow-sm"
                 }`}
               >
                 {/* Message Body formatted with linebreaks / markdown elements */}
@@ -212,14 +211,14 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                   {msg.text.split("\n\n").map((paragraph, pIdx) => {
                     if (paragraph.startsWith("### ")) {
                       return (
-                        <h4 key={pIdx} className="font-mono font-bold text-blue-400 text-xs mt-2">
+                        <h4 key={pIdx} className="font-serif font-bold text-navy text-xs mt-2">
                           {paragraph.replace("### ", "")}
                         </h4>
                       );
                     }
                     if (paragraph.startsWith("- ")) {
                       return (
-                        <ul key={pIdx} className="space-y-1 list-disc list-inside text-gray-300">
+                        <ul key={pIdx} className="space-y-1 list-disc list-inside text-ink-primary">
                           {paragraph.split("\n").map((line, lIdx) => (
                             <li key={lIdx}>{line.replace("- ", "")}</li>
                           ))}
@@ -232,12 +231,12 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
 
                 {/* Citations & Model Badge */}
                 {!isUser && msg.citations && msg.citations.length > 0 && (
-                  <div className="pt-2 border-t border-gray-800/80 flex flex-wrap items-center gap-1 font-mono text-[10px]">
-                    <span className="text-gray-500">Citations:</span>
+                  <div className="pt-2 border-t border-border-warm flex flex-wrap items-center gap-1 text-[10px]">
+                    <span className="text-ink-secondary">Citations:</span>
                     {msg.citations.map((c) => (
                       <span
                         key={c}
-                        className="px-1.5 py-0.2 rounded bg-blue-500/10 border border-blue-500/20 text-blue-300"
+                        className="px-1.5 py-0.2 rounded bg-navy-subtle border border-navy/20 text-navy font-mono"
                       >
                         {c}
                       </span>
@@ -245,16 +244,16 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-1 text-[10px] text-gray-500 font-mono">
-                  <span>{msg.timestamp}</span>
+                <div className="flex items-center justify-between pt-1 text-[10px] text-ink-secondary">
+                  <span className="font-mono">{msg.timestamp}</span>
                   {!isUser && msg.model && (
-                    <span className="text-gray-400">{msg.model}</span>
+                    <span className="text-ink-secondary">{msg.model}</span>
                   )}
                 </div>
               </div>
 
               {isUser && (
-                <div className="w-7 h-7 rounded-lg bg-gray-800 text-gray-300 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-7 h-7 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
                   <User className="w-4 h-4" />
                 </div>
               )}
@@ -263,8 +262,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         })}
 
         {loading && (
-          <div className="flex items-center gap-3 text-gray-400 font-mono text-xs p-2">
-            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="flex items-center gap-3 text-ink-secondary text-xs p-2">
+            <div className="w-5 h-5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
             <span>Analyzing case graph and grounding evidence...</span>
           </div>
         )}
@@ -272,13 +271,13 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       </div>
 
       {/* Suggested Quick Prompt Pills */}
-      <div className="px-4 py-2 border-t border-[#1f293d] bg-[#0d121d] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+      <div className="px-4 py-2 border-t border-border-warm bg-slate-50 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
         {QUICK_PROMPTS.map((prompt, idx) => (
           <button
             key={idx}
             onClick={() => handleSend(prompt)}
             disabled={loading}
-            className="px-2.5 py-1 rounded-lg bg-[#111622] hover:bg-[#182030] border border-[#1f293d] text-gray-300 hover:text-white text-[11px] font-mono whitespace-nowrap transition-all cursor-pointer disabled:opacity-50"
+            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 border border-border-warm text-ink-primary text-[11px] whitespace-nowrap transition-all cursor-pointer disabled:opacity-50 shadow-sm"
           >
             {prompt}
           </button>
@@ -291,7 +290,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           e.preventDefault();
           handleSend();
         }}
-        className="p-3 bg-[#111622] border-t border-[#233148] rounded-b-2xl flex items-center gap-2"
+        className="p-3 bg-slate-50 border-t border-border-warm rounded-b-2xl flex items-center gap-2"
       >
         <input
           type="text"
@@ -299,12 +298,12 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           value={inputQuery}
           onChange={(e) => setInputQuery(e.target.value)}
           disabled={loading}
-          className="flex-1 px-3.5 py-2 bg-[#0a0d14] border border-[#1f293d] rounded-xl text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 font-sans"
+          className="flex-1 px-3.5 py-2 bg-white border border-border-warm rounded-xl text-xs text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy font-sans shadow-sm"
         />
         <button
           type="submit"
           disabled={loading || !inputQuery.trim()}
-          className="p-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl transition-all shadow-md shadow-blue-600/25 cursor-pointer shrink-0"
+          className="p-2 bg-navy hover:bg-navy-hover disabled:opacity-50 text-white rounded-xl transition-all shadow-md shadow-navy/20 cursor-pointer shrink-0"
         >
           <Send className="w-4 h-4" />
         </button>

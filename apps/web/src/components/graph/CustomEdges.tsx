@@ -36,7 +36,7 @@ export const TransactionEdge = ({
       : edgeData?.label || "";
 
   const isHighlighted = selected || edgeData?.is_highlighted;
-  const strokeColor = isHighlighted ? "#38bdf8" : "#3b82f6";
+  const strokeColor = isHighlighted ? "#1F3A5F" : "#829ab1";
   const strokeWidth = isHighlighted ? 3 : 2;
 
   return (
@@ -61,10 +61,10 @@ export const TransactionEdge = ({
             className="nodrag nopan"
           >
             <div
-              className={`px-2 py-0.5 rounded-full border text-[10px] font-mono font-medium transition-all ${
+              className={`px-2 py-0.5 rounded-full border text-[10px] font-mono font-semibold transition-all ${
                 isHighlighted
-                  ? "bg-blue-600 text-white border-blue-400 shadow-md shadow-blue-500/40 scale-105"
-                  : "bg-[#111622]/90 text-blue-300 border-[#1f293d] hover:border-blue-500/60"
+                  ? "bg-navy text-white border-navy shadow-md shadow-navy/30 scale-105"
+                  : "bg-white/95 text-ink-primary border-border-warm shadow-sm hover:border-navy"
               }`}
             >
               {formattedAmount}

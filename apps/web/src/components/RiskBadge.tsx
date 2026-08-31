@@ -16,36 +16,36 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({
 }) => {
   const normLevel = level.toLowerCase();
 
-  let bg = "bg-gray-800/60 border-gray-700 text-gray-300";
+  let bg = "bg-slate-100 border-border-warm text-slate-700";
   let Icon = ShieldCheck;
   let label = "Low Risk";
 
   if (normLevel === "critical") {
-    bg = "bg-red-500/15 border-red-500/40 text-red-400";
+    bg = "bg-severity-critical-bg border-severity-critical-border text-severity-critical font-bold";
     Icon = Flame;
     label = "Critical";
-  } else if (normLevel === "high") {
-    bg = "bg-orange-500/15 border-orange-500/40 text-orange-400";
+  } else if (normLevel === "high" || normLevel === "suspicious") {
+    bg = "bg-severity-suspicious-bg border-severity-suspicious-border text-severity-suspicious font-bold";
     Icon = AlertOctagon;
-    label = "High Risk";
+    label = "Suspicious";
   } else if (normLevel === "medium") {
-    bg = "bg-amber-500/15 border-amber-500/40 text-amber-400";
+    bg = "bg-severity-suspicious-bg border-severity-suspicious-border text-severity-suspicious font-medium";
     Icon = AlertTriangle;
     label = "Medium Risk";
   } else {
-    bg = "bg-emerald-500/15 border-emerald-500/40 text-emerald-400";
+    bg = "bg-slate-100 border-border-warm text-slate-700 font-medium";
     Icon = ShieldCheck;
     label = "Low Risk";
   }
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-mono font-medium ${bg} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-sans ${bg} ${className}`}
     >
       <Icon className="w-3.5 h-3.5 shrink-0" />
       <span>{label}</span>
       {showScore && score !== undefined && (
-        <span className="opacity-75 font-semibold">({Math.round(score)})</span>
+        <span className="font-mono text-[11px] opacity-90 font-semibold">({Math.round(score)})</span>
       )}
     </span>
   );
