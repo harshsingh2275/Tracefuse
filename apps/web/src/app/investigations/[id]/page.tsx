@@ -22,6 +22,7 @@ import {
   UserCheck,
   ExternalLink,
   Flame,
+  GitFork,
 } from "lucide-react";
 import { Node, Edge } from "@xyflow/react";
 import { api } from "@/lib/api";
@@ -40,6 +41,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { PatternBadge } from "@/components/PatternBadge";
 import { InvestigationGraph } from "@/components/graph/InvestigationGraph";
 import { InvestigationTimeline } from "@/components/timeline/InvestigationTimeline";
+import { FollowMoneyController } from "@/components/graph/FollowMoneyController";
 
 function InvestigationDetailContent() {
   const params = useParams();
@@ -302,6 +304,7 @@ function InvestigationDetailContent() {
         <div className="flex items-center gap-2 border-b border-[#1f293d] pb-2 overflow-x-auto">
           {[
             { id: "graph", label: "Network Graph", icon: Layers, count: graphPayload?.nodes.length },
+            { id: "follow_money", label: "Follow the Money", icon: GitFork },
             { id: "timeline", label: "Timeline Flow", icon: Clock, count: timelineEvents.length },
             { id: "patterns", label: "Patterns & Risk", icon: AlertTriangle, count: detail.patterns.length },
             { id: "evidence", label: "Evidence Locker", icon: FileText, count: detail.evidence_items.length },
@@ -341,6 +344,24 @@ function InvestigationDetailContent() {
             <InvestigationGraph
               initialNodes={graphPayload.nodes as Node[]}
               initialEdges={graphPayload.edges as Edge[]}
+              investigationId={investigationId}
+              accounts={detail.entities}
+            />
+          </section>
+        )}
+
+        {/* Tab 2: Dedicated Follow the Money Tab */}
+        {activeTab === "follow_money" && graphPayload && (
+          <section className="space-y-4">
+            <FollowMoneyController
+              investigationId={investigationId}
+              accounts={detail.entities}
+            />
+            <InvestigationGraph
+              initialNodes={graphPayload.nodes as Node[]}
+              initialEdges={graphPayload.edges as Edge[]}
+              investigationId={investigationId}
+              accounts={detail.entities}
             />
           </section>
         )}

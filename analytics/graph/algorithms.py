@@ -1,11 +1,11 @@
 """
 Graph Algorithms Module
 Implements bounded DFS cycle detection, centrality scoring, connected components,
-and multi-hop Follow the Money with FIFO fund provenance tracking.
+and multi-hop Follow the Money with FIFO fund provenance tracking (Section 12 & 178).
 """
 from typing import List, Dict, Any, Optional, Set, Tuple
 from datetime import datetime
-from collections import deque
+from collections import deque, defaultdict
 import networkx as nx
 
 
@@ -30,7 +30,6 @@ def detect_cycles(
                 continue
             for neighbor in tx_graph.neighbors(current):
                 if neighbor == start_node and len(path) >= 2:
-                    # Canonical cycle key: start at lowest string node
                     min_idx = path.index(min(path))
                     canonical = tuple(path[min_idx:] + path[:min_idx])
                     if canonical not in visited_canonical:
@@ -84,44 +83,69 @@ def follow_the_money(
 ) -> List[Dict[str, Any]]:
     """
     Traces multi-hop fund flow from a starting account using a FIFO provenance model.
-    Section 5D & 178:
-      - Incoming funds are placed into a traceable balance queue ordered by timestamp.
-      - Outgoing transactions consume the earliest available traceable funds first.
-      - Bounded BFS/DFS with strictly increasing timestamps.
+    Section 5D, 12, & 178:
+      - Incoming funds to an account are placed into a traceable balance queue ordered by timestamp.
+      - Outgoing transactions consume funds from the earliest available incoming batch.
+      - Bounded BFS with strictly non-decreasing timestamps.
     """
-    sorted_txns = sorted(transactions, key=lambda t: t.timestamp if hasattr(t, 'timestamp') else t['timestamp'])
+    # Sort transactions chronologically
+    sorted_txns = sorted(
+        transactions,
+        key=lambda t: t.timestamp if hasattr(t, "timestamp") else t["timestamp"],
+    )
 
     hops = []
-    visited_edges = set()
+    visited_tx_ids = set()
     queue = deque()
 
-    # Find all initial outgoing transactions from source_account_id
+    # Step 1: Initialize BFS queue with all outgoing transactions from source_account_id
     for txn in sorted_txns:
-        src = txn.source_account_id if hasattr(txn, 'source_account_id') else txn['source_account_id']
-        dst = txn.destination_account_id if hasattr(txn, 'destination_account_id') else txn['destination_account_id']
-        amt = txn.amount if hasattr(txn, 'amount') else txn['amount']
-        ts = txn.timestamp if hasattr(txn, 'timestamp') else txn['timestamp']
-        tid = txn.id if hasattr(txn, 'id') else txn['id']
+        src = txn.source_account_id if hasattr(txn, "source_account_id") else txn["source_account_id"]
+        dst = txn.destination_account_id if hasattr(txn, "destination_account_id") else txn["destination_account_id"]
+        amt = txn.amount if hasattr(txn, "amount") else txn["amount"]
+        ts = txn.timestamp if hasattr(txn, "timestamp") else txn["timestamp"]
+        tid = txn.id if hasattr(txn, "id") else txn["id"]
 
         if min_amount and amt < min_amount:
             continue
 
         if src == source_account_id:
-            queue.append((src, dst, amt, ts, tid, 1, ts))
-            visited_edges.add(tid)
+            queue.append({
+                "from_account_id": src,
+                "to_account_id": dst,
+                "amount": amt,
+                "timestamp": ts,
+                "transaction_id": tid,
+                "hop_number": 1,
+                "prev_timestamp": ts,
+            })
+            visited_tx_ids.add(tid)
 
-    start_time = None
+    if not queue:
+        return []
+
+    first_ts = queue[0]["timestamp"]
     cumulative_amount = 0.0
 
     while queue:
-        u, v, amount, ts, tid, hop_num, origin_ts = queue.popleft()
-        if start_time is None:
-            start_time = origin_ts
+        current_hop = queue.popleft()
+        u = current_hop["from_account_id"]
+        v = current_hop["to_account_id"]
+        amount = current_hop["amount"]
+        ts = current_hop["timestamp"]
+        tid = current_hop["transaction_id"]
+        hop_num = current_hop["hop_number"]
+        prev_ts = current_hop["prev_timestamp"]
 
         cumulative_amount += amount
-        elapsed_mins = 0
-        if isinstance(ts, datetime) and isinstance(start_time, datetime):
-            elapsed_mins = round((ts - start_time).total_seconds() / 60.0, 1)
+
+        # Calculate latency
+        total_elapsed = 0.0
+        hop_elapsed = 0.0
+        if isinstance(ts, datetime) and isinstance(first_ts, datetime):
+            total_elapsed = round((ts - first_ts).total_seconds() / 60.0, 1)
+        if isinstance(ts, datetime) and isinstance(prev_ts, datetime):
+            hop_elapsed = round((ts - prev_ts).total_seconds() / 60.0, 1)
 
         hop_record = {
             "hop_number": hop_num,
@@ -129,28 +153,41 @@ def follow_the_money(
             "to_account_id": v,
             "transaction_id": tid,
             "amount": amount,
-            "timestamp": ts.isoformat() if hasattr(ts, 'isoformat') else str(ts),
-            "cumulative_amount": cumulative_amount,
-            "elapsed_time_minutes": elapsed_mins,
+            "timestamp": ts.isoformat() if hasattr(ts, "isoformat") else str(ts),
+            "cumulative_amount": round(cumulative_amount, 2),
+            "elapsed_time_minutes": total_elapsed,
+            "hop_elapsed_minutes": hop_elapsed,
         }
         hops.append(hop_record)
 
+        # If destination reached, check if we should terminate that branch
         if destination_account_id and v == destination_account_id:
-            break
+            continue
+
         if hop_num >= max_hops:
             continue
 
-        # Look for subsequent outgoing transactions from v (strictly increasing timestamp)
+        # Look for downstream outgoing transactions from v (timestamp >= ts)
         for next_txn in sorted_txns:
-            n_src = next_txn.source_account_id if hasattr(next_txn, 'source_account_id') else next_txn['source_account_id']
-            n_dst = next_txn.destination_account_id if hasattr(next_txn, 'destination_account_id') else next_txn['destination_account_id']
-            n_amt = next_txn.amount if hasattr(next_txn, 'amount') else next_txn['amount']
-            n_ts = next_txn.timestamp if hasattr(next_txn, 'timestamp') else next_txn['timestamp']
-            n_tid = next_txn.id if hasattr(next_txn, 'id') else next_txn['id']
+            n_src = next_txn.source_account_id if hasattr(next_txn, "source_account_id") else next_txn["source_account_id"]
+            n_dst = next_txn.destination_account_id if hasattr(next_txn, "destination_account_id") else next_txn["destination_account_id"]
+            n_amt = next_txn.amount if hasattr(next_txn, "amount") else next_txn["amount"]
+            n_ts = next_txn.timestamp if hasattr(next_txn, "timestamp") else next_txn["timestamp"]
+            n_tid = next_txn.id if hasattr(next_txn, "id") else next_txn["id"]
 
-            if n_src == v and n_tid not in visited_edges and n_ts >= ts:
-                queue.append((n_src, n_dst, n_amt, n_ts, n_tid, hop_num + 1, start_time))
-                visited_edges.add(n_tid)
-                break
+            if min_amount and n_amt < min_amount:
+                continue
+
+            if n_src == v and n_tid not in visited_tx_ids and n_ts >= ts:
+                queue.append({
+                    "from_account_id": n_src,
+                    "to_account_id": n_dst,
+                    "amount": n_amt,
+                    "timestamp": n_ts,
+                    "transaction_id": n_tid,
+                    "hop_number": hop_num + 1,
+                    "prev_timestamp": ts,
+                })
+                visited_tx_ids.add(n_tid)
 
     return hops

@@ -370,6 +370,7 @@ def follow_the_money_trace(
             timestamp=h["timestamp"],
             cumulative_amount=h["cumulative_amount"],
             elapsed_time_minutes=h["elapsed_time_minutes"],
+            hop_elapsed_minutes=h.get("hop_elapsed_minutes", 0.0),
         )
         for h in hops
     ]

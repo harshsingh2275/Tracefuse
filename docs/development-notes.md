@@ -95,3 +95,18 @@ This document records architectural decisions, assumptions, and clarifications m
 - **Scenario 9 Flagship Case Verification:**
   - Graph correctly visualizes the combined Star (5 mules) + Chain (2-hop layering) + Cycle (circular kickback) + Shared Device (`dev_flagship_shared_01`).
   - Timeline strictly preserves deterministic transaction sequence from origin disbursement to final kickback.
+
+## 7. Flagship "Follow the Money" Multi-Hop Provenance (Step 11)
+- **Date:** MVP Order Step 11
+- **FIFO Provenance Algorithm (`analytics/graph/algorithms.py`):**
+  - Implemented multi-hop FIFO queue provenance model per Section 5D & 178.
+  - Bounded BFS with non-decreasing timestamps, preserving strict fund flow attribution.
+  - Computes cumulative trail volume, total elapsed minutes, and per-hop latency (`hop_elapsed_minutes`).
+- **Interactive Trace Visualizer (`apps/web/src/components/graph/FollowMoneyController.tsx`):**
+  - Dedicated controller with Source Account selector, optional Destination filter, Min Amount filter, and Max Hops slider.
+  - Interactive playback animation: stepping through hops sequentially and highlighting nodes and glowing edges on the React Flow canvas.
+  - Hop-by-hop breakdown cards detailing Hop #, From $\rightarrow$ To accounts, amount in INR, timestamp, transaction ID, and latency metrics.
+- **Verification Across Scenarios:**
+  - **Scenario 4 (`inv_layering_chain`)**: Successfully traces the 4-hop rapid pass-through chain (`acc_s4_hop_01` $\rightarrow$ `02` $\rightarrow$ `03` $\rightarrow$ `04` $\rightarrow$ `05`) with exact amounts.
+  - **Scenario 9 (`inv_flagship_demo`)**: Successfully traces the multi-hop fund dispersion from the origin through the 5 fan-out mules to layering conduits.
+  - Full suite of 36 unit and integration tests passing (`pytest`).

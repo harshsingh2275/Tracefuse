@@ -116,7 +116,7 @@ def test_get_investigation_evidence():
 def test_follow_the_money_endpoint():
     req_body = {
         "source_account_id": "acc_flagship_origin",
-        "max_hops": 5,
+        "max_hops": 6,
     }
     response = client.post("/investigations/inv_flagship_demo/follow-money", json=req_body)
     assert response.status_code == 200
@@ -127,6 +127,31 @@ def test_follow_the_money_endpoint():
     assert len(data["hops"]) >= 4
     assert data["hops"][0]["hop_number"] == 1
     assert data["hops"][0]["from_account_id"] == "acc_flagship_origin"
+    assert "hop_elapsed_minutes" in data["hops"][0]
+
+
+def test_follow_the_money_scenario_4_layered_chain():
+    req_body = {
+        "source_account_id": "acc_s4_hop_01",
+        "max_hops": 6,
+    }
+    response = client.post("/investigations/inv_layering_chain/follow-money", json=req_body)
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["source_account_id"] == "acc_s4_hop_01"
+    assert data["total_hops"] == 4
+    hop_sequence = [h["to_account_id"] for h in data["hops"]]
+    assert hop_sequence == [
+        "acc_s4_hop_02",
+        "acc_s4_hop_03",
+        "acc_s4_hop_04",
+        "acc_s4_hop_05",
+    ]
+    # Check all 4 rapid pass-through hops in chain
+    for h in data["hops"]:
+        assert h["amount"] >= 340000.0
+        assert h["elapsed_time_minutes"] >= 0.0
 
 
 def test_ask_assistant_endpoint():

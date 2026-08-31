@@ -242,6 +242,7 @@ export interface MoneyHopResponse {
   timestamp: string;
   cumulative_amount: number;
   elapsed_time_minutes: number;
+  hop_elapsed_minutes?: number;
 }
 
 export interface FollowMoneyResponse {

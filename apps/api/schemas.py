@@ -239,6 +239,7 @@ class MoneyHopResponse(BaseModel):
     timestamp: str
     cumulative_amount: float
     elapsed_time_minutes: float
+    hop_elapsed_minutes: float = 0.0
 
 
 class FollowMoneyResponse(BaseModel):
