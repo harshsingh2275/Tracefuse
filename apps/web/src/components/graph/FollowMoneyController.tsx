@@ -6,15 +6,13 @@ import {
   Play,
   Pause,
   RotateCcw,
-  ArrowRight,
   Clock,
-  IndianRupee,
-  Layers,
-  ChevronRight,
+  ArrowRight,
+  TrendingDown,
   Sparkles,
-  CheckCircle2,
+  ShieldCheck,
   AlertOctagon,
-  X,
+  Layers,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { MoneyHopResponse, AccountSummaryResponse } from "@tracefuse/shared";
@@ -22,28 +20,31 @@ import { MoneyHopResponse, AccountSummaryResponse } from "@tracefuse/shared";
 interface FollowMoneyControllerProps {
   investigationId: string;
   accounts: AccountSummaryResponse[];
-  onHighlightPath?: (activeHop: MoneyHopResponse | null, allHops: MoneyHopResponse[]) => void;
+  onHopSelect?: (hop: MoneyHopResponse | null, allHops: MoneyHopResponse[]) => void;
   className?: string;
 }
 
 export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
   investigationId,
-  accounts,
-  onHighlightPath,
+  accounts = [],
+  onHopSelect,
   className = "",
 }) => {
   const [sourceAccount, setSourceAccount] = useState<string>(accounts[0]?.id || "");
   const [destinationAccount, setDestinationAccount] = useState<string>("");
   const [maxHops, setMaxHops] = useState<number>(6);
-  const [minAmount, setMinAmount] = useState<string>("");
-
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [hops, setHops] = useState<MoneyHopResponse[]>([]);
-  const [activeHopIndex, setActiveHopIndex] = useState<number>(-1);
-  const [isPlaying, setIsPlaying] = useState(false);
 
-  // Auto-select initial account if accounts change
+  const [hops, setHops] = useState<MoneyHopResponse[]>([]);
+  const [activeHopIndex, setActiveHopIndex] = useState<number>(0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  const getAccountName = (accId: string) => {
+    const found = accounts.find((a) => a.id === accId);
+    return found?.holder_name || accId;
+  };
+
   useEffect(() => {
     if (accounts.length > 0 && !sourceAccount) {
       setSourceAccount(accounts[0].id);
@@ -55,101 +56,101 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
     try {
       setLoading(true);
       setError(null);
-      setIsPlaying(false);
-      setActiveHopIndex(-1);
-
-      const parsedMinAmount = minAmount ? parseFloat(minAmount) : undefined;
       const res = await api.followTheMoney(
         investigationId,
         sourceAccount,
-        maxHops,
-        parsedMinAmount
+        destinationAccount || undefined,
+        maxHops
       );
 
-      // If destination account is filtered, filter hops to that path branch if desired
-      let resultHops = res.hops;
-      if (destinationAccount) {
-        const destIdx = resultHops.findIndex((h) => h.to_account_id === destinationAccount);
-        if (destIdx !== -1) {
-          resultHops = resultHops.slice(0, destIdx + 1);
-        }
+      const resultHops = res.hops || [];
+      setHops(resultHops);
+      setActiveHopIndex(0);
+
+      if (resultHops.length === 0) {
+        setError("No downstream money flow detected from this account within parameters.");
       }
 
-      setHops(resultHops);
-      if (resultHops.length > 0) {
-        setActiveHopIndex(0);
-        onHighlightPath?.(resultHops[0], resultHops);
-      } else {
-        onHighlightPath?.(null, []);
+      if (onHopSelect) {
+        onHopSelect(resultHops[0] || null, resultHops);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to trace fund flow.";
+      const msg = err instanceof Error ? err.message : "Failed to compute money trail.";
       setError(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  // Playback animation effect
+  // Step forward/backward in hops
+  const selectHop = (idx: number) => {
+    if (idx >= 0 && idx < hops.length) {
+      setActiveHopIndex(idx);
+      if (onHopSelect) {
+        onHopSelect(hops[idx], hops);
+      }
+    }
+  };
+
+  // Auto-play animation
   useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
+    let interval: NodeJS.Timeout | null = null;
     if (isPlaying && hops.length > 0) {
-      timer = setInterval(() => {
+      interval = setInterval(() => {
         setActiveHopIndex((prev) => {
-          if (prev >= hops.length - 1) {
+          const next = prev + 1;
+          if (next >= hops.length) {
             setIsPlaying(false);
             return prev;
           }
-          const next = prev + 1;
-          onHighlightPath?.(hops[next], hops);
+          if (onHopSelect) {
+            onHopSelect(hops[next], hops);
+          }
           return next;
         });
       }, 1200);
     }
     return () => {
-      if (timer) clearInterval(timer);
+      if (interval) clearInterval(interval);
     };
-  }, [isPlaying, hops, onHighlightPath]);
-
-  const selectHop = (idx: number) => {
-    setIsPlaying(false);
-    setActiveHopIndex(idx);
-    onHighlightPath?.(hops[idx], hops);
-  };
+  }, [isPlaying, hops, onHopSelect]);
 
   const resetTrace = () => {
     setIsPlaying(false);
-    setActiveHopIndex(hops.length > 0 ? 0 : -1);
-    if (hops.length > 0) {
-      onHighlightPath?.(hops[0], hops);
-    } else {
-      onHighlightPath?.(null, []);
+    setActiveHopIndex(0);
+    if (onHopSelect && hops.length > 0) {
+      onHopSelect(hops[0], hops);
     }
   };
 
   return (
-    <div className={`bg-[#111622] border border-[#1f293d] rounded-xl p-5 shadow-2xl space-y-5 ${className}`}>
+    <div className={`bg-white border border-border-warm rounded-xl p-5 shadow-sm space-y-4 ${className}`}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-[#1f293d]">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 font-mono text-[11px] font-semibold">
-            <Sparkles className="w-3 h-3" />
-            FIFO FUND PROVENANCE TRAIL
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-warm">
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 rounded-lg bg-navy-subtle text-navy border border-navy/20">
+            <GitFork className="w-4 h-4" />
           </div>
-          <h3 className="text-base font-bold font-mono text-white tracking-tight mt-1 flex items-center gap-2">
-            <GitFork className="w-4 h-4 text-blue-400" />
-            Follow the Money Trace Engine
-          </h3>
+          <div>
+            <h3 className="text-sm font-serif font-bold text-ink-primary">
+              Follow the Money Multi-Hop Provenance
+            </h3>
+            <p className="text-[11px] text-ink-secondary">
+              Strict First-In-First-Out fund flow reconstruction
+            </p>
+          </div>
         </div>
 
         {hops.length > 0 && (
-          <div className="flex items-center gap-2 bg-[#0a0d14] border border-[#1f293d] p-1.5 rounded-xl font-mono text-xs">
+          <div className="flex items-center gap-2 font-mono text-xs">
             <button
               onClick={() => {
-                if (activeHopIndex >= hops.length - 1) setActiveHopIndex(0);
+                if (activeHopIndex >= hops.length - 1) {
+                  setActiveHopIndex(0);
+                }
                 setIsPlaying(!isPlaying);
               }}
-              className="p-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all cursor-pointer"
+              className="p-1.5 rounded-lg bg-navy hover:bg-navy-hover text-white transition-all cursor-pointer shadow-sm"
               title={isPlaying ? "Pause Flow Animation" : "Play Multi-Hop Flow"}
             >
               {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -157,13 +158,13 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
 
             <button
               onClick={resetTrace}
-              className="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition-all cursor-pointer"
+              className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer"
               title="Reset to First Hop"
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
 
-            <span className="text-gray-400 px-2">
+            <span className="text-ink-secondary px-2">
               Hop {activeHopIndex + 1} / {hops.length}
             </span>
           </div>
@@ -171,13 +172,13 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
       </div>
 
       {/* Parameter Controls */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-mono">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-sans">
         <div>
-          <label className="block text-gray-400 text-[11px] mb-1">Source Account (Origin)</label>
+          <label className="block text-ink-secondary text-[11px] font-medium mb-1">Source Account (Origin)</label>
           <select
             value={sourceAccount}
             onChange={(e) => setSourceAccount(e.target.value)}
-            className="w-full p-2 bg-[#0a0d14] border border-[#1f293d] rounded-lg text-white focus:outline-none focus:border-blue-500 text-xs"
+            className="w-full p-2 bg-slate-50 border border-border-warm rounded-lg text-ink-primary focus:outline-none focus:border-navy text-xs"
           >
             {accounts.map((acc) => (
               <option key={acc.id} value={acc.id}>
@@ -188,11 +189,11 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
         </div>
 
         <div>
-          <label className="block text-gray-400 text-[11px] mb-1">Destination (Optional Filter)</label>
+          <label className="block text-ink-secondary text-[11px] font-medium mb-1">Destination (Optional Filter)</label>
           <select
             value={destinationAccount}
             onChange={(e) => setDestinationAccount(e.target.value)}
-            className="w-full p-2 bg-[#0a0d14] border border-[#1f293d] rounded-lg text-white focus:outline-none focus:border-blue-500 text-xs"
+            className="w-full p-2 bg-slate-50 border border-border-warm rounded-lg text-ink-primary focus:outline-none focus:border-navy text-xs"
           >
             <option value="">All Reachable Downstream</option>
             {accounts.map((acc) => (
@@ -204,7 +205,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
         </div>
 
         <div>
-          <label className="block text-gray-400 text-[11px] mb-1">Max Hops (1-8)</label>
+          <label className="block text-ink-secondary text-[11px] font-medium mb-1">Max Hops (1-8)</label>
           <div className="flex items-center gap-2">
             <input
               type="range"
@@ -212,9 +213,9 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
               max="8"
               value={maxHops}
               onChange={(e) => setMaxHops(Number(e.target.value))}
-              className="flex-1 accent-blue-500 cursor-pointer"
+              className="flex-1 accent-navy cursor-pointer"
             />
-            <span className="text-white font-bold w-4 text-center">{maxHops}</span>
+            <span className="text-ink-primary font-bold font-mono w-4 text-center">{maxHops}</span>
           </div>
         </div>
 
@@ -222,7 +223,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
           <button
             onClick={handleTrace}
             disabled={loading || !sourceAccount}
-            className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center gap-1.5 cursor-pointer text-xs"
+            className="w-full py-2 bg-navy hover:bg-navy-hover disabled:opacity-50 text-white font-semibold rounded-lg transition-all shadow-md shadow-navy/20 flex items-center justify-center gap-1.5 cursor-pointer text-xs"
           >
             <GitFork className="w-3.5 h-3.5" />
             <span>{loading ? "Tracing Provenance..." : "Trace Fund Flow"}</span>
@@ -231,7 +232,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
       </div>
 
       {error && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-400 flex items-center gap-2">
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center gap-2">
           <AlertOctagon className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
@@ -240,61 +241,73 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
       {/* Hop-by-Hop Breakdown Timeline */}
       {hops.length > 0 && (
         <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-gray-400 uppercase tracking-wider text-[11px] font-semibold">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-ink-secondary uppercase tracking-wider text-[11px] font-semibold">
               Discovered Multi-Hop Trail ({hops.length} Hops)
             </span>
-            <span className="text-emerald-400 font-bold">
+            <span className="text-emerald-700 font-bold font-mono">
               Total Trail: ₹
               {hops[hops.length - 1]?.cumulative_amount?.toLocaleString("en-IN") || 0}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {hops.map((hop, idx) => {
-              const isActive = activeHopIndex === idx;
+              const isActive = idx === activeHopIndex;
               const hopDate = new Date(hop.timestamp);
 
               return (
                 <div
                   key={`${hop.transaction_id}-${idx}`}
                   onClick={() => selectHop(idx)}
-                  className={`p-3.5 rounded-xl border transition-all cursor-pointer font-mono text-xs space-y-2 ${
+                  className={`p-3 rounded-xl border transition-all cursor-pointer space-y-2 ${
                     isActive
-                      ? "bg-blue-950/40 border-blue-500 shadow-lg shadow-blue-600/20 ring-1 ring-blue-400"
-                      : "bg-[#0a0d14] border-[#1f293d] hover:border-gray-700"
+                      ? "bg-navy-subtle border-navy shadow-md ring-2 ring-navy/30"
+                      : "bg-slate-50 border-border-warm hover:border-slate-300"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        isActive ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400"
+                        isActive ? "bg-navy text-white" : "bg-slate-200 text-slate-700"
                       }`}
                     >
                       HOP {hop.hop_number}
                     </span>
-                    <span className="text-gray-500 text-[10px]">
+                    <span className="text-ink-secondary text-[10px] font-mono">
                       +{hop.hop_elapsed_minutes || 0}m latency
                     </span>
                   </div>
 
-                  <div className="text-sm font-bold text-emerald-400">
+                  <div className="text-sm font-bold font-mono text-emerald-700">
                     ₹{hop.amount.toLocaleString("en-IN")}
                   </div>
 
-                  <div className="text-[11px] text-gray-300 space-y-1">
-                    <div className="flex items-center gap-1.5 truncate">
-                      <span className="text-gray-500">From:</span>
-                      <span className="text-white truncate font-medium">{hop.from_account_id}</span>
+                  <div className="text-[11px] text-ink-primary space-y-1">
+                    <div className="flex flex-col truncate">
+                      <span className="text-ink-secondary text-[10px]">From:</span>
+                      <span className="font-semibold text-slate-900 truncate">
+                        {getAccountName(hop.from_account_id)}
+                      </span>
+                      <span className="text-slate-400 font-mono text-[10px]">
+                        ({hop.from_account_id})
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1.5 truncate">
-                      <span className="text-gray-500">To:</span>
-                      <span className="text-white truncate font-medium">{hop.to_account_id}</span>
+                    <div className="flex flex-col truncate pt-0.5">
+                      <span className="text-ink-secondary text-[10px]">To:</span>
+                      <span className="font-semibold text-slate-900 truncate">
+                        {getAccountName(hop.to_account_id)}
+                      </span>
+                      <span className="text-slate-400 font-mono text-[10px]">
+                        ({hop.to_account_id})
+                      </span>
                     </div>
                   </div>
 
-                  <div className="pt-1.5 border-t border-gray-800/80 flex items-center justify-between text-[10px] text-gray-500">
-                    <span>Txn: {hop.transaction_id}</span>
+                  <div className="pt-1.5 border-t border-border-warm flex items-center justify-between text-[10px] text-ink-secondary font-mono">
+                    <span title={hop.transaction_id}>
+                      Txn: {hop.transaction_id.length > 12 ? `${hop.transaction_id.slice(0, 10)}...` : hop.transaction_id}
+                    </span>
                     <span>{hopDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                   </div>
                 </div>

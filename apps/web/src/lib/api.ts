@@ -82,6 +82,7 @@ export const api = {
   followTheMoney: (
     id: string,
     sourceAccountId: string,
+    destinationAccountId?: string,
     maxHops: number = 6,
     minAmount?: number
   ): Promise<FollowMoneyResponse> => {
@@ -89,6 +90,7 @@ export const api = {
       method: "POST",
       body: JSON.stringify({
         source_account_id: sourceAccountId,
+        destination_account_id: destinationAccountId,
         max_hops: maxHops,
         min_amount: minAmount,
       }),

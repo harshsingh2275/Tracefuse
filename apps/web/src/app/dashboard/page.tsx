@@ -91,10 +91,10 @@ export default function DashboardPage() {
 
   // Risk Distribution Chart Data
   const riskDistributionData = [
-    { name: "Low", count: investigations.filter((i) => i.risk_level === "low").length, color: "#10b981" },
-    { name: "Medium", count: investigations.filter((i) => i.risk_level === "medium").length, color: "#f59e0b" },
-    { name: "High", count: investigations.filter((i) => i.risk_level === "high").length, color: "#f97316" },
-    { name: "Critical", count: investigations.filter((i) => i.risk_level === "critical").length, color: "#ef4444" },
+    { name: "Low", count: investigations.filter((i) => i.risk_level === "low").length, color: "#6B655A" },
+    { name: "Medium", count: investigations.filter((i) => i.risk_level === "medium").length, color: "#B8792F" },
+    { name: "High", count: investigations.filter((i) => i.risk_level === "high").length, color: "#B8792F" },
+    { name: "Critical", count: investigations.filter((i) => i.risk_level === "critical").length, color: "#8C2F2F" },
   ];
 
   // Top Patterns Distribution Data
@@ -105,28 +105,28 @@ export default function DashboardPage() {
     });
   });
   const patternChartData = Object.entries(patternCounts).map(([pattern, count]) => ({
-    name: pattern.replace(/_/g, " ").toUpperCase(),
+    name: pattern.replace(/_/g, " "),
     count,
   }));
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-[#f3f4f6] flex flex-col font-sans">
+    <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-8">
-        {/* Error Alert Banner (Section 24) */}
+        {/* Error Alert Banner */}
         {error && (
-          <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between gap-4">
+          <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <ShieldAlert className="w-5 h-5 text-red-400 shrink-0" />
+              <ShieldAlert className="w-5 h-5 text-severity-critical shrink-0" />
               <div>
-                <div className="text-sm font-semibold text-red-400">Connection Error</div>
-                <div className="text-xs text-gray-300">{error}</div>
+                <div className="text-sm font-semibold text-severity-critical">Connection Error</div>
+                <div className="text-xs text-ink-secondary">{error}</div>
               </div>
             </div>
             <button
               onClick={fetchData}
-              className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-mono rounded-lg border border-red-500/40 flex items-center gap-1.5 transition-all cursor-pointer"
+              className="px-3 py-1.5 bg-white hover:bg-slate-50 text-severity-critical text-xs rounded-lg border border-red-200 flex items-center gap-1.5 transition-all cursor-pointer font-medium"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               Retry
@@ -134,19 +134,18 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Flagship Case Hero Callout (<60s to wow per Section 21 & 33A) */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#111622] via-[#161d2d] to-[#111622] border border-[#233148] p-6 md:p-8 shadow-2xl">
-          <div className="absolute -right-12 -top-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Flagship Case Hero Callout */}
+        <div className="relative overflow-hidden rounded-2xl bg-white border border-border-warm p-6 md:p-8 shadow-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 rounded-full">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider text-navy bg-navy-subtle border border-navy/20 rounded-full">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
                 FLAGSHIP INVESTIGATION CASE
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight font-mono">
+              <h2 className="text-2xl md:text-3xl font-bold text-ink-primary tracking-tight font-serif">
                 Multi-Hop Syndicate: ₹8.4L Dispersion & Circular Kickback
               </h2>
-              <p className="text-xs md:text-sm text-gray-300 leading-relaxed font-sans">
+              <p className="text-xs md:text-sm text-ink-secondary leading-relaxed font-sans">
                 High-confidence multi-pattern nexus combining <strong>5 rapid fan-out hops</strong>,{" "}
                 <strong>3 shared-device accounts</strong>, 2-hop rapid layering, and a closed-loop circular kickback returning to the syndicate origin.
               </p>
@@ -154,7 +153,7 @@ export default function DashboardPage() {
 
             <Link
               href="/investigations/inv_flagship_demo?tab=graph"
-              className="px-5 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-mono text-sm font-semibold rounded-xl transition-all shadow-xl shadow-blue-600/30 flex items-center gap-2 shrink-0 border border-blue-400/40 group cursor-pointer"
+              className="px-5 py-3.5 bg-navy hover:bg-navy-hover text-white font-sans text-sm font-semibold rounded-xl transition-all shadow-md shadow-navy/20 flex items-center gap-2 shrink-0 group cursor-pointer"
             >
               <span>Explore Flagship Graph</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -162,13 +161,13 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Section 6 Top-Level Metric Cards */}
+        {/* Operational Metrics */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-mono font-bold tracking-wider text-gray-400 uppercase">
+            <h3 className="text-sm font-serif font-bold text-ink-primary">
               Financial Crime Operational Metrics
             </h3>
-            <span className="text-[11px] font-mono text-gray-500">Live Seed Feed</span>
+            <span className="text-[11px] text-ink-secondary font-medium">Live Surveillance Feed</span>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -198,108 +197,109 @@ export default function DashboardPage() {
               value={
                 loading
                   ? "..."
-                  : `₹${((summary?.amount_under_investigation ?? 2700000) / 100000).toFixed(1)}L`
+                  : `₹${((summary?.amount_under_investigation ?? 1570000) / 100000).toFixed(1)}L`
               }
-              subtitle="Total INR at Risk"
+              subtitle="Active Flow"
               icon={IndianRupee}
-              variant="accent"
+              variant="default"
             />
             <MetricCard
               title="Active Cases"
-              value={loading ? "..." : summary?.active_investigations ?? 6}
-              subtitle="Open Queue"
+              value={loading ? "..." : summary?.active_investigations ?? 7}
+              subtitle="Under Review"
               icon={Activity}
               variant="default"
             />
             <MetricCard
-              title="Escalated Cases"
-              value={loading ? "..." : summary?.escalated_cases ?? 1}
-              subtitle="Critical Severity"
+              title="Escalated to SAR"
+              value={loading ? "..." : summary?.escalated_cases ?? 2}
+              subtitle="Reg. Action"
               icon={Flame}
               variant="critical"
             />
           </div>
         </section>
 
-        {/* Two-Column Analytics Layout: Left = Case Table, Right = Charts */}
+        {/* Main Workspace Layout (2-Column Grid) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Column: Suspicious Cases Table (2 Cols) */}
+          {/* Main Case Queue Table (2 Cols) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h3 className="text-lg font-bold font-mono text-white tracking-tight">
-                  Investigation Cases Queue
+                <h3 className="text-lg font-serif font-bold text-ink-primary tracking-tight">
+                  Investigation Case Queue
                 </h3>
-                <p className="text-xs text-gray-400">
-                  Suspicious clusters ranked by composite Investigation Risk Score
+                <p className="text-xs text-ink-secondary">
+                  Prioritized by composite heuristic risk score and typology velocity
                 </p>
               </div>
 
-              {/* Search Bar */}
-              <div className="relative w-full sm:w-64">
+              {/* Status Filter Tabs */}
+              <div className="flex items-center gap-1 bg-white border border-border-warm p-1 rounded-xl shadow-sm text-xs font-sans">
+                {["all", "new", "investigating", "escalated", "resolved"].map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => setStatusFilter(st)}
+                    className={`px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer font-medium ${
+                      statusFilter === st
+                        ? "bg-navy text-white shadow-sm"
+                        : "text-ink-secondary hover:text-ink-primary hover:bg-slate-100"
+                    }`}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Search and Sort Toolbar */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="relative flex-1">
                 <input
                   type="text"
-                  placeholder="Search cases, accounts, patterns..."
+                  placeholder="Search by case title, entity name, ID, or pattern..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-1.5 bg-[#111622] border border-[#1f293d] rounded-lg text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 font-mono transition-all"
+                  className="w-full pl-9 pr-4 py-2 bg-white border border-border-warm rounded-xl text-xs text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy shadow-sm"
                 />
-                <Search className="w-3.5 h-3.5 text-gray-500 absolute left-3 top-2.5 pointer-events-none" />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
               </div>
+
+              <button
+                onClick={() => setSortAsc(!sortAsc)}
+                className="px-3 py-2 bg-white border border-border-warm text-ink-primary hover:bg-slate-50 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                title="Toggle Risk Score Sort"
+              >
+                <ArrowUpDown className="w-3.5 h-3.5 text-navy" />
+                <span>{sortAsc ? "Lowest Risk" : "Highest Risk"}</span>
+              </button>
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex items-center gap-2 border-b border-[#1f293d] pb-2 overflow-x-auto">
-              {["all", "new", "investigating", "escalated", "resolved"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setStatusFilter(tab)}
-                  className={`px-3 py-1 rounded-md text-xs font-mono capitalize transition-all cursor-pointer ${
-                    statusFilter === tab
-                      ? "bg-blue-600/20 text-blue-400 border border-blue-500/30 font-semibold"
-                      : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/40"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-
-              <div className="ml-auto flex items-center gap-2">
-                <button
-                  onClick={() => setSortAsc(!sortAsc)}
-                  className="px-2.5 py-1 text-[11px] font-mono text-gray-400 hover:text-white bg-[#111622] border border-[#1f293d] rounded-md flex items-center gap-1.5 cursor-pointer"
-                >
-                  <ArrowUpDown className="w-3 h-3" />
-                  <span>Risk {sortAsc ? "▲ Low to High" : "▼ High to Low"}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Cases Table */}
-            <div className="bg-[#111622] border border-[#1f293d] rounded-xl overflow-hidden shadow-xl">
+            {/* Case List Table */}
+            <div className="bg-white border border-border-warm rounded-2xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-sans">
-                  <thead className="bg-[#182030] text-gray-400 font-mono uppercase tracking-wider border-b border-[#1f293d] text-[11px]">
+                  <thead className="bg-slate-50 text-ink-secondary text-[11px] uppercase tracking-wider border-b border-border-warm font-medium">
                     <tr>
-                      <th className="py-3 px-4">Case / Title</th>
+                      <th className="py-3 px-4">Case Title & Entity Nexus</th>
                       <th className="py-3 px-4">Detected Patterns</th>
-                      <th className="py-3 px-4">Risk Level</th>
-                      <th className="py-3 px-4">Volume</th>
+                      <th className="py-3 px-4">Risk Score</th>
+                      <th className="py-3 px-4">Total Flow</th>
                       <th className="py-3 px-4">Status</th>
                       <th className="py-3 px-4 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#1f293d]">
+
+                  <tbody className="divide-y divide-border-warm">
                     {loading ? (
-                      // Skeleton Loading Rows
-                      [...Array(5)].map((_, i) => (
+                      [1, 2, 3, 4, 5].map((i) => (
                         <tr key={i} className="animate-pulse">
-                          <td className="py-4 px-4"><div className="h-4 bg-gray-800 rounded w-48 mb-1" /><div className="h-3 bg-gray-800/60 rounded w-24" /></td>
-                          <td className="py-4 px-4"><div className="h-5 bg-gray-800 rounded w-32" /></td>
-                          <td className="py-4 px-4"><div className="h-5 bg-gray-800 rounded w-20" /></td>
-                          <td className="py-4 px-4"><div className="h-4 bg-gray-800 rounded w-16" /></td>
-                          <td className="py-4 px-4"><div className="h-5 bg-gray-800 rounded w-16" /></td>
-                          <td className="py-4 px-4 text-right"><div className="h-7 bg-gray-800 rounded w-24 ml-auto" /></td>
+                          <td className="py-4 px-4"><div className="h-4 bg-slate-200 rounded w-48 mb-1" /><div className="h-3 bg-slate-200 rounded w-24" /></td>
+                          <td className="py-4 px-4"><div className="h-5 bg-slate-200 rounded w-32" /></td>
+                          <td className="py-4 px-4"><div className="h-6 bg-slate-200 rounded w-20" /></td>
+                          <td className="py-4 px-4"><div className="h-4 bg-slate-200 rounded w-16" /></td>
+                          <td className="py-4 px-4"><div className="h-5 bg-slate-200 rounded w-16" /></td>
+                          <td className="py-4 px-4 text-right"><div className="h-7 bg-slate-200 rounded w-24 ml-auto" /></td>
                         </tr>
                       ))
                     ) : filteredInvestigations.length === 0 ? (
@@ -320,15 +320,15 @@ export default function DashboardPage() {
                       filteredInvestigations.map((inv) => (
                         <tr
                           key={inv.id}
-                          className="hover:bg-[#182030]/60 transition-colors group cursor-pointer"
+                          className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
                         >
                           <td className="py-3.5 px-4">
                             <Link href={`/investigations/${inv.id}?tab=graph`} className="block">
-                              <div className="font-semibold text-white group-hover:text-blue-400 transition-colors">
+                              <div className="font-semibold text-slate-900 group-hover:text-navy transition-colors">
                                 {inv.title}
                               </div>
-                              <div className="font-mono text-[11px] text-gray-500 flex items-center gap-2 mt-0.5">
-                                <span>{inv.id}</span>
+                              <div className="text-[11px] text-ink-secondary flex items-center gap-2 mt-0.5">
+                                <span className="font-mono">({inv.id})</span>
                                 <span>•</span>
                                 <span>{inv.entities_count} accounts</span>
                               </div>
@@ -347,7 +347,7 @@ export default function DashboardPage() {
                             <RiskBadge level={inv.risk_level} score={inv.risk_score} />
                           </td>
 
-                          <td className="py-3.5 px-4 font-mono font-medium text-gray-200 whitespace-nowrap">
+                          <td className="py-3.5 px-4 font-mono font-bold text-emerald-700 whitespace-nowrap">
                             ₹{inv.total_flow_amount.toLocaleString("en-IN")}
                           </td>
 
@@ -358,7 +358,7 @@ export default function DashboardPage() {
                           <td className="py-3.5 px-4 text-right whitespace-nowrap">
                             <Link
                               href={`/investigations/${inv.id}?tab=graph`}
-                              className="px-3 py-1.5 bg-blue-600/10 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/30 hover:border-blue-500 rounded-lg text-xs font-mono font-medium transition-all inline-flex items-center gap-1 cursor-pointer"
+                              className="px-3 py-1.5 bg-navy-subtle hover:bg-navy text-navy hover:text-white border border-navy/20 hover:border-navy rounded-lg text-xs font-medium transition-all inline-flex items-center gap-1 cursor-pointer"
                             >
                               <span>Investigate</span>
                               <ExternalLink className="w-3 h-3" />
@@ -376,21 +376,21 @@ export default function DashboardPage() {
           {/* Sidebar Column: Visual Analytics & Breakdown (1 Col) */}
           <div className="space-y-6">
             {/* Risk Severity Breakdown Chart */}
-            <div className="bg-[#111622] border border-[#1f293d] p-5 rounded-xl space-y-4 shadow-xl">
+            <div className="bg-white border border-border-warm p-5 rounded-2xl space-y-4 shadow-sm">
               <div>
-                <h4 className="text-sm font-bold font-mono text-white tracking-tight">
+                <h4 className="text-sm font-bold font-serif text-ink-primary tracking-tight">
                   Risk Band Distribution
                 </h4>
-                <p className="text-xs text-gray-400">Case volume segmented by severity score</p>
+                <p className="text-xs text-ink-secondary">Case volume segmented by severity score</p>
               </div>
 
               <div className="h-48 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={riskDistributionData}>
-                    <XAxis dataKey="name" stroke="#6b7280" fontSize={11} tickLine={false} />
-                    <YAxis stroke="#6b7280" fontSize={11} allowDecimals={false} tickLine={false} />
+                    <XAxis dataKey="name" stroke="#6B655A" fontSize={11} tickLine={false} />
+                    <YAxis stroke="#6B655A" fontSize={11} allowDecimals={false} tickLine={false} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#0a0d14", borderColor: "#1f293d", borderRadius: "8px", fontSize: "12px" }}
+                      contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E5E0D6", borderRadius: "8px", fontSize: "12px" }}
                     />
                     <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                       {riskDistributionData.map((entry, index) => (
@@ -403,41 +403,24 @@ export default function DashboardPage() {
             </div>
 
             {/* Pattern Type Frequency Chart */}
-            <div className="bg-[#111622] border border-[#1f293d] p-5 rounded-xl space-y-4 shadow-xl">
+            <div className="bg-white border border-border-warm p-5 rounded-2xl space-y-4 shadow-sm">
               <div>
-                <h4 className="text-sm font-bold font-mono text-white tracking-tight">
+                <h4 className="text-sm font-bold font-serif text-ink-primary tracking-tight">
                   Detected Pattern Signatures
                 </h4>
-                <p className="text-xs text-gray-400">Frequencies across active investigation cases</p>
+                <p className="text-xs text-ink-secondary">Typology occurrences across active dossiers</p>
               </div>
 
-              <div className="space-y-2.5 font-mono text-xs">
-                {patternChartData.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between">
-                    <span className="text-gray-300">{item.name}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-gray-800 h-2 rounded-full overflow-hidden">
-                        <div
-                          className="bg-blue-500 h-full rounded-full"
-                          style={{ width: `${Math.min(100, item.count * 25)}%` }}
-                        />
-                      </div>
-                      <span className="font-semibold text-white w-4 text-right">{item.count}</span>
-                    </div>
+              <div className="space-y-2.5 text-xs font-sans">
+                {patternChartData.slice(0, 5).map((p, idx) => (
+                  <div key={idx} className="flex items-center justify-between pb-2 border-b border-border-warm last:border-0 last:pb-0">
+                    <span className="text-ink-primary capitalize font-medium">{p.name}</span>
+                    <span className="font-mono font-bold text-navy bg-navy-subtle px-2 py-0.5 rounded text-[11px]">
+                      {p.count} cases
+                    </span>
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Demo Helper Note for Judges */}
-            <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/20 text-xs font-mono text-gray-400 space-y-1.5">
-              <div className="text-blue-400 font-semibold flex items-center gap-1.5">
-                <ShieldAlert className="w-3.5 h-3.5" />
-                Judge Evaluation Note
-              </div>
-              <p className="leading-relaxed">
-                Click <strong>&quot;Investigate&quot;</strong> on the Flagship case to open the multi-hop React Flow network graph, Follow-the-Money trace, and Grounded AI Copilot.
-              </p>
             </div>
           </div>
         </div>
