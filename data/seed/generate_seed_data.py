@@ -263,7 +263,7 @@ def generate_seed():
         s3_src = Account(
             id="acc_s3_src_01",
             account_number=generate_account_number(),
-            holder_name="Rajesh Verma (Shell Syndicate)",
+            holder_name="Rajesh Verma",
             account_type="current",
             created_at=s3_time - timedelta(days=45),
             is_synthetic=True,
@@ -337,17 +337,17 @@ def generate_seed():
         print("[Seed] Generating Scenario 4: Layered Money Movement...", flush=True)
         s4_time = BASE_TIME - timedelta(days=4, hours=10)
         s4_nodes = []
-        chain_names = ["Originator Prime", "Layer Hop Alpha", "Layer Hop Beta", "Layer Hop Gamma", "Offshore Mule Final"]
+        chain_names = ["Alok Mathur", "Naveen Singhal", "Tarun Malhotra", "Sanjay Aggarwal", "Ananya Deshmukh"]
         for i, h_name in enumerate(chain_names):
             acc = Account(
                 id=f"acc_s4_hop_{i+1:02d}",
                 account_number=generate_account_number(),
-                holder_name=f"{h_name} ({fake.name()})",
+                holder_name=h_name,
                 account_type="current" if i == 0 else "savings",
                 created_at=s4_time - timedelta(days=random.randint(5, 40)),
                 is_synthetic=True,
             )
-            ent = Entity(id=f"ent_s4_hop_{i+1:02d}", type="person" if i < 4 else "beneficiary", name=acc.holder_name)
+            ent = Entity(id=f"ent_s4_hop_{i+1:02d}", type="person" if i < 4 else "beneficiary", name=h_name)
             to_add.extend([
                 acc, ent,
                 AccountEntity(account_id=acc.id, entity_id=ent.id, relationship_type="owns"),
@@ -467,16 +467,17 @@ def generate_seed():
         to_add.extend([s6_shared_dev1, s6_shared_dev2])
 
         s6_accs = []
+        s6_names = ["Sunil Kashyap", "Meera Joshi", "Rakesh Nair", "Simran Kaur"]
         for i in range(4):
             acc = Account(
                 id=f"acc_s6_mule_{i+1:02d}",
                 account_number=generate_account_number(),
-                holder_name=f"Mule Account {i+1} ({fake.name()})",
+                holder_name=s6_names[i],
                 account_type="savings",
                 created_at=s6_time - timedelta(days=random.randint(15, 45)),
                 is_synthetic=True,
             )
-            ent = Entity(id=f"ent_s6_mule_{i+1:02d}", type="person", name=acc.holder_name)
+            ent = Entity(id=f"ent_s6_mule_{i+1:02d}", type="person", name=s6_names[i])
             to_add.extend([
                 acc, ent,
                 AccountEntity(account_id=acc.id, entity_id=ent.id, relationship_type="owns"),
@@ -529,7 +530,7 @@ def generate_seed():
         s7_feeder = Account(
             id="acc_s7_feeder_01",
             account_number=generate_account_number(),
-            holder_name="Feeder Source Entity",
+            holder_name="Arjun Kapoor",
             account_type="current",
             created_at=s7_time - timedelta(days=90),
             is_synthetic=True,
@@ -537,7 +538,7 @@ def generate_seed():
         s7_pass = Account(
             id="acc_s7_passthrough_01",
             account_number=generate_account_number(),
-            holder_name="Quick Transit Conduit (Aman Gupta)",
+            holder_name="Aman Gupta",
             account_type="savings",
             created_at=s7_time - timedelta(days=20),
             is_synthetic=True,
@@ -545,12 +546,21 @@ def generate_seed():
         s7_sink = Account(
             id="acc_s7_sink_01",
             account_number=generate_account_number(),
-            holder_name="Final Beneficiary Vault",
+            holder_name="Shweta Iyer",
             account_type="savings",
             created_at=s7_time - timedelta(days=120),
             is_synthetic=True,
         )
-        to_add.extend([s7_feeder, s7_pass, s7_sink])
+        ent_s7_feeder = Entity(id="ent_s7_feeder_01", type="person", name="Arjun Kapoor")
+        ent_s7_pass = Entity(id="ent_s7_pass_01", type="person", name="Aman Gupta")
+        ent_s7_sink = Entity(id="ent_s7_sink_01", type="person", name="Shweta Iyer")
+        to_add.extend([
+            s7_feeder, s7_pass, s7_sink,
+            ent_s7_feeder, ent_s7_pass, ent_s7_sink,
+            AccountEntity(account_id=s7_feeder.id, entity_id=ent_s7_feeder.id, relationship_type="owns"),
+            AccountEntity(account_id=s7_pass.id, entity_id=ent_s7_pass.id, relationship_type="owns"),
+            AccountEntity(account_id=s7_sink.id, entity_id=ent_s7_sink.id, relationship_type="owns"),
+        ])
 
         t7_in1 = Transaction(
             id="txn_s7_in_01",
@@ -629,7 +639,7 @@ def generate_seed():
         s8_src = Account(
             id="acc_s8_smurf_src",
             account_number=generate_account_number(),
-            holder_name="Smurf Operator (Rohan Mehra)",
+            holder_name="Rohan Mehra",
             account_type="savings",
             created_at=s8_time - timedelta(days=25),
             is_synthetic=True,
@@ -637,12 +647,19 @@ def generate_seed():
         s8_dst = Account(
             id="acc_s8_smurf_dst",
             account_number=generate_account_number(),
-            holder_name="Collector Account (Target Vault)",
+            holder_name="Harish Bhatia",
             account_type="current",
             created_at=s8_time - timedelta(days=50),
             is_synthetic=True,
         )
-        to_add.extend([s8_src, s8_dst])
+        ent_s8_src = Entity(id="ent_s8_smurf_src", type="person", name="Rohan Mehra")
+        ent_s8_dst = Entity(id="ent_s8_smurf_dst", type="person", name="Harish Bhatia")
+        to_add.extend([
+            s8_src, s8_dst,
+            ent_s8_src, ent_s8_dst,
+            AccountEntity(account_id=s8_src.id, entity_id=ent_s8_src.id, relationship_type="owns"),
+            AccountEntity(account_id=s8_dst.id, entity_id=ent_s8_dst.id, relationship_type="owns"),
+        ])
 
         for i in range(6):
             t = Transaction(
@@ -689,7 +706,7 @@ def generate_seed():
         acc_s9_origin = Account(
             id="acc_flagship_origin",
             account_number=generate_account_number(),
-            holder_name="Vikramaditya Syndicate Master",
+            holder_name="Vikramaditya Singhania",
             account_type="current",
             created_at=s9_time - timedelta(days=12),
             is_synthetic=True,
@@ -697,8 +714,8 @@ def generate_seed():
         ent_s9_origin = Entity(
             id="ent_flagship_origin",
             type="person",
-            name="Vikramaditya Syndicate Master",
-            metadata_json={"role": "Primary Organizer", "risk_rating": "Critical"},
+            name="Vikramaditya Singhania",
+            metadata_json={"role": "Corporate Director", "city": "Mumbai"},
         )
         to_add.extend([
             acc_s9_origin, ent_s9_origin,
@@ -721,11 +738,11 @@ def generate_seed():
 
         s9_mules = []
         mule_names = [
-            "Sameer Mule Alpha",
-            "Pooja Mule Beta",
-            "Karan Mule Gamma",
-            "Deepak Mule Delta",
-            "Neha Mule Epsilon",
+            "Sameer Saxena",
+            "Pooja Hegde",
+            "Karan Chawla",
+            "Deepak Rawat",
+            "Neha Bansal",
         ]
         for i, m_name in enumerate(mule_names):
             m_acc = Account(
@@ -752,28 +769,38 @@ def generate_seed():
         acc_s9_layer1 = Account(
             id="acc_flagship_layer_01",
             account_number=generate_account_number(),
-            holder_name="Nexus Capital Transit (Ramesh K)",
+            holder_name="Ramesh Kumar",
             account_type="current",
             created_at=s9_time - timedelta(days=6),
             is_synthetic=True,
         )
+        ent_s9_layer1 = Entity(id="ent_flagship_layer_01", type="merchant", name="Nexus Enterprises")
         acc_s9_layer2 = Account(
             id="acc_flagship_layer_02",
             account_number=generate_account_number(),
-            holder_name="Pacific Meridian Vault (Suresh N)",
+            holder_name="Suresh Nair",
             account_type="current",
             created_at=s9_time - timedelta(days=5),
             is_synthetic=True,
         )
+        ent_s9_layer2 = Entity(id="ent_flagship_layer_02", type="merchant", name="Pacific Meridian Trading")
         acc_s9_beneficiary = Account(
             id="acc_flagship_beneficiary",
             account_number=generate_account_number(),
-            holder_name="Global Shield Offshoring Ltd",
+            holder_name="Shield Logistics Pvt Ltd",
             account_type="merchant",
             created_at=s9_time - timedelta(days=15),
             is_synthetic=True,
         )
-        to_add.extend([acc_s9_layer1, acc_s9_layer2, acc_s9_beneficiary])
+        ent_s9_beneficiary = Entity(id="ent_flagship_beneficiary", type="beneficiary", name="Shield Logistics Pvt Ltd")
+        to_add.extend([
+            acc_s9_layer1, ent_s9_layer1,
+            acc_s9_layer2, ent_s9_layer2,
+            acc_s9_beneficiary, ent_s9_beneficiary,
+            AccountEntity(account_id=acc_s9_layer1.id, entity_id=ent_s9_layer1.id, relationship_type="operates"),
+            AccountEntity(account_id=acc_s9_layer2.id, entity_id=ent_s9_layer2.id, relationship_type="operates"),
+            AccountEntity(account_id=acc_s9_beneficiary.id, entity_id=ent_s9_beneficiary.id, relationship_type="owns"),
+        ])
 
         # Fan-out from Origin to 5 Mules
         mule_amounts = [180000.0, 175000.0, 165000.0, 160000.0, 160000.0]
@@ -874,14 +901,14 @@ def generate_seed():
             id="note_flagship_01",
             investigation_id=inv_s9.id,
             user_id=demo_user.id,
-            note_text="High priority multi-pattern nexus detected: 5 rapid fan-out hops from origin within 21 mins, 3 accounts sharing device fingerprint fp_flagship_syndicate_core_88x. Layered forward via Nexus Capital and Pacific Meridian.",
+            note_text="High priority multi-pattern nexus detected: 5 rapid fan-out hops from origin within 21 mins, 3 accounts sharing device fingerprint fp_flagship_syndicate_core_88x. Layered forward via Nexus Enterprises and Pacific Meridian Trading.",
             created_at=s9_time + timedelta(hours=1, minutes=10),
         )
         note2 = CaseNote(
             id="note_flagship_02",
             investigation_id=inv_s9.id,
             user_id=demo_user.id,
-            note_text="Follow-the-money trace confirms circular kickback of ₹1.2L returning to Mule Alpha.",
+            note_text="Follow-the-money trace confirms circular kickback of ₹1.2L returning to Sameer Saxena.",
             created_at=s9_time + timedelta(hours=1, minutes=25),
         )
         act1 = CaseAction(

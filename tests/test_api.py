@@ -264,7 +264,7 @@ def test_get_account_detail():
     acc = response.json()
 
     assert acc["id"] == "acc_flagship_origin"
-    assert acc["holder_name"] == "Vikramaditya Syndicate Master"
+    assert acc["holder_name"] == "Vikramaditya Singhania"
     assert acc["transaction_count"] >= 5
     assert acc["total_outflow"] > 500000.0
 
