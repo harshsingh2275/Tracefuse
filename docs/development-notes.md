@@ -162,3 +162,16 @@ This document records architectural decisions, assumptions, and clarifications m
   - Login screen with instant 1-Click Judge Access to Flagship case.
   - Dashboard top section prioritizes Flagship Scenario 9 Hero CTA directly above metric cards and sorted case queue.
   - Case view organizes Network Graph and Follow the Money as primary top-level tabs.
+
+## 11. Production Cloud Deployment Configuration (Section 30 & 36)
+- **Date:** MVP Order Step 16 / Deployment Checklist
+- **Configuration Artifacts Added:**
+  - `vercel.json` & `apps/web/vercel.json`: Automated frontend build config with `NEXT_PUBLIC_API_URL`.
+  - `Dockerfile`: Multi-stage Python 3.12 container for FastAPI backend with PostgreSQL drivers.
+  - `render.yaml`: Complete 1-click Render blueprint service declaration.
+  - `Procfile`: Procfile for Railway / Heroku process managers.
+  - `docs/deployment-guide.md`: Step-by-step production operations manual for Supabase, Render/Railway, Vercel, and remote database seeding.
+- **Git Security Audit:**
+  - Verified `.env` is ignored by `.gitignore` and has **zero commits** across the entire Git history.
+- **Live Readiness:**
+  - Ready for zero-downtime deployment and instant judge evaluation.

@@ -1,0 +1,39 @@
+services:
+  # Backend FastAPI API Service
+  - type: web
+    name: tracefuse-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn apps.api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: DATABASE_URL
+        sync: false
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        value: llama-3.3-70b-versatile
+      - key: AI_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: CORS_ORIGINS
+        value: "*"
+
+  # Frontend Next.js Web App
+  - type: web
+    name: tracefuse-web
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm --workspace=apps/web run build
+    startCommand: npm --workspace=apps/web run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.10.0
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: tracefuse-api
+          property: host

@@ -85,6 +85,30 @@ pytest
 
 ---
 
-## 🔒 Demo Authentication
-- Route: `/login`
-- Judge Demo Passcode: `demo2026`
+## 🔒 Demo Authentication & Hackathon Evaluation
+- **Access Route**: `/login`
+- **Judge 1-Click Access**: Click **"⚡ Load Demo Investigation"** (direct bypass into Flagship Case graph in $<60$s)
+- **Demo Passcode**: `demo2026`
+
+---
+
+## 🧪 Comprehensive Test Suite
+All 54 unit, integration, and acceptance tests pass:
+```bash
+pytest
+```
+Covers:
+- All 8 rule-based pattern detectors (Section 5B & 11)
+- Risk scoring engine with 60-point single-signal cap (Section 14)
+- Multi-hop Follow-the-Money FIFO provenance trace (Section 5D & 12)
+- All 9 seed data scenarios (Section 26)
+- Full acceptance criteria audit (Section 27)
+- All 13 FastAPI endpoints (Section 18)
+
+---
+
+## 🌐 Production Cloud Deployment
+Complete step-by-step instructions available in [`docs/deployment-guide.md`](file:///d:/Tracefuse/docs/deployment-guide.md):
+- **Frontend**: Deploy to **Vercel** with `vercel.json` and `NEXT_PUBLIC_API_URL`
+- **Backend**: Deploy to **Render / Railway** with `render.yaml` / `Dockerfile` / `Procfile`
+- **Database**: Deploy to **Supabase / Neon** and seed with `python -m data.seed.generate_seed_data`
