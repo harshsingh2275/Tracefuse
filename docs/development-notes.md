@@ -124,3 +124,26 @@ This document records architectural decisions, assumptions, and clarifications m
 - **Frontend Copilot Panel (`apps/web/src/components/ai/AIAssistantPanel.tsx`):**
   - Slide-out / expandable copilot drawer with suggested quick prompts, Markdown formatting, and cited transaction badges.
   - Accessible via floating trigger button or case header CTA across all investigation views.
+
+## 9. Case Management Workflow & Printable Compliance Report (Steps 13 & 14)
+- **Date:** MVP Order Steps 13 & 14
+- **Case Status State Machine (Section 7):**
+  - State transitions: `New` $\rightarrow$ `Investigating` $\rightarrow$ `Escalated` $\rightarrow$ `Resolved`.
+  - Audited via `CaseAction` table recording previous state, new state, user ID, and timestamp.
+  - Status updates and notes persist to database and reload state seamlessly.
+- **Investigator Case Notes:**
+  - Full CRUD integration allowing analysts to add timestamped findings attributed to investigator IDs.
+- **Printable Investigation Report (`apps/web/src/app/investigations/[id]/report/page.tsx`):**
+  - Route at `/investigations/:id/report` with browser print-to-PDF styles (`@media print`).
+  - Structured into 10 regulatory sections:
+    1. Header & Security Classification (`CONFIDENTIAL // COMPLIANCE SAR`)
+    2. Executive Summary & Recommended Action
+    3. Entities Involved Table (Account IDs, holders, types, numbers)
+    4. Detected Patterns Breakdown with confidence and cited transaction IDs
+    5. Multi-Hop Money Trail Sequence with latencies
+    6. Case Notes with timestamps & analyst IDs
+    7. Status History & Audit Trail (`CaseAction` records)
+    8. Formal Sign-off Blocks for Investigating and Compliance Officers
+- **Failure Mode Resilience (Section 24):**
+  - Report fetch errors or data failures are isolated with user-friendly retry banners without crashing the dossier view.
+- **Test Suite Status:** 38 unit and integration tests passing (`pytest`).

@@ -191,15 +191,13 @@ function InvestigationDetailContent() {
               <span>Ask AI Copilot</span>
             </button>
 
-            <button
-              onClick={() => {
-                window.print();
-              }}
+            <Link
+              href={`/investigations/${investigationId}/report`}
               className="px-3 py-1.5 bg-[#111622] hover:bg-[#182030] border border-[#1f293d] rounded-lg text-xs font-mono text-gray-300 flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print Report</span>
-            </button>
+              <span>Compliance Report</span>
+            </Link>
           </div>
         </div>
 

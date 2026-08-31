@@ -488,7 +488,8 @@ def generate_investigation_report(investigation_id: str, db: Session = Depends(g
     patterns = analytics["patterns"]
     risk_breakdown = analytics["risk_breakdown"]
     
-    notes = db.query(CaseNote).filter(CaseNote.investigation_id == inv.id).all()
+    notes = db.query(CaseNote).filter(CaseNote.investigation_id == inv.id).order_by(CaseNote.created_at.asc()).all()
+    actions = db.query(CaseAction).filter(CaseAction.investigation_id == inv.id).order_by(CaseAction.created_at.asc()).all()
     money_trail = follow_the_money(accounts[0].id, transactions, max_hops=5) if accounts else []
 
     recommended_action = (
@@ -534,6 +535,16 @@ def generate_investigation_report(investigation_id: str, db: Session = Depends(g
         investigator_notes=[
             {"user_id": n.user_id, "note": n.note_text, "timestamp": n.created_at.isoformat()}
             for n in notes
+        ],
+        status_history=[
+            {
+                "action_type": a.action_type,
+                "previous_value": a.previous_value,
+                "new_value": a.new_value,
+                "user_id": a.user_id,
+                "timestamp": a.created_at.isoformat(),
+            }
+            for a in actions
         ],
         recommended_action=recommended_action,
     )

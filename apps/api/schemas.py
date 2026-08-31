@@ -285,4 +285,5 @@ class InvestigationReportResponse(BaseModel):
     risk_factors: List[Dict[str, Any]]
     money_trail_summary: List[Dict[str, Any]]
     investigator_notes: List[Dict[str, Any]]
+    status_history: List[Dict[str, Any]] = []
     recommended_action: str

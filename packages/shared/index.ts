@@ -274,5 +274,6 @@ export interface InvestigationReportResponse {
   risk_factors: Record<string, unknown>[];
   money_trail_summary: Record<string, unknown>[];
   investigator_notes: Record<string, unknown>[];
+  status_history: Record<string, unknown>[];
   recommended_action: string;
 }
