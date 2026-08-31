@@ -112,9 +112,9 @@ function InvestigationDetailContent() {
       setDetail((prev) =>
         prev
           ? {
-              ...prev,
-              notes: [...prev.notes, createdNote],
-            }
+            ...prev,
+            notes: [...prev.notes, createdNote],
+          }
           : null
       );
       setNewNote("");
@@ -127,12 +127,12 @@ function InvestigationDetailContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0d14] text-[#f3f4f6] flex flex-col font-sans">
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-3 font-mono">
-            <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs text-gray-400">Loading Investigation Dossier ({investigationId})...</p>
+            <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs text-slate-500">Loading Investigation Dossier ({investigationId})...</p>
           </div>
         </div>
       </div>
@@ -141,23 +141,23 @@ function InvestigationDetailContent() {
 
   if (error || !detail) {
     return (
-      <div className="min-h-screen bg-[#0a0d14] text-[#f3f4f6] flex flex-col font-sans">
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
         <Navbar />
         <div className="flex-1 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-[#111622] border border-red-500/30 p-6 rounded-2xl text-center space-y-4">
-            <ShieldAlert className="w-8 h-8 text-red-400 mx-auto" />
-            <h3 className="text-lg font-bold text-white font-mono">Investigation Error</h3>
-            <p className="text-xs text-gray-400">{error || "Case record not found."}</p>
+          <div className="max-w-md w-full bg-white border border-red-200 p-6 rounded-2xl text-center space-y-4 shadow-sm">
+            <ShieldAlert className="w-8 h-8 text-red-600 mx-auto" />
+            <h3 className="text-lg font-bold text-slate-900 font-mono">Investigation Error</h3>
+            <p className="text-xs text-slate-500">{error || "Case record not found."}</p>
             <div className="flex justify-center gap-3 pt-2">
               <button
                 onClick={fetchData}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-mono transition-all cursor-pointer"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-mono transition-all cursor-pointer shadow-sm"
               >
                 Retry
               </button>
               <Link
                 href="/dashboard"
-                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-mono transition-all"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-mono transition-all"
               >
                 Back to Dashboard
               </Link>
@@ -169,138 +169,109 @@ function InvestigationDetailContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-[#f3f4f6] flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
-        {/* Breadcrumb & Navigation Header */}
-        <div className="flex items-center justify-between gap-4">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 text-xs font-mono text-gray-400 hover:text-white transition-colors"
-          >
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-5 md:px-8 md:py-7 space-y-6">
+        {/* Breadcrumb & Top Action Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <Link href="/dashboard" className="inline-flex items-center gap-2 text-xs font-mono text-slate-500 hover:text-slate-900 transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Case Queue</span>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowAiPanel(!showAiPanel)}
-              className="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg text-xs font-mono font-medium flex items-center gap-2 transition-all shadow-md shadow-blue-600/25 border border-blue-400/30 cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
+          <div className="flex items-center gap-2.5">
+            <button onClick={() => setShowAiPanel(!showAiPanel)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-mono font-medium flex items-center gap-2 transition-all shadow-md shadow-indigo-600/20 border border-indigo-500 cursor-pointer">
+              <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
               <span>Ask AI Copilot</span>
             </button>
-
-            <Link
-              href={`/investigations/${investigationId}/report`}
-              className="px-3 py-1.5 bg-[#111622] hover:bg-[#182030] border border-[#1f293d] rounded-lg text-xs font-mono text-gray-300 flex items-center gap-1.5 transition-all cursor-pointer"
-            >
+            <Link href={`/investigations/${investigationId}/report`} className="px-3.5 py-2 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-mono text-slate-700 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm">
               <Printer className="w-3.5 h-3.5" />
               <span>Compliance Report</span>
             </Link>
           </div>
         </div>
 
-        {/* Case Dossier Main Header */}
-        <div className="bg-[#111622] border border-[#1f293d] p-6 rounded-2xl shadow-xl space-y-4 relative overflow-hidden">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-            <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-xs text-blue-400 font-semibold uppercase tracking-wider">
-                  {detail.id}
-                </span>
-                <span className="text-gray-600">•</span>
-                <span className="font-mono text-xs text-gray-400 capitalize">
-                  {detail.scenario_tag.replace(/_/g, " ")}
-                </span>
+        {/* Case Dossier Main Header (Clean Slate Card) */}
+        <section className="bg-white border border-slate-200 p-6 md:p-8 rounded-2xl shadow-sm relative overflow-hidden">
+          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+            <div className="min-w-0 max-w-4xl space-y-2">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="font-mono text-xs text-indigo-600 font-semibold uppercase tracking-wider">{detail.id}</span>
+                <span className="w-1 h-1 rounded-full bg-slate-300" />
+                <span className="font-mono text-xs text-slate-500 capitalize">{detail.scenario_tag.replace(/_/g, " ")}</span>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold font-mono text-white tracking-tight">
-                {detail.title}
-              </h1>
+              <h1 className="text-2xl md:text-4xl leading-tight font-bold font-mono text-slate-900 tracking-tight text-balance">{detail.title}</h1>
+              <p className="text-xs text-slate-500 font-mono">Financial crime forensic investigation dossier <span className="text-slate-300">/</span> internal intelligence</p>
             </div>
 
-            {/* Risk Badge & Status Selector */}
-            <div className="flex flex-wrap items-center gap-3">
-              <RiskBadge level={detail.risk_level} score={detail.risk_score} className="py-1.5 px-3 text-xs" />
-
-              <div className="flex items-center gap-2 bg-[#0a0d14] border border-[#1f293d] px-3 py-1.5 rounded-xl font-mono text-xs">
-                <span className="text-gray-500">Status:</span>
-                <select
-                  value={detail.status}
-                  disabled={statusUpdating}
-                  onChange={(e) => handleStatusChange(e.target.value)}
-                  className="bg-transparent text-white font-medium focus:outline-none cursor-pointer capitalize"
-                >
-                  <option value="new" className="bg-[#111622]">New</option>
-                  <option value="investigating" className="bg-[#111622]">Investigating</option>
-                  <option value="escalated" className="bg-[#111622]">Escalated</option>
-                  <option value="resolved" className="bg-[#111622]">Resolved</option>
+            <div className="lg:min-w-48 flex flex-row lg:flex-col items-start lg:items-end gap-3">
+              <RiskBadge level={detail.risk_level} score={detail.risk_score} className="py-2 px-3.5 text-xs shadow-sm" />
+              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-lg font-mono text-xs">
+                <span className="text-slate-500">Status</span>
+                <select value={detail.status} disabled={statusUpdating} onChange={(e) => handleStatusChange(e.target.value)} className="bg-transparent text-slate-900 font-semibold focus:outline-none cursor-pointer capitalize">
+                  <option value="new" className="bg-white">New</option>
+                  <option value="investigating" className="bg-white">Investigating</option>
+                  <option value="escalated" className="bg-white">Escalated</option>
+                  <option value="resolved" className="bg-white">Resolved</option>
                 </select>
               </div>
             </div>
           </div>
 
-          {/* Quick Metrics Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-gray-800/80 font-mono text-xs">
-            <div>
-              <span className="text-gray-500 text-[10px] uppercase">Money Flow at Risk</span>
-              <div className="text-sm font-bold text-emerald-400 mt-0.5">
-                ₹{detail.total_flow_amount.toLocaleString("en-IN")}
-              </div>
+          {/* Metric 4-Column Row */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8 pt-6 border-t border-slate-200 font-mono">
+            <div className="pr-4 lg:border-r border-slate-200">
+              <span className="text-slate-500 text-[11px] uppercase tracking-wider">Money at Risk</span>
+              <div className="text-xl md:text-2xl font-bold text-indigo-600 mt-1.5">₹{detail.total_flow_amount.toLocaleString("en-IN")}</div>
             </div>
-            <div>
-              <span className="text-gray-500 text-[10px] uppercase">Entities in Scope</span>
-              <div className="text-sm font-bold text-white mt-0.5">
-                {detail.entities.length} Accounts / Devices
-              </div>
+            <div className="px-0 sm:px-4 lg:border-r border-slate-200">
+              <span className="text-slate-500 text-[11px] uppercase tracking-wider">Entities in Scope</span>
+              <div className="text-base md:text-lg font-bold text-slate-900 mt-1.5">{detail.entities.length} Accounts / Devices</div>
             </div>
-            <div>
-              <span className="text-gray-500 text-[10px] uppercase">Detected Patterns</span>
-              <div className="text-sm font-bold text-blue-400 mt-0.5">
-                {detail.patterns.length} Active Signatures
-              </div>
+            <div className="pt-4 sm:pt-0 pr-4 sm:px-4 lg:border-r border-slate-200">
+              <span className="text-slate-500 text-[11px] uppercase tracking-wider">Active Signatures</span>
+              <div className="text-base md:text-lg font-bold text-slate-900 mt-1.5">{detail.patterns.length} Detected Patterns</div>
             </div>
-            <div>
-              <span className="text-gray-500 text-[10px] uppercase">Case Genesis Time</span>
-              <div className="text-sm font-bold text-gray-300 mt-0.5">
-                {new Date(detail.created_at).toLocaleDateString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-              </div>
+            <div className="pt-4 sm:pt-0 sm:px-4">
+              <span className="text-slate-500 text-[11px] uppercase tracking-wider">Case Genesis Time</span>
+              <div className="text-base md:text-lg font-bold text-slate-700 mt-1.5">{new Date(detail.created_at).toLocaleDateString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Case Genesis Drawer (Section 5F) */}
+        {/* Case Genesis Drawer (Clean Slate Style) */}
         {detail.case_genesis && (
-          <div className="bg-gradient-to-r from-blue-950/20 via-[#111622] to-[#111622] border border-blue-500/20 rounded-xl p-4 shadow-lg">
-            <button
-              onClick={() => setShowGenesis(!showGenesis)}
-              className="w-full flex items-center justify-between text-xs font-mono font-semibold text-blue-400 cursor-pointer"
-            >
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-blue-400" />
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm">
+            <button onClick={() => setShowGenesis(!showGenesis)} className="w-full flex items-center justify-between text-xs font-mono font-semibold text-indigo-600 cursor-pointer">
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="w-4 h-4 text-indigo-600" />
                 <span>CASE GENESIS & DETECTION TRIGGER</span>
               </div>
-              {showGenesis ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              {showGenesis ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
             </button>
 
             {showGenesis && (
-              <div className="mt-3 pt-3 border-t border-blue-500/15 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
-                <div className="space-y-1.5">
-                  <div className="text-gray-400 font-mono text-[11px]">Primary Heuristic Trigger:</div>
-                  <p className="text-gray-200 leading-relaxed font-semibold">
-                    {detail.case_genesis.primary_trigger}
-                  </p>
-                  <div className="text-gray-500 font-mono text-[11px] pt-1">
-                    Triggering Entity: <strong className="text-gray-300">{detail.case_genesis.triggering_entity}</strong>
+              <div className="mt-5 pt-5 border-t border-slate-200 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-6 text-xs font-sans">
+                <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-5 space-y-3">
+                  <div className="flex items-center gap-2 text-indigo-700 font-mono text-[11px] font-semibold uppercase tracking-wider">
+                    <span className="w-2 h-2 rounded-full bg-indigo-600" />
+                    Primary Heuristic Trigger
+                  </div>
+                  <p className="text-slate-800 text-sm leading-relaxed font-medium">{detail.case_genesis.primary_trigger}</p>
+                  <div className="pt-3 border-t border-indigo-200/60 text-slate-600 font-mono text-xs">
+                    Triggering Entity: <strong className="text-slate-900 ml-1.5">{detail.case_genesis.triggering_entity}</strong>
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <div className="text-gray-400 font-mono text-[11px]">Corroborating Evidence Signals:</div>
-                  <ul className="list-disc list-inside space-y-1 text-gray-300 text-[11px]">
+                <div className="px-1 lg:px-2 space-y-3">
+                  <div className="text-slate-500 font-mono text-[11px] uppercase tracking-wider font-semibold">Corroborating Evidence Signals</div>
+                  <ul className="space-y-2.5 text-slate-700 text-xs leading-relaxed">
                     {detail.case_genesis.key_evidence_signals.map((sig, idx) => (
-                      <li key={idx}>{sig}</li>
+                      <li key={idx} className="flex items-start gap-2.5">
+                        <span className="mt-1.5 w-1.5 h-1.5 shrink-0 rounded-full bg-indigo-400" />
+                        <span>{sig}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -310,7 +281,7 @@ function InvestigationDetailContent() {
         )}
 
         {/* Tabbed Navigation Bar */}
-        <div className="flex items-center gap-2 border-b border-[#1f293d] pb-2 overflow-x-auto">
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
           {[
             { id: "graph", label: "Network Graph", icon: Layers, count: graphPayload?.nodes.length },
             { id: "follow_money", label: "Follow the Money", icon: GitFork },
@@ -325,19 +296,17 @@ function InvestigationDetailContent() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-mono font-medium flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-                  isActive
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25 border border-blue-400/40"
-                    : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/40"
-                }`}
+                className={`px-4 py-2 rounded-xl text-xs font-mono font-medium flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${isActive
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25 border border-indigo-500"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                  }`}
               >
                 <Icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span
-                    className={`px-1.5 py-0.2 rounded text-[10px] ${
-                      isActive ? "bg-blue-700 text-white" : "bg-gray-800 text-gray-400"
-                    }`}
+                    className={`px-1.5 py-0.2 rounded text-[10px] ${isActive ? "bg-indigo-700 text-white" : "bg-slate-200 text-slate-700"
+                      }`}
                   >
                     {tab.count}
                   </span>
@@ -375,19 +344,19 @@ function InvestigationDetailContent() {
           </section>
         )}
 
-        {/* Tab 2: Timeline Stream */}
+        {/* Tab 3: Timeline Stream */}
         {activeTab === "timeline" && (
           <section className="space-y-4">
             <InvestigationTimeline events={timelineEvents} />
           </section>
         )}
 
-        {/* Tab 3: Patterns & Risk Signals */}
+        {/* Tab 4: Patterns & Risk Signals */}
         {activeTab === "patterns" && (
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Detected Pattern Cards (2 Cols) */}
             <div className="lg:col-span-2 space-y-4">
-              <h3 className="text-base font-bold font-mono text-white tracking-tight">
+              <h3 className="text-base font-bold font-mono text-slate-900 tracking-tight">
                 Detected Pattern Signatures ({detail.patterns.length})
               </h3>
 
@@ -395,26 +364,26 @@ function InvestigationDetailContent() {
                 {detail.patterns.map((pat) => (
                   <div
                     key={pat.id}
-                    className="bg-[#111622] border border-[#1f293d] p-5 rounded-xl space-y-3 shadow-lg"
+                    className="bg-white border border-slate-200 p-5 rounded-xl space-y-3 shadow-sm"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
                         <PatternBadge type={pat.pattern_type} className="text-xs py-1 px-2.5" />
-                        <span className="text-xs font-mono text-gray-400">
+                        <span className="text-xs font-mono text-slate-500">
                           Confidence: {(pat.confidence * 100).toFixed(0)}%
                         </span>
                       </div>
                       <RiskBadge level={pat.severity} showScore={false} />
                     </div>
 
-                    <p className="text-xs text-gray-200 leading-relaxed font-sans">
+                    <p className="text-xs text-slate-700 leading-relaxed font-sans">
                       {pat.explanation}
                     </p>
 
-                    <div className="pt-2 border-t border-gray-800/80 flex flex-wrap items-center gap-2 font-mono text-[11px]">
-                      <span className="text-gray-500">Cited Transactions:</span>
+                    <div className="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-2 font-mono text-[11px]">
+                      <span className="text-slate-500">Cited Transactions:</span>
                       {pat.transaction_ids_json.slice(0, 4).map((tid) => (
-                        <span key={tid} className="px-1.5 py-0.5 rounded bg-[#0a0d14] border border-gray-800 text-blue-300">
+                        <span key={tid} className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-indigo-700">
                           {tid}
                         </span>
                       ))}
@@ -426,28 +395,28 @@ function InvestigationDetailContent() {
 
             {/* Risk Factor Breakdown (1 Col) */}
             <div className="space-y-4">
-              <h3 className="text-base font-bold font-mono text-white tracking-tight">
+              <h3 className="text-base font-bold font-mono text-slate-900 tracking-tight">
                 Composite Risk Breakdown
               </h3>
 
-              <div className="bg-[#111622] border border-[#1f293d] p-5 rounded-xl space-y-4 shadow-lg font-mono text-xs">
-                <div className="flex items-center justify-between pb-3 border-b border-gray-800">
-                  <span className="text-gray-400">Composite Score:</span>
-                  <span className="text-xl font-bold text-red-400">{detail.risk_score} / 100</span>
+              <div className="bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm font-mono text-xs">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <span className="text-slate-500">Composite Score:</span>
+                  <span className="text-xl font-bold text-red-600">{detail.risk_score} / 100</span>
                 </div>
 
                 <div className="space-y-3">
                   {detail.risk_signals.map((sig) => (
                     <div key={sig.id} className="space-y-1">
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-gray-300 capitalize">{sig.category.replace(/_/g, " ")}</span>
-                        <span className="font-semibold text-white">
+                        <span className="text-slate-700 capitalize">{sig.category.replace(/_/g, " ")}</span>
+                        <span className="font-semibold text-slate-900">
                           {sig.score.toFixed(0)} pts (wt {sig.weight})
                         </span>
                       </div>
-                      <div className="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                         <div
-                          className="bg-blue-500 h-full rounded-full"
+                          className="bg-indigo-600 h-full rounded-full"
                           style={{ width: `${Math.min(100, sig.score)}%` }}
                         />
                       </div>
@@ -459,33 +428,33 @@ function InvestigationDetailContent() {
           </section>
         )}
 
-        {/* Tab 4: Evidence Locker */}
+        {/* Tab 5: Evidence Locker */}
         {activeTab === "evidence" && (
-          <section className="bg-[#111622] border border-[#1f293d] rounded-xl overflow-hidden shadow-xl">
-            <div className="p-4 bg-[#182030] border-b border-[#1f293d]">
-              <h3 className="text-sm font-bold font-mono text-white">
+          <section className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-4 bg-slate-50 border-b border-slate-200">
+              <h3 className="text-sm font-bold font-mono text-slate-900">
                 Structured Evidence Items ({detail.evidence_items.length})
               </h3>
             </div>
 
-            <div className="divide-y divide-[#1f293d] font-sans text-xs">
+            <div className="divide-y divide-slate-100 font-sans text-xs">
               {detail.evidence_items.map((item, idx) => (
-                <div key={item.id} className="p-4 hover:bg-[#182030]/40 transition-colors space-y-2">
+                <div key={item.id} className="p-4 hover:bg-slate-50/70 transition-colors space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-[11px] text-blue-400 font-semibold">
+                    <span className="font-mono text-[11px] text-indigo-700 font-semibold">
                       Evidence Item #{idx + 1}
                     </span>
-                    <span className="font-mono text-[11px] text-gray-500">
+                    <span className="font-mono text-[11px] text-slate-400">
                       {new Date(item.created_at).toLocaleTimeString()}
                     </span>
                   </div>
 
-                  <p className="text-gray-200 leading-relaxed">{item.description}</p>
+                  <p className="text-slate-800 leading-relaxed">{item.description}</p>
 
                   <div className="flex flex-wrap items-center gap-1.5 pt-1 font-mono text-[11px]">
-                    <span className="text-gray-500">Transactions:</span>
+                    <span className="text-slate-500">Transactions:</span>
                     {item.transaction_ids_json.map((tid) => (
-                      <span key={tid} className="px-1.5 py-0.5 bg-[#0a0d14] border border-gray-800 text-gray-300 rounded">
+                      <span key={tid} className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 text-slate-700 rounded">
                         {tid}
                       </span>
                     ))}
@@ -496,27 +465,27 @@ function InvestigationDetailContent() {
           </section>
         )}
 
-        {/* Tab 5: Case Notes & Audit */}
+        {/* Tab 6: Case Notes & Audit */}
         {activeTab === "notes" && (
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Notes List & Input (2 Cols) */}
             <div className="lg:col-span-2 space-y-4">
-              <h3 className="text-base font-bold font-mono text-white">Investigator Case Notes</h3>
+              <h3 className="text-base font-bold font-mono text-slate-900">Investigator Case Notes</h3>
 
               {/* Add Note Form */}
-              <form onSubmit={handleAddNote} className="bg-[#111622] border border-[#1f293d] p-4 rounded-xl space-y-3">
+              <form onSubmit={handleAddNote} className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-sm">
                 <textarea
                   placeholder="Record investigative finding, subpoena note, or freeze confirmation..."
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   rows={3}
-                  className="w-full p-3 bg-[#0a0d14] border border-[#1f293d] rounded-lg text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 font-sans"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white font-sans"
                 />
                 <div className="flex justify-end">
                   <button
                     type="submit"
                     disabled={submittingNote || !newNote.trim()}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>{submittingNote ? "Saving..." : "Add Note"}</span>
@@ -533,17 +502,17 @@ function InvestigationDetailContent() {
                   />
                 ) : (
                   detail.notes.map((n) => (
-                    <div key={n.id} className="bg-[#111622] border border-[#1f293d] p-4 rounded-xl space-y-2">
+                    <div key={n.id} className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 shadow-sm">
                       <div className="flex items-center justify-between text-xs font-mono">
-                        <span className="text-blue-400 font-semibold flex items-center gap-1">
-                          <UserCheck className="w-3 h-3 text-emerald-400" />
+                        <span className="text-indigo-600 font-semibold flex items-center gap-1">
+                          <UserCheck className="w-3 h-3 text-emerald-600" />
                           {n.user_name || n.user_id}
                         </span>
-                        <span className="text-gray-500 text-[11px]">
+                        <span className="text-slate-400 text-[11px]">
                           {new Date(n.created_at).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-200 font-sans leading-relaxed">{n.note_text}</p>
+                      <p className="text-xs text-slate-700 font-sans leading-relaxed">{n.note_text}</p>
                     </div>
                   ))
                 )}
@@ -552,21 +521,21 @@ function InvestigationDetailContent() {
 
             {/* Case Action Audit Log (1 Col) */}
             <div className="space-y-4">
-              <h3 className="text-base font-bold font-mono text-white">Status Audit Trail</h3>
+              <h3 className="text-base font-bold font-mono text-slate-900">Status Audit Trail</h3>
 
-              <div className="bg-[#111622] border border-[#1f293d] p-4 rounded-xl space-y-3 font-mono text-xs">
+              <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 font-mono text-xs shadow-sm">
                 {detail.actions.map((act) => (
-                  <div key={act.id} className="pb-3 border-b border-gray-800 last:border-0 last:pb-0 space-y-1">
+                  <div key={act.id} className="pb-3 border-b border-slate-100 last:border-0 last:pb-0 space-y-1">
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-gray-400 uppercase">{act.action_type}</span>
-                      <span className="text-gray-500 text-[10px]">
+                      <span className="text-slate-400 uppercase">{act.action_type}</span>
+                      <span className="text-slate-400 text-[10px]">
                         {new Date(act.created_at).toLocaleTimeString()}
                       </span>
                     </div>
-                    <div className="text-white">
-                      Status changed: <span className="text-gray-400">{act.previous_value}</span> ➔ <strong className="text-blue-400 capitalize">{act.new_value}</strong>
+                    <div className="text-slate-800">
+                      Status changed: <span className="text-slate-500">{act.previous_value}</span> ➔ <strong className="text-indigo-600 capitalize">{act.new_value}</strong>
                     </div>
-                    <div className="text-[10px] text-gray-500">By {act.user_name || act.user_id}</div>
+                    <div className="text-[10px] text-slate-400">By {act.user_name || act.user_id}</div>
                   </div>
                 ))}
               </div>
@@ -578,14 +547,14 @@ function InvestigationDetailContent() {
         {!showAiPanel && (
           <button
             onClick={() => setShowAiPanel(true)}
-            className="fixed bottom-6 right-6 z-40 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-full shadow-2xl shadow-blue-600/50 border border-blue-400/40 font-mono text-xs font-semibold flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+            className="fixed bottom-6 right-6 z-40 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-xl shadow-indigo-600/30 border border-indigo-400/40 font-mono text-xs font-semibold flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
             <span>TraceFuse AI Copilot</span>
           </button>
         )}
 
-        {/* Grounded AI Assistant Slide-Out Panel (Section 15) */}
+        {/* Grounded AI Assistant Slide-Out Panel */}
         <AIAssistantPanel
           investigationId={investigationId}
           caseTitle={detail.title}
@@ -601,7 +570,7 @@ export default function InvestigationDetailPage() {
   return (
     <React.Suspense
       fallback={
-        <div className="min-h-screen bg-[#0a0d14] text-[#f3f4f6] flex items-center justify-center font-mono text-xs text-gray-400">
+        <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center font-mono text-xs text-slate-500">
           Loading Investigation Dossier...
         </div>
       }
