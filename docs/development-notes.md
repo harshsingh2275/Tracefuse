@@ -146,4 +146,19 @@ This document records architectural decisions, assumptions, and clarifications m
     8. Formal Sign-off Blocks for Investigating and Compliance Officers
 - **Failure Mode Resilience (Section 24):**
   - Report fetch errors or data failures are isolated with user-friendly retry banners without crashing the dossier view.
-- **Test Suite Status:** 38 unit and integration tests passing (`pytest`).
+- **Test Suite Status:** 54 unit, integration, and acceptance tests passing (`pytest`).
+
+## 10. Dedicated Visual Polish Pass & Design System Audit (Step 15 & Section 20)
+- **Date:** MVP Order Step 15
+- **Design System Tokens (Section 20):**
+  - Standardized color hierarchy: Primary `#3b82f6` (blue-500), Secondary `#6366f1` (indigo-500), Dark Navy background `#0a0d14`, Card backgrounds `#111622`, Borders `#1f293d` / `#233148`.
+  - Consistent risk palette: Critical `#ef4444`, High `#f97316`, Medium `#f59e0b`, Low `#10b981`.
+  - Typography adherence: JetBrains Mono / `font-mono` strictly applied to IDs, hash fingerprints, currencies, timestamps, and metrics; Inter / sans-serif for narratives.
+- **Reusable UI Components:**
+  - Standardized `EmptyState` component with dashed slate borders, themed icons, and action triggers.
+  - Standardized `Skeleton` and `DashboardSkeleton` components for smooth initial loading feedback.
+  - Verified reusable `RiskBadge`, `StatusBadge`, `PatternBadge`, and `MetricCard`.
+- **Visual Story Sequence (Section 33A - Under 60s to WOW):**
+  - Login screen with instant 1-Click Judge Access to Flagship case.
+  - Dashboard top section prioritizes Flagship Scenario 9 Hero CTA directly above metric cards and sorted case queue.
+  - Case view organizes Network Graph and Follow the Money as primary top-level tabs.

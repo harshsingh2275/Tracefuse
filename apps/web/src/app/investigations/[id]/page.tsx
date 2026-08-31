@@ -43,6 +43,7 @@ import { InvestigationGraph } from "@/components/graph/InvestigationGraph";
 import { InvestigationTimeline } from "@/components/timeline/InvestigationTimeline";
 import { FollowMoneyController } from "@/components/graph/FollowMoneyController";
 import { AIAssistantPanel } from "@/components/ai/AIAssistantPanel";
+import { EmptyState } from "@/components/EmptyState";
 
 function InvestigationDetailContent() {
   const params = useParams();
@@ -526,9 +527,10 @@ function InvestigationDetailContent() {
               {/* Notes Feed */}
               <div className="space-y-3">
                 {detail.notes.length === 0 ? (
-                  <div className="p-8 text-center bg-[#111622] border border-[#1f293d] rounded-xl text-gray-500 font-mono text-xs">
-                    No notes recorded on this case yet.
-                  </div>
+                  <EmptyState
+                    title="No Case Notes Recorded"
+                    description="Record initial findings, counterparty subpoenas, or regulatory status updates."
+                  />
                 ) : (
                   detail.notes.map((n) => (
                     <div key={n.id} className="bg-[#111622] border border-[#1f293d] p-4 rounded-xl space-y-2">

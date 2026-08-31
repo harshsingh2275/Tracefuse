@@ -36,6 +36,8 @@ import { MetricCard } from "@/components/MetricCard";
 import { RiskBadge } from "@/components/RiskBadge";
 import { StatusBadge } from "@/components/StatusBadge";
 import { PatternBadge } from "@/components/PatternBadge";
+import { EmptyState } from "@/components/EmptyState";
+import { DashboardSkeleton } from "@/components/LoadingSkeleton";
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummaryResponse | null>(null);
@@ -302,8 +304,16 @@ export default function DashboardPage() {
                       ))
                     ) : filteredInvestigations.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="py-8 text-center text-gray-500 font-mono">
-                          No investigations matched your filter criteria.
+                        <td colSpan={6} className="p-8">
+                          <EmptyState
+                            title="No Investigations Matched"
+                            description="No cases found matching your active status and search filters."
+                            actionLabel="Reset Search & Filters"
+                            onAction={() => {
+                              setStatusFilter("all");
+                              setSearchQuery("");
+                            }}
+                          />
                         </td>
                       </tr>
                     ) : (
