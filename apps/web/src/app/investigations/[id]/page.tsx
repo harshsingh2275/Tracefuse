@@ -42,6 +42,7 @@ import { PatternBadge } from "@/components/PatternBadge";
 import { InvestigationGraph } from "@/components/graph/InvestigationGraph";
 import { InvestigationTimeline } from "@/components/timeline/InvestigationTimeline";
 import { FollowMoneyController } from "@/components/graph/FollowMoneyController";
+import { AIAssistantPanel } from "@/components/ai/AIAssistantPanel";
 
 function InvestigationDetailContent() {
   const params = useParams();
@@ -57,6 +58,7 @@ function InvestigationDetailContent() {
   const [error, setError] = useState<string | null>(null);
 
   const [showGenesis, setShowGenesis] = useState(true);
+  const [showAiPanel, setShowAiPanel] = useState(false);
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [newNote, setNewNote] = useState("");
   const [submittingNote, setSubmittingNote] = useState(false);
@@ -181,6 +183,14 @@ function InvestigationDetailContent() {
           </Link>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowAiPanel(!showAiPanel)}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg text-xs font-mono font-medium flex items-center gap-2 transition-all shadow-md shadow-blue-600/25 border border-blue-400/30 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
+              <span>Ask AI Copilot</span>
+            </button>
+
             <button
               onClick={() => {
                 window.print();
@@ -563,6 +573,25 @@ function InvestigationDetailContent() {
             </div>
           </section>
         )}
+
+        {/* Floating AI Copilot Trigger Button */}
+        {!showAiPanel && (
+          <button
+            onClick={() => setShowAiPanel(true)}
+            className="fixed bottom-6 right-6 z-40 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-full shadow-2xl shadow-blue-600/50 border border-blue-400/40 font-mono text-xs font-semibold flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
+            <span>TraceFuse AI Copilot</span>
+          </button>
+        )}
+
+        {/* Grounded AI Assistant Slide-Out Panel (Section 15) */}
+        <AIAssistantPanel
+          investigationId={investigationId}
+          caseTitle={detail.title}
+          isOpen={showAiPanel}
+          onClose={() => setShowAiPanel(false)}
+        />
       </main>
     </div>
   );

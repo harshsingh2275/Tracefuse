@@ -156,7 +156,7 @@ def test_follow_the_money_scenario_4_layered_chain():
 
 def test_ask_assistant_endpoint():
     req_body = {
-        "question": "Why is this investigation marked as critical and what patterns were detected?",
+        "question": "Why is this account suspicious?",
     }
     response = client.post("/investigations/inv_flagship_demo/ask", json=req_body)
     assert response.status_code == 200
@@ -165,6 +165,41 @@ def test_ask_assistant_endpoint():
     assert data["grounded"] is True
     assert len(data["answer"]) > 50
     assert "model" in data
+    # Confirm it cites real evidence, amounts or patterns from Flagship case
+    assert ("89" in data["answer"] or "8.4" in data["answer"] or "fan_out" in data["answer"].lower() or "mule" in data["answer"].lower() or "syndicate" in data["answer"].lower() or "critical" in data["answer"].lower())
+
+
+def test_ask_assistant_offline_fallback(monkeypatch):
+    import apps.api.services.ai_service as ai_module
+    # Simulate missing/unset API key
+    monkeypatch.setattr(ai_module, "AI_API_KEY", "")
+
+    req_body = {
+        "question": "What is the money trail from the origin?",
+    }
+    response = client.post("/investigations/inv_flagship_demo/ask", json=req_body)
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["grounded"] is True
+    assert data["fallback_used"] is True
+    assert data["model"] == "deterministic-evidence-engine"
+    assert "Money Trail" in data["answer"] or "Hop" in data["answer"] or "acc_flagship" in data["answer"]
+    assert len(data["citations"]) > 0
+
+
+def test_ask_assistant_citations_from_case():
+    req_body = {
+        "question": "Show me the evidence and detected patterns with transaction citations.",
+    }
+    response = client.post("/investigations/inv_flagship_demo/ask", json=req_body)
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["grounded"] is True
+    assert len(data["citations"]) > 0
+    for cite in data["citations"]:
+        assert cite.startswith("txn_")
 
 
 # -------------------------------------------------------------------------

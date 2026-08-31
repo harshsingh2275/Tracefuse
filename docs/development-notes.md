@@ -110,3 +110,17 @@ This document records architectural decisions, assumptions, and clarifications m
   - **Scenario 4 (`inv_layering_chain`)**: Successfully traces the 4-hop rapid pass-through chain (`acc_s4_hop_01` $\rightarrow$ `02` $\rightarrow$ `03` $\rightarrow$ `04` $\rightarrow$ `05`) with exact amounts.
   - **Scenario 9 (`inv_flagship_demo`)**: Successfully traces the multi-hop fund dispersion from the origin through the 5 fan-out mules to layering conduits.
   - Full suite of 36 unit and integration tests passing (`pytest`).
+
+## 8. Grounded AI Assistant & Copilot (Step 12)
+- **Date:** MVP Order Step 12
+- **Strict Evidence Grounding Context (`apps/api/services/context_builder.py`):**
+  - Synthesizes structured JSON payload containing active investigation case details, entities, hardware devices, detected patterns, risk signals, and Follow-the-Money hops.
+  - System prompt strictly instructs the LLM to only answer based on injected JSON evidence without hallucinating fake transaction IDs.
+- **Provider Abstraction & Groq Client (`apps/api/services/ai_service.py`):**
+  - Uses `groq` SDK client with `AI_MODEL="llama-3.3-70b-versatile"` and `AI_BASE_URL="https://api.groq.com/openai/v1"`.
+  - In-memory rate limiting (10 requests/minute per client IP).
+- **Deterministic Offline Fallback (Section 5G & 15):**
+  - If `AI_API_KEY` is not provided or API calls fail, the system smoothly falls back to deterministic rule-based evidence synthesis citing exact transaction IDs, amounts, and detected patterns with `fallback_used: true` and `grounded: true`.
+- **Frontend Copilot Panel (`apps/web/src/components/ai/AIAssistantPanel.tsx`):**
+  - Slide-out / expandable copilot drawer with suggested quick prompts, Markdown formatting, and cited transaction badges.
+  - Accessible via floating trigger button or case header CTA across all investigation views.
