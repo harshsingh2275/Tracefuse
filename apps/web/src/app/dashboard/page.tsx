@@ -141,7 +141,7 @@ export default function DashboardPage() {
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 rounded-full">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                FLAGSHIP INVESTIGATION CASE (SCENARIO 9)
+                FLAGSHIP INVESTIGATION CASE
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight font-mono">
                 Multi-Hop Syndicate: ₹8.4L Dispersion & Circular Kickback

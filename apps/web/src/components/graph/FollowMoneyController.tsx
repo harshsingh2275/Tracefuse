@@ -134,7 +134,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 font-mono text-[11px] font-semibold">
             <Sparkles className="w-3 h-3" />
-            SECTION 5D FIFO FUND PROVENANCE
+            FIFO FUND PROVENANCE TRAIL
           </div>
           <h3 className="text-base font-bold font-mono text-white tracking-tight mt-1 flex items-center gap-2">
             <GitFork className="w-4 h-4 text-blue-400" />

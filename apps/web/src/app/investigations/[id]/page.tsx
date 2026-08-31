@@ -279,7 +279,7 @@ function InvestigationDetailContent() {
             >
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-blue-400" />
-                <span>CASE GENESIS & DETECTION TRIGGER (SECTION 5F)</span>
+                <span>CASE GENESIS & DETECTION TRIGGER</span>
               </div>
               {showGenesis ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
