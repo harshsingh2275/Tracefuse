@@ -172,30 +172,20 @@ function InvestigationDetailContent() {
     <div className="min-h-screen bg-[#0a0d14] text-[#f3f4f6] flex flex-col font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-5 md:px-8 md:py-7 space-y-7">
         {/* Breadcrumb & Navigation Header */}
-        <div className="flex items-center justify-between gap-4">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 text-xs font-mono text-gray-400 hover:text-white transition-colors"
-          >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <Link href="/dashboard" className="inline-flex items-center gap-2 text-xs font-mono text-gray-400 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Case Queue</span>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowAiPanel(!showAiPanel)}
-              className="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg text-xs font-mono font-medium flex items-center gap-2 transition-all shadow-md shadow-blue-600/25 border border-blue-400/30 cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
+          <div className="flex items-center gap-2.5">
+            <button onClick={() => setShowAiPanel(!showAiPanel)} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg text-xs font-mono font-medium flex items-center gap-2 transition-all shadow-md shadow-blue-600/20 border border-blue-400/30 cursor-pointer">
+              <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
               <span>Ask AI Copilot</span>
             </button>
-
-            <Link
-              href={`/investigations/${investigationId}/report`}
-              className="px-3 py-1.5 bg-[#111622] hover:bg-[#182030] border border-[#1f293d] rounded-lg text-xs font-mono text-gray-300 flex items-center gap-1.5 transition-all cursor-pointer"
-            >
+            <Link href={`/investigations/${investigationId}/report`} className="px-3.5 py-2 bg-[#111622] hover:bg-[#182030] border border-[#263247] rounded-lg text-xs font-mono text-gray-300 flex items-center gap-1.5 transition-all cursor-pointer">
               <Printer className="w-3.5 h-3.5" />
               <span>Compliance Report</span>
             </Link>
@@ -203,35 +193,23 @@ function InvestigationDetailContent() {
         </div>
 
         {/* Case Dossier Main Header */}
-        <div className="bg-[#111622] border border-[#1f293d] p-6 rounded-2xl shadow-xl space-y-4 relative overflow-hidden">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-            <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-xs text-blue-400 font-semibold uppercase tracking-wider">
-                  {detail.id}
-                </span>
-                <span className="text-gray-600">•</span>
-                <span className="font-mono text-xs text-gray-400 capitalize">
-                  {detail.scenario_tag.replace(/_/g, " ")}
-                </span>
+        <section className="bg-[#111622] border border-[#263247] p-5 md:p-7 rounded-2xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-7">
+            <div className="min-w-0 max-w-4xl">
+              <div className="flex flex-wrap items-center gap-2.5 mb-4">
+                <span className="font-mono text-[11px] text-blue-300 font-semibold uppercase tracking-[0.18em]">{detail.id}</span>
+                <span className="size-1 rounded-full bg-gray-600" />
+                <span className="font-mono text-[11px] text-gray-500 capitalize">{detail.scenario_tag.replace(/_/g, " ")}</span>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold font-mono text-white tracking-tight">
-                {detail.title}
-              </h1>
+              <h1 className="text-2xl md:text-4xl leading-tight font-bold font-mono text-white tracking-tight text-balance">{detail.title}</h1>
+              <p className="mt-3 text-xs text-gray-500 font-mono">Financial crime investigation dossier <span className="text-gray-700">/</span> internal review</p>
             </div>
 
-            {/* Risk Badge & Status Selector */}
-            <div className="flex flex-wrap items-center gap-3">
-              <RiskBadge level={detail.risk_level} score={detail.risk_score} className="py-1.5 px-3 text-xs" />
-
-              <div className="flex items-center gap-2 bg-[#0a0d14] border border-[#1f293d] px-3 py-1.5 rounded-xl font-mono text-xs">
-                <span className="text-gray-500">Status:</span>
-                <select
-                  value={detail.status}
-                  disabled={statusUpdating}
-                  onChange={(e) => handleStatusChange(e.target.value)}
-                  className="bg-transparent text-white font-medium focus:outline-none cursor-pointer capitalize"
-                >
+            <div className="lg:min-w-48 flex flex-row lg:flex-col items-start lg:items-end gap-3">
+              <RiskBadge level={detail.risk_level} score={detail.risk_score} className="py-2 px-3.5 text-xs" />
+              <div className="flex items-center gap-2 bg-[#0a0d14] border border-[#263247] px-3.5 py-2 rounded-lg font-mono text-xs">
+                <span className="text-gray-500">Status</span>
+                <select value={detail.status} disabled={statusUpdating} onChange={(e) => handleStatusChange(e.target.value)} className="bg-transparent text-white font-medium focus:outline-none cursor-pointer capitalize">
                   <option value="new" className="bg-[#111622]">New</option>
                   <option value="investigating" className="bg-[#111622]">Investigating</option>
                   <option value="escalated" className="bg-[#111622]">Escalated</option>
@@ -241,67 +219,34 @@ function InvestigationDetailContent() {
             </div>
           </div>
 
-          {/* Quick Metrics Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-gray-800/80 font-mono text-xs">
-            <div>
-              <span className="text-gray-500 text-[10px] uppercase">Money Flow at Risk</span>
-              <div className="text-sm font-bold text-emerald-400 mt-0.5">
-                ₹{detail.total_flow_amount.toLocaleString("en-IN")}
-              </div>
-            </div>
-            <div>
-              <span className="text-gray-500 text-[10px] uppercase">Entities in Scope</span>
-              <div className="text-sm font-bold text-white mt-0.5">
-                {detail.entities.length} Accounts / Devices
-              </div>
-            </div>
-            <div>
-              <span className="text-gray-500 text-[10px] uppercase">Detected Patterns</span>
-              <div className="text-sm font-bold text-blue-400 mt-0.5">
-                {detail.patterns.length} Active Signatures
-              </div>
-            </div>
-            <div>
-              <span className="text-gray-500 text-[10px] uppercase">Case Genesis Time</span>
-              <div className="text-sm font-bold text-gray-300 mt-0.5">
-                {new Date(detail.created_at).toLocaleDateString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-              </div>
-            </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 mt-7 pt-5 border-t border-[#263247] font-mono">
+            <div className="pr-4 lg:border-r border-[#263247]"><span className="text-gray-500 text-[10px] uppercase tracking-wider">Money flow at risk</span><div className="text-base font-bold text-emerald-400 mt-2">₹{detail.total_flow_amount.toLocaleString("en-IN")}</div></div>
+            <div className="px-4 lg:border-r border-[#263247]"><span className="text-gray-500 text-[10px] uppercase tracking-wider">Entities in scope</span><div className="text-sm font-bold text-white mt-2">{detail.entities.length} Accounts / Devices</div></div>
+            <div className="pt-5 sm:pt-0 pr-4 sm:px-4 lg:border-r border-[#263247]"><span className="text-gray-500 text-[10px] uppercase tracking-wider">Detected patterns</span><div className="text-sm font-bold text-blue-300 mt-2">{detail.patterns.length} Active Signatures</div></div>
+            <div className="pt-5 sm:pt-0 sm:px-4"><span className="text-gray-500 text-[10px] uppercase tracking-wider">Case genesis time</span><div className="text-sm font-bold text-gray-300 mt-2">{new Date(detail.created_at).toLocaleDateString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</div></div>
           </div>
-        </div>
+        </section>
 
         {/* Case Genesis Drawer (Section 5F) */}
         {detail.case_genesis && (
-          <div className="bg-gradient-to-r from-blue-950/20 via-[#111622] to-[#111622] border border-blue-500/20 rounded-xl p-4 shadow-lg">
-            <button
-              onClick={() => setShowGenesis(!showGenesis)}
-              className="w-full flex items-center justify-between text-xs font-mono font-semibold text-blue-400 cursor-pointer"
-            >
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-blue-400" />
-                <span>CASE GENESIS & DETECTION TRIGGER</span>
-              </div>
-              {showGenesis ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          <div className="bg-[#101722] border border-[#263247] rounded-2xl p-4 md:p-5 shadow-lg">
+            <button onClick={() => setShowGenesis(!showGenesis)} className="w-full flex items-center justify-between text-xs font-mono font-semibold text-blue-300 cursor-pointer">
+              <div className="flex items-center gap-2.5"><Sparkles className="w-4 h-4" /><span>CASE GENESIS & DETECTION TRIGGER</span></div>
+              {showGenesis ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
             </button>
 
             {showGenesis && (
-              <div className="mt-3 pt-3 border-t border-blue-500/15 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
-                <div className="space-y-1.5">
-                  <div className="text-gray-400 font-mono text-[11px]">Primary Heuristic Trigger:</div>
-                  <p className="text-gray-200 leading-relaxed font-semibold">
-                    {detail.case_genesis.primary_trigger}
-                  </p>
-                  <div className="text-gray-500 font-mono text-[11px] pt-1">
-                    Triggering Entity: <strong className="text-gray-300">{detail.case_genesis.triggering_entity}</strong>
-                  </div>
+              <div className="mt-5 pt-5 border-t border-[#263247] grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-5 text-xs font-sans">
+                <div className="rounded-xl border border-blue-400/20 bg-blue-500/[0.06] p-5">
+                  <div className="flex items-center gap-2 text-blue-300 font-mono text-[10px] uppercase tracking-[0.16em] mb-3"><span className="size-1.5 rounded-full bg-blue-400" />Primary heuristic trigger</div>
+                  <p className="text-gray-100 text-sm leading-7 font-medium">{detail.case_genesis.primary_trigger}</p>
+                  <div className="mt-5 pt-4 border-t border-blue-400/15 text-gray-500 font-mono text-[11px]">Triggering entity <strong className="text-gray-200 ml-2">{detail.case_genesis.triggering_entity}</strong></div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <div className="text-gray-400 font-mono text-[11px]">Corroborating Evidence Signals:</div>
-                  <ul className="list-disc list-inside space-y-1 text-gray-300 text-[11px]">
-                    {detail.case_genesis.key_evidence_signals.map((sig, idx) => (
-                      <li key={idx}>{sig}</li>
-                    ))}
+                <div className="px-1 lg:px-2">
+                  <div className="text-gray-400 font-mono text-[10px] uppercase tracking-[0.16em] mb-3">Corroborating evidence signals</div>
+                  <ul className="flex flex-col gap-3 text-gray-300 text-[11px] leading-5">
+                    {detail.case_genesis.key_evidence_signals.map((sig, idx) => (<li key={idx} className="flex gap-3"><span className="mt-2 size-1 shrink-0 rounded-full bg-gray-500" /><span>{sig}</span></li>))}
                   </ul>
                 </div>
               </div>

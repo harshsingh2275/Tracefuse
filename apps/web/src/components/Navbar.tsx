@@ -28,7 +28,7 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0a0d14]/90 backdrop-blur-md border-b border-[#1f293d] px-4 md:px-8 py-3">
+    <header className="sticky top-0 z-50 bg-[#0a0d14]/95 backdrop-blur-md border-b border-[#1f293d] px-4 md:px-8 py-3.5">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Left: Brand */}
         <div className="flex items-center gap-6">
@@ -77,7 +77,7 @@ export const Navbar: React.FC = () => {
           {/* Flagship Demo Button (<60s to wow per Section 21) */}
           <Link
             href="/investigations/inv_flagship_demo?tab=graph"
-            className="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-mono font-medium rounded-lg shadow-lg shadow-blue-600/20 border border-blue-400/30 flex items-center gap-2 transition-all cursor-pointer"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-mono font-medium rounded-lg shadow-lg shadow-blue-600/20 border border-blue-400/30 flex items-center gap-2 transition-all cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
             <span className="hidden sm:inline">Load Demo Investigation</span>
