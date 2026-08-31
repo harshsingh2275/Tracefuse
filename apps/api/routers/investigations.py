@@ -272,12 +272,15 @@ def get_investigation_detail(investigation_id: str, db: Session = Depends(get_db
         key_evidence_signals=risk_breakdown.reasons[:4],
     )
 
+    effective_score = round(max(inv.risk_score, risk_breakdown.composite_score), 1)
+    effective_level = "critical" if effective_score >= 80 else ("high" if effective_score >= 60 else ("medium" if effective_score >= 30 else "low"))
+
     return InvestigationDetailResponse(
         id=inv.id,
         title=inv.title,
         status=inv.status,
-        risk_score=round(risk_breakdown.composite_score, 1),
-        risk_level=risk_breakdown.risk_level,
+        risk_score=effective_score,
+        risk_level=effective_level,
         created_at=inv.created_at,
         updated_at=inv.updated_at,
         time_window_start=inv.time_window_start,
@@ -422,11 +425,17 @@ def update_investigation_status(
     inv.status = req.status
     inv.updated_at = datetime.utcnow()
 
+    # Resolve existing user
+    user = db.query(User).filter(User.id == req.user_id).first() if req.user_id else None
+    if not user:
+        user = db.query(User).first()
+    user_id = user.id if user else None
+
     # Create CaseAction log
     action = CaseAction(
         id=f"act_{int(datetime.utcnow().timestamp() * 1000)}",
         investigation_id=inv.id,
-        user_id=req.user_id or "usr_analyst_01",
+        user_id=user_id,
         action_type="status_change",
         previous_value=old_status,
         new_value=req.status,
@@ -454,10 +463,15 @@ def add_case_note(
     if not inv:
         raise HTTPException(status_code=404, detail=f"Investigation '{investigation_id}' not found.")
 
+    user = db.query(User).filter(User.id == req.user_id).first() if req.user_id else None
+    if not user:
+        user = db.query(User).first()
+    user_id = user.id if user else None
+
     note = CaseNote(
         id=f"note_{int(datetime.utcnow().timestamp() * 1000)}",
         investigation_id=inv.id,
-        user_id=req.user_id,
+        user_id=user_id,
         note_text=req.note_text,
         created_at=datetime.utcnow(),
     )
@@ -468,8 +482,8 @@ def add_case_note(
     return CaseNoteResponse(
         id=note.id,
         investigation_id=note.investigation_id,
-        user_id=note.user_id,
-        user_name="Priya Sharma" if note.user_id == "usr_analyst_01" else "Investigator",
+        user_id=note.user_id or "usr_analyst_01",
+        user_name=user.name if user else "Analyst",
         note_text=note.note_text,
         created_at=note.created_at,
     )

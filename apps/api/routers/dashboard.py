@@ -20,10 +20,15 @@ def get_dashboard_summary(db: Session = Depends(get_db)):
         suspicious_networks = db.query(Investigation).count()
 
         # High risk / Critical accounts in investigations
-        high_risk_invs = db.query(Investigation.id).filter(Investigation.risk_level.in_(["high", "critical"])).subquery()
-        high_risk_accounts = db.query(InvestigationEntity.account_id).filter(
-            InvestigationEntity.investigation_id.in_(high_risk_invs)
-        ).distinct().count()
+        high_risk_inv_ids = [r[0] for r in db.query(Investigation.id).filter(Investigation.risk_level.in_(["high", "critical"])).all()]
+        high_risk_accounts = (
+            db.query(InvestigationEntity.account_id)
+            .filter(InvestigationEntity.investigation_id.in_(high_risk_inv_ids))
+            .distinct()
+            .count()
+            if high_risk_inv_ids
+            else 0
+        )
 
         # Flagged transactions (transactions linked to fraud scenarios)
         flagged_transactions = db.query(Transaction).filter(

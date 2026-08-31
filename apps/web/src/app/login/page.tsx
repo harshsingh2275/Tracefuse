@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ShieldAlert, KeyRound, ArrowRight, Lock, Terminal } from "lucide-react";
+import { ShieldAlert, KeyRound, ArrowRight, Lock, Terminal, Sparkles } from "lucide-react";
 
 function LoginForm() {
   const [passcode, setPasscode] = useState("");
@@ -89,18 +89,33 @@ function LoginForm() {
         </button>
       </form>
 
-      {/* Quick Demo Access for Hackathon Judges */}
-      <div className="pt-3 border-t border-[#1f293d] space-y-3">
+      {/* Quick Demo Access for Hackathon Judges (Section 21) */}
+      <div className="pt-3 border-t border-[#1f293d] space-y-2.5">
+        <button
+          type="button"
+          onClick={() => {
+            document.cookie = "tracefuse_session=authenticated_analyst; path=/; max-age=86400; SameSite=Lax";
+            router.push("/investigations/inv_flagship_demo?tab=graph");
+          }}
+          className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-mono text-xs font-bold rounded-xl border border-blue-400/40 shadow-lg shadow-blue-600/30 transition-all flex items-center justify-between group cursor-pointer"
+        >
+          <span className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
+            Load Demo Investigation (1-Click Judge Access)
+          </span>
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        </button>
+
         <button
           type="button"
           onClick={() => handleLogin("demo2026")}
-          className="w-full py-2.5 px-4 bg-[#182030] hover:bg-[#202b40] text-gray-300 hover:text-white font-mono text-xs rounded-xl border border-[#26344d] transition-all flex items-center justify-between group cursor-pointer"
+          className="w-full py-2 px-3 bg-[#182030] hover:bg-[#202b40] text-gray-400 hover:text-white font-mono text-xs rounded-xl border border-[#26344d] transition-all flex items-center justify-between group cursor-pointer"
         >
           <span className="flex items-center gap-2">
             <KeyRound className="w-3.5 h-3.5 text-blue-400" />
-            Quick Judge Access: <strong className="text-white">demo2026</strong>
+            Passcode: <strong className="text-gray-200">demo2026</strong>
           </span>
-          <span className="text-blue-400 group-hover:underline text-[11px]">Instant Login &rarr;</span>
+          <span className="text-blue-400 group-hover:underline text-[11px]">Go to Dashboard &rarr;</span>
         </button>
 
         <div className="flex items-center justify-between text-[11px] text-gray-500 font-mono pt-1">
@@ -108,7 +123,7 @@ function LoginForm() {
             <Terminal className="w-3 h-3 text-emerald-400" />
             System Status: Active
           </span>
-          <span>Build Bank YEL 2026</span>
+          <span>Build Bank Hackathon 2026</span>
         </div>
       </div>
     </div>

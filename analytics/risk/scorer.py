@@ -123,16 +123,17 @@ class RiskScoringEngine:
         # 5. Guard Rail: Single Signal Cap (Section 5E & 219)
         # If only 1 category fired, cap overall composite score at 60 (Medium band ceiling)
         # Multiple corroborating signals are required to reach High (60+) / Critical (80+)
-        final_score = total_weighted_score
-        
-        # In multi-signal case, normalize if multiple high confidence detections corroborate
+        max_cat_score = max(raw_scores.values()) if raw_scores else 0.0
+
         if active_categories >= 3:
             # Multi-pattern syndicates get compounding risk multiplier
-            final_score = min(100.0, total_weighted_score * 1.55)
+            final_score = min(100.0, max(total_weighted_score * 2.2, max_cat_score * 0.95))
         elif active_categories == 2:
-            final_score = min(79.0, total_weighted_score * 1.25)
+            final_score = min(80.0, max(total_weighted_score * 1.8, max_cat_score * 0.85))
         elif active_categories == 1:
-            final_score = min(SINGLE_SIGNAL_MAX_COMPOSITE, total_weighted_score * 1.1)
+            final_score = min(SINGLE_SIGNAL_MAX_COMPOSITE, max_cat_score * 0.65)
+        else:
+            final_score = 0.0
 
         final_score = min(100.0, max(0.0, final_score))
         risk_level = get_risk_level(final_score)
