@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ShieldAlert, KeyRound, ArrowRight, Lock, Terminal, Sparkles } from "lucide-react";
+import { ShieldAlert, ArrowRight, Lock, Sparkles } from "lucide-react";
 
 function LoginForm() {
   const [passcode, setPasscode] = useState("");
@@ -16,7 +16,7 @@ function LoginForm() {
     setError("");
     setLoading(true);
 
-    // Hardcoded password for judging evaluation per Section 3 & Section 60
+    // Passcode for demo evaluation
     if (code === "demo2026" || code === "admin") {
       document.cookie = "tracefuse_session=authenticated_analyst; path=/; max-age=86400; SameSite=Lax";
       const destination = searchParams.get("from") || "/dashboard";
@@ -33,7 +33,7 @@ function LoginForm() {
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wide text-navy bg-navy-subtle border border-navy/20 rounded-full">
           <ShieldAlert className="w-3.5 h-3.5 text-navy" />
-          TRACEFUSE SURVEILLANCE GATE
+          TraceFuse Investigator Console
         </div>
         <h1 className="text-3xl font-bold text-ink-primary tracking-tight font-serif">
           Investigator Access
@@ -52,14 +52,13 @@ function LoginForm() {
         className="space-y-4 pt-2"
       >
         <div>
-          <label className="block text-xs font-semibold text-ink-primary mb-1.5 flex items-center justify-between">
-            <span>Demo Access Passcode</span>
-            <span className="font-mono text-ink-secondary text-[11px]">Default: demo2026</span>
+          <label className="block text-xs font-semibold text-ink-primary mb-1.5">
+            Passcode
           </label>
           <div className="relative">
             <input
               type="password"
-              placeholder="Enter passcode (demo2026)"
+              placeholder="Enter passcode"
               value={passcode}
               onChange={(e) => {
                 setPasscode(e.target.value);
@@ -89,8 +88,8 @@ function LoginForm() {
         </button>
       </form>
 
-      {/* Quick Demo Access for Hackathon Judges (<60s to wow) */}
-      <div className="pt-3 border-t border-border-warm space-y-2.5">
+      {/* Demo Investigation Fast-Track Access */}
+      <div className="pt-3 border-t border-border-warm space-y-3">
         <button
           type="button"
           onClick={() => {
@@ -101,29 +100,19 @@ function LoginForm() {
         >
           <span className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-            Load Demo Investigation (1-Click Judge Access)
+            Load Demo Investigation
           </span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
 
-        <button
-          type="button"
-          onClick={() => handleLogin("demo2026")}
-          className="w-full py-2 px-3 bg-slate-50 hover:bg-slate-100 text-ink-secondary hover:text-ink-primary text-xs rounded-xl border border-border-warm transition-all flex items-center justify-between group cursor-pointer"
-        >
-          <span className="flex items-center gap-2">
-            <KeyRound className="w-3.5 h-3.5 text-navy" />
-            Passcode: <strong className="text-ink-primary font-mono">demo2026</strong>
-          </span>
-          <span className="text-navy font-semibold text-[11px] group-hover:underline">Go to Dashboard &rarr;</span>
-        </button>
-
-        <div className="flex items-center justify-between text-[11px] text-ink-secondary font-mono pt-1">
-          <span className="flex items-center gap-1.5">
-            <Terminal className="w-3 h-3 text-emerald-700" />
-            System Status: Active
-          </span>
-          <span>Build Bank Hackathon 2026</span>
+        {/* Muted Footer Captions */}
+        <div className="text-center space-y-1 pt-1">
+          <p className="text-[11px] text-ink-secondary">
+            Access restricted to authorized fraud investigation personnel.
+          </p>
+          <p className="text-[11px] text-slate-400 font-sans">
+            Build Bank Hackathon 2026
+          </p>
         </div>
       </div>
     </div>
