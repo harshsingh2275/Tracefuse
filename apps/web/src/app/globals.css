@@ -43,7 +43,49 @@ h1, h2, h3, .font-heading {
   font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
-/* React Flow Linen Theme Customizations */
+/* =========================================================================
+   Universal Interactive States (Audited: Focus, Hover Transitions, Disabled)
+   ========================================================================= */
+
+button,
+a,
+input,
+select,
+textarea {
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
+}
+
+/* Keyboard Accessible Focus Visible Ring */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px #F7F4EE, 0 0 0 4px #1F3A5F !important;
+}
+
+/* Disabled State Formatting */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+}
+
+/* Table Row Interactive Hover Transitions */
+tbody tr {
+  transition: background-color 150ms ease;
+}
+
+tbody tr:hover {
+  background-color: rgba(31, 58, 95, 0.035);
+}
+
+/* React Flow Canvas & Interactive Node Styling */
 .react-flow__background {
   background-color: #F7F4EE !important;
 }
@@ -60,6 +102,7 @@ h1, h2, h3, .font-heading {
   border-bottom: 1px solid #E5E0D6 !important;
   color: #6B655A !important;
   fill: #6B655A !important;
+  transition: background-color 150ms ease, color 150ms ease !important;
 }
 
 .react-flow__controls-button:hover {
@@ -83,4 +126,12 @@ h1, h2, h3, .font-heading {
   border: 2px solid #FFFFFF !important;
   width: 8px !important;
   height: 8px !important;
+}
+
+.react-flow__node {
+  transition: transform 150ms ease, filter 150ms ease;
+}
+
+.react-flow__node:hover {
+  filter: drop-shadow(0 4px 10px rgba(31, 58, 95, 0.15));
 }
