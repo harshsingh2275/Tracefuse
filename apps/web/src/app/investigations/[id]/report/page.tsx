@@ -44,6 +44,7 @@ export default function InvestigationReportPage() {
     }
 
     if (investigationId) {
+      document.title = `TraceFuse — Compliance Report (${investigationId.toUpperCase()})`;
       loadReport();
     }
   }, [investigationId]);

@@ -67,6 +67,7 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    document.title = "TraceFuse — Investigation Dashboard";
     fetchData();
   }, []);
 

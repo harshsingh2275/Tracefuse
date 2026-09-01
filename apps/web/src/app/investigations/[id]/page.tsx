@@ -86,9 +86,12 @@ function InvestigationDetailContent() {
 
   useEffect(() => {
     if (investigationId) {
+      document.title = detail
+        ? `TraceFuse — ${detail.id.toUpperCase()}`
+        : `TraceFuse — ${investigationId.toUpperCase()}`;
       fetchData();
     }
-  }, [investigationId]);
+  }, [investigationId, detail?.id]);
 
   const handleStatusChange = async (newStatus: string) => {
     try {

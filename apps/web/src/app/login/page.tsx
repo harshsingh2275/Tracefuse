@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldAlert, ArrowRight, Lock, Sparkles } from "lucide-react";
 
@@ -10,6 +10,10 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    document.title = "TraceFuse — Investigator Access";
+  }, []);
 
   const handleLogin = (codeToTest?: string) => {
     const code = codeToTest ?? passcode;
