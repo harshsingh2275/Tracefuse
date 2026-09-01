@@ -17,6 +17,7 @@ import {
   ChevronRight,
   ShieldAlert,
   SlidersHorizontal,
+  ArrowRight,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -360,7 +361,7 @@ export default function DashboardPage() {
                         </td>
                       </tr>
                     ) : (
-                      filteredInvestigations.map((inv) => (
+                      filteredInvestigations.slice(0, 5).map((inv) => (
                         <tr
                           key={inv.id}
                           className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
@@ -404,7 +405,7 @@ export default function DashboardPage() {
                           <td className="py-3.5 px-4 text-right whitespace-nowrap">
                             <Link
                               href={`/investigations/${inv.id}?tab=graph`}
-                              className="px-3 py-1.5 bg-navy-subtle hover:bg-navy text-navy hover:text-white border border-navy/20 hover:border-navy rounded-lg text-xs font-medium transition-all inline-flex items-center gap-1 cursor-pointer"
+                              className="px-3 py-1.5 bg-navy-subtle hover:bg-navy text-navy hover:text-white border border-navy/20 hover:border-navy rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-1 cursor-pointer"
                             >
                               <span>Investigate</span>
                               <ExternalLink className="w-3 h-3" />
@@ -416,6 +417,22 @@ export default function DashboardPage() {
                   </tbody>
                 </table>
               </div>
+
+              {/* Table Footer: View All Link */}
+              {!loading && filteredInvestigations.length > 0 && (
+                <div className="p-3.5 bg-slate-50 border-t border-border-warm flex items-center justify-between text-xs font-sans">
+                  <span className="text-ink-secondary">
+                    Showing top <strong className="text-ink-primary font-mono">{Math.min(5, filteredInvestigations.length)}</strong> prioritized cases
+                  </span>
+                  <Link
+                    href="/investigations"
+                    className="text-navy hover:text-navy-hover font-semibold flex items-center gap-1.5 transition-colors group cursor-pointer"
+                  >
+                    <span>View All {investigations.length} Investigations</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
 
