@@ -27,6 +27,7 @@ import {
   ExternalLink,
   ShieldAlert,
   GitFork,
+  Monitor,
 } from "lucide-react";
 import { AccountNode, DeviceNode, EntityNode } from "./CustomNodes";
 import { TransactionEdge } from "./CustomEdges";
@@ -172,6 +173,12 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
 
   return (
     <div className={`space-y-3 ${className}`}>
+      {/* Mobile Screen Experience Notice */}
+      <div className="md:hidden p-3 bg-navy-subtle border border-navy/20 rounded-xl text-xs text-navy flex items-center gap-2">
+        <Monitor className="w-4 h-4 shrink-0 text-navy" />
+        <span>Graph canvas is best viewed on desktop or tablet screens. Pinch to zoom and drag to pan across clusters.</span>
+      </div>
+
       {/* Top Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-white border border-border-warm rounded-xl shadow-sm text-xs font-sans">
         <div className="flex items-center gap-3 flex-wrap">

@@ -40,7 +40,7 @@ export const DashboardSkeleton: React.FC = () => {
           <Skeleton className="h-4 w-60 bg-slate-200" />
           <Skeleton className="h-3 w-32 bg-slate-100" />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="rounded-xl bg-white border border-border-warm p-4 space-y-3 shadow-sm">
               <div className="flex items-center justify-between">

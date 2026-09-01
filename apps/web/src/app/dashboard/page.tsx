@@ -213,7 +213,7 @@ export default function DashboardPage() {
             <span className="text-[11px] text-ink-secondary font-medium">Live Surveillance Feed</span>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             <MetricCard
               title="Suspicious Networks"
               value={loading ? "..." : summary?.suspicious_networks ?? 7}

@@ -334,7 +334,7 @@ function InvestigationDetailContent() {
         )}
 
         {/* Tabbed Navigation Bar */}
-        <div className="flex items-center gap-2 border-b border-border-warm pb-2 overflow-x-auto">
+        <div className="flex items-center gap-2 border-b border-border-warm pb-2 overflow-x-auto whitespace-nowrap">
           {[
             { id: "graph", label: "Network Graph", icon: Layers, count: graphPayload?.nodes.length },
             { id: "follow_money", label: "Follow the Money", icon: GitFork },
@@ -349,7 +349,7 @@ function InvestigationDetailContent() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-medium flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-4 py-2 rounded-xl text-xs font-medium flex items-center gap-2 transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                   isActive
                     ? "bg-navy text-white shadow-md shadow-navy/20"
                     : "text-ink-secondary hover:text-ink-primary hover:bg-slate-200/60"
