@@ -45,7 +45,7 @@ import { FollowMoneyController } from "@/components/graph/FollowMoneyController"
 import { AIAssistantPanel } from "@/components/ai/AIAssistantPanel";
 import { EmptyState } from "@/components/EmptyState";
 import { InvestigationSkeleton } from "@/components/LoadingSkeleton";
-import { formatCaseCode } from "@/lib/formatters";
+import { formatCaseCode, formatAccountCode, humanizeEvidenceText, formatTxnCode } from "@/lib/formatters";
 
 function InvestigationDetailContent() {
   const params = useParams();
@@ -308,10 +308,10 @@ function InvestigationDetailContent() {
                     Primary Heuristic Trigger
                   </div>
                   <p className="text-ink-primary text-sm leading-relaxed font-medium">
-                    {detail.case_genesis.primary_trigger}
+                    {humanizeEvidenceText(detail.case_genesis.primary_trigger, detail.entities)}
                   </p>
                   <div className="pt-3 border-t border-navy/15 text-ink-secondary text-xs">
-                    Triggering Entity: <strong className="text-ink-primary ml-1.5">{detail.case_genesis.triggering_entity}</strong>
+                    Triggering Entity: <strong className="text-ink-primary ml-1.5">{humanizeEvidenceText(detail.case_genesis.triggering_entity, detail.entities)}</strong>
                   </div>
                 </div>
 
@@ -323,7 +323,7 @@ function InvestigationDetailContent() {
                     {detail.case_genesis.key_evidence_signals.map((sig, idx) => (
                       <li key={idx} className="flex items-start gap-2.5">
                         <span className="mt-1.5 w-1.5 h-1.5 shrink-0 rounded-full bg-navy" />
-                        <span>{sig}</span>
+                        <span>{humanizeEvidenceText(sig, detail.entities)}</span>
                       </li>
                     ))}
                   </ul>
@@ -432,7 +432,7 @@ function InvestigationDetailContent() {
                     </div>
 
                     <p className="text-xs text-ink-primary leading-relaxed font-sans">
-                      {pat.explanation}
+                      {humanizeEvidenceText(pat.explanation, detail.entities)}
                     </p>
 
                     <div className="pt-2.5 border-t border-border-warm flex flex-wrap items-center gap-2 text-xs">
@@ -440,9 +440,10 @@ function InvestigationDetailContent() {
                       {pat.transaction_ids_json.slice(0, 4).map((tid) => (
                         <span
                           key={tid}
+                          title={tid}
                           className="px-1.5 py-0.5 rounded bg-slate-100 border border-border-warm text-navy font-mono text-[10px]"
                         >
-                          {tid}
+                          {formatTxnCode(tid)}
                         </span>
                       ))}
                     </div>
@@ -511,16 +512,19 @@ function InvestigationDetailContent() {
                     </span>
                   </div>
 
-                  <p className="text-ink-primary leading-relaxed">{item.description}</p>
+                  <p className="text-ink-primary leading-relaxed">
+                    {humanizeEvidenceText(item.description, detail.entities)}
+                  </p>
 
                   <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs">
                     <span className="text-ink-secondary text-[11px]">Transactions:</span>
                     {item.transaction_ids_json.map((tid) => (
                       <span
                         key={tid}
+                        title={tid}
                         className="px-1.5 py-0.5 bg-slate-100 border border-border-warm text-ink-primary font-mono text-[10px] rounded"
                       >
-                        {tid}
+                        {formatTxnCode(tid)}
                       </span>
                     ))}
                   </div>

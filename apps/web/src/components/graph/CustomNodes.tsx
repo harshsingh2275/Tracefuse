@@ -9,6 +9,7 @@ import {
   Flame,
   ShieldCheck,
 } from "lucide-react";
+import { formatAccountCode } from "@/lib/formatters";
 
 // Account Node Component
 export const AccountNode = memo(({ data, selected }: NodeProps) => {
@@ -74,8 +75,8 @@ export const AccountNode = memo(({ data, selected }: NodeProps) => {
         <div className="font-semibold text-slate-900 text-xs truncate" title={holderName}>
           {holderName}
         </div>
-        <div className="font-mono text-[10px] text-slate-500 truncate">
-          {accountNumber || nodeData.id}
+        <div className="font-mono text-[10px] text-slate-500 truncate" title={nodeData.id}>
+          {accountNumber ? `${accountNumber} • ${formatAccountCode(nodeData.id)}` : formatAccountCode(nodeData.id)}
         </div>
       </div>
     </div>

@@ -14,6 +14,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { TimelineEventResponse, AccountSummaryResponse } from "@tracefuse/shared";
+import { formatAccountCode, formatTxnCode } from "@/lib/formatters";
 
 interface InvestigationTimelineProps {
   events: TimelineEventResponse[];
@@ -226,7 +227,7 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
                     <span className="px-1.5 py-0.5 rounded bg-navy-subtle text-navy border border-navy/20 font-semibold">
                       #{idx + 1}
                     </span>
-                    <span className="text-ink-secondary">{evt.id}</span>
+                    <span className="text-ink-secondary" title={evt.id}>{formatTxnCode(evt.id)}</span>
                     <span className="text-slate-300">•</span>
                     <span className="text-ink-secondary uppercase text-[11px]">
                       {evt.transaction_type}
@@ -246,14 +247,18 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
                   <div className="flex items-center gap-2 text-ink-primary">
                     <div className="flex flex-col">
                       <span className="font-semibold text-slate-900">{sourceName}</span>
-                      <span className="font-mono text-[10px] text-slate-500">({evt.source_account_id})</span>
+                      <span className="font-mono text-[10px] text-slate-500" title={evt.source_account_id}>
+                        ({formatAccountCode(evt.source_account_id)})
+                      </span>
                     </div>
 
                     <ArrowRight className="w-3.5 h-3.5 text-navy shrink-0 mx-1" />
 
                     <div className="flex flex-col">
                       <span className="font-semibold text-slate-900">{destName}</span>
-                      <span className="font-mono text-[10px] text-slate-500">({evt.destination_account_id})</span>
+                      <span className="font-mono text-[10px] text-slate-500" title={evt.destination_account_id}>
+                        ({formatAccountCode(evt.destination_account_id)})
+                      </span>
                     </div>
                   </div>
 

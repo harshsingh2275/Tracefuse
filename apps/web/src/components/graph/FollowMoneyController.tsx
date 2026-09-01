@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { MoneyHopResponse, AccountSummaryResponse } from "@tracefuse/shared";
+import { formatAccountCode, formatTxnCode } from "@/lib/formatters";
 
 interface FollowMoneyControllerProps {
   investigationId: string;
@@ -289,8 +290,8 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
                       <span className="font-semibold text-slate-900 truncate">
                         {getAccountName(hop.from_account_id)}
                       </span>
-                      <span className="text-slate-400 font-mono text-[10px]">
-                        ({hop.from_account_id})
+                      <span className="text-slate-400 font-mono text-[10px]" title={hop.from_account_id}>
+                        ({formatAccountCode(hop.from_account_id)})
                       </span>
                     </div>
                     <div className="flex flex-col truncate pt-0.5">
@@ -298,15 +299,15 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
                       <span className="font-semibold text-slate-900 truncate">
                         {getAccountName(hop.to_account_id)}
                       </span>
-                      <span className="text-slate-400 font-mono text-[10px]">
-                        ({hop.to_account_id})
+                      <span className="text-slate-400 font-mono text-[10px]" title={hop.to_account_id}>
+                        ({formatAccountCode(hop.to_account_id)})
                       </span>
                     </div>
                   </div>
 
                   <div className="pt-1.5 border-t border-border-warm flex items-center justify-between text-[10px] text-ink-secondary font-mono">
                     <span title={hop.transaction_id}>
-                      Txn: {hop.transaction_id.length > 12 ? `${hop.transaction_id.slice(0, 10)}...` : hop.transaction_id}
+                      Txn: {formatTxnCode(hop.transaction_id)}
                     </span>
                     <span>{hopDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                   </div>

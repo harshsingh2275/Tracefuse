@@ -21,7 +21,7 @@ import { api } from "@/lib/api";
 import { InvestigationReportResponse } from "@tracefuse/shared";
 import { Navbar } from "@/components/Navbar";
 import { ReportSkeleton } from "@/components/LoadingSkeleton";
-import { formatCaseCode } from "@/lib/formatters";
+import { formatCaseCode, formatAccountCode, humanizeEvidenceText, formatTxnCode } from "@/lib/formatters";
 
 export default function InvestigationReportPage() {
   const params = useParams();
@@ -253,8 +253,8 @@ export default function InvestigationReportPage() {
                       <div className="font-semibold text-slate-900">
                         {String(ent.holder_name || ent.name || "Entity Record")}
                       </div>
-                      <div className="font-mono text-[10px] text-slate-500">
-                        {String(ent.account_id || ent.id || "")}
+                      <div className="font-mono text-[10px] text-slate-500" title={String(ent.account_id || ent.id || "")}>
+                        ({formatAccountCode(String(ent.account_id || ent.id || ""))})
                       </div>
                     </td>
                     <td className="py-3 px-4 font-mono text-ink-primary font-medium">
@@ -299,14 +299,14 @@ export default function InvestigationReportPage() {
                 </div>
 
                 <p className="text-ink-primary print:text-gray-800 leading-relaxed font-sans">
-                  {String(p.explanation || p.evidence || "")}
+                  {humanizeEvidenceText(String(p.explanation || p.evidence || ""), report.entities_involved)}
                 </p>
 
                 {Array.isArray(p.transaction_ids) && p.transaction_ids.length > 0 && (
                   <div className="pt-1 text-[11px] text-ink-secondary">
                     Cited Transactions:{" "}
                     <span className="font-mono text-[10px] text-navy font-semibold">
-                      {p.transaction_ids.join(", ")}
+                      {p.transaction_ids.map((tid) => formatTxnCode(tid)).join(", ")}
                     </span>
                   </div>
                 )}
@@ -345,16 +345,16 @@ export default function InvestigationReportPage() {
                         <div className="font-semibold text-slate-900">
                           {getAccountName(String(hop.from_account_id || ""))}
                         </div>
-                        <div className="font-mono text-[10px] text-slate-500">
-                          ({String(hop.from_account_id || "")})
+                        <div className="font-mono text-[10px] text-slate-500" title={String(hop.from_account_id || "")}>
+                          ({formatAccountCode(String(hop.from_account_id || ""))})
                         </div>
                       </td>
                       <td className="py-2.5 px-4">
                         <div className="font-semibold text-slate-900">
                           {getAccountName(String(hop.to_account_id || ""))}
                         </div>
-                        <div className="font-mono text-[10px] text-slate-500">
-                          ({String(hop.to_account_id || "")})
+                        <div className="font-mono text-[10px] text-slate-500" title={String(hop.to_account_id || "")}>
+                          ({formatAccountCode(String(hop.to_account_id || ""))})
                         </div>
                       </td>
                       <td className="py-2.5 px-4 font-bold font-mono text-emerald-700">
