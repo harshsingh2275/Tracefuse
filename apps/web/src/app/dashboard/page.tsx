@@ -110,6 +110,47 @@ export default function DashboardPage() {
     count,
   }));
 
+  if (loading && !summary) {
+    return (
+      <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
+        <Navbar />
+        <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-8">
+          <DashboardSkeleton />
+        </main>
+      </div>
+    );
+  }
+
+  if (error && !summary) {
+    return (
+      <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white border border-border-warm p-8 rounded-2xl text-center space-y-4 shadow-sm">
+            <div className="w-12 h-12 rounded-2xl bg-severity-critical-bg border border-severity-critical-border text-severity-critical flex items-center justify-center mx-auto">
+              <ShieldAlert className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold font-serif text-ink-primary">Unable to Connect</h3>
+              <p className="text-xs text-ink-secondary leading-relaxed">
+                We couldn't retrieve the active surveillance feed and case queue. Please check the backend server status or retry.
+              </p>
+            </div>
+            <div className="pt-2">
+              <button
+                onClick={fetchData}
+                className="px-4 py-2 bg-navy hover:bg-navy-hover text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all mx-auto cursor-pointer shadow-md shadow-navy/20"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Retry Connection</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
       <Navbar />
@@ -117,20 +158,20 @@ export default function DashboardPage() {
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-8">
         {/* Error Alert Banner */}
         {error && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center justify-between gap-4">
+          <div className="p-4 bg-severity-critical-bg border border-severity-critical-border rounded-xl flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <ShieldAlert className="w-5 h-5 text-severity-critical shrink-0" />
               <div>
-                <div className="text-sm font-semibold text-severity-critical">Connection Error</div>
+                <div className="text-sm font-semibold text-severity-critical">Surveillance Feed Disconnected</div>
                 <div className="text-xs text-ink-secondary">{error}</div>
               </div>
             </div>
             <button
               onClick={fetchData}
-              className="px-3 py-1.5 bg-white hover:bg-slate-50 text-severity-critical text-xs rounded-lg border border-red-200 flex items-center gap-1.5 transition-all cursor-pointer font-medium"
+              className="px-3 py-1.5 bg-white hover:bg-slate-50 text-severity-critical text-xs rounded-lg border border-severity-critical-border flex items-center gap-1.5 transition-all cursor-pointer font-medium"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              Retry
+              <span>Retry</span>
             </button>
           </div>
         )}

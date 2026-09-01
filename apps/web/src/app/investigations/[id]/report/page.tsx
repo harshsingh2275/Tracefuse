@@ -20,6 +20,9 @@ import { api } from "@/lib/api";
 import { InvestigationReportResponse } from "@tracefuse/shared";
 import { Navbar } from "@/components/Navbar";
 
+import { ReportSkeleton } from "@/components/LoadingSkeleton";
+import { RefreshCw } from "lucide-react";
+
 export default function InvestigationReportPage() {
   const params = useParams();
   const investigationId = params.id as string;
@@ -28,21 +31,21 @@ export default function InvestigationReportPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function loadReport() {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await api.getInvestigationReport(investigationId);
-        setReport(data);
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Failed to load report dossier.";
-        setError(msg);
-      } finally {
-        setLoading(false);
-      }
+  const loadReport = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await api.getInvestigationReport(investigationId);
+      setReport(data);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to load report dossier.";
+      setError(msg);
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     if (investigationId) {
       document.title = `TraceFuse — Compliance Report (${investigationId.toUpperCase()})`;
       loadReport();
@@ -65,14 +68,9 @@ export default function InvestigationReportPage() {
     return (
       <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center space-y-3">
-            <div className="w-8 h-8 border-2 border-navy border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs text-ink-secondary">
-              Generating regulatory compliance report <span className="font-mono">({investigationId})</span>...
-            </p>
-          </div>
-        </div>
+        <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-6 md:px-8 md:py-8">
+          <ReportSkeleton />
+        </main>
       </div>
     );
   }
@@ -82,14 +80,27 @@ export default function InvestigationReportPage() {
       <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
         <Navbar />
         <div className="flex-1 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white border border-red-200 p-6 rounded-2xl text-center space-y-4 shadow-sm">
-            <ShieldAlert className="w-8 h-8 text-severity-critical mx-auto" />
-            <h3 className="text-lg font-bold font-serif text-ink-primary">Report Generation Error</h3>
-            <p className="text-xs text-ink-secondary">{error || "Report record could not be compiled."}</p>
-            <div className="pt-2">
+          <div className="max-w-md w-full bg-white border border-border-warm p-8 rounded-2xl text-center space-y-4 shadow-sm">
+            <div className="w-12 h-12 rounded-2xl bg-severity-critical-bg border border-severity-critical-border text-severity-critical flex items-center justify-center mx-auto">
+              <ShieldAlert className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold font-serif text-ink-primary">Unable to Compile Report</h3>
+              <p className="text-xs text-ink-secondary leading-relaxed">
+                {error || `We couldn't compile the regulatory compliance report for case "${investigationId}". Please check your connection or retry.`}
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                onClick={loadReport}
+                className="px-4 py-2 bg-navy hover:bg-navy-hover text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-md shadow-navy/20"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Retry Compilation</span>
+              </button>
               <Link
                 href={`/investigations/${investigationId}`}
-                className="px-4 py-2 bg-navy hover:bg-navy-hover text-white rounded-xl text-xs font-medium transition-all"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium transition-all"
               >
                 Back to Dossier
               </Link>
