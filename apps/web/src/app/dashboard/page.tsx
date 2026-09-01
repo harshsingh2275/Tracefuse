@@ -38,6 +38,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { PatternBadge } from "@/components/PatternBadge";
 import { EmptyState } from "@/components/EmptyState";
 import { DashboardSkeleton } from "@/components/LoadingSkeleton";
+import { formatCaseCode } from "@/lib/formatters";
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummaryResponse | null>(null);
@@ -370,7 +371,7 @@ export default function DashboardPage() {
                                 {inv.title}
                               </div>
                               <div className="text-[11px] text-ink-secondary flex items-center gap-2 mt-0.5">
-                                <span className="font-mono">({inv.id})</span>
+                                <span className="font-mono text-slate-500 font-medium">{formatCaseCode(inv.id)}</span>
                                 <span>•</span>
                                 <span>{inv.entities_count} accounts</span>
                               </div>

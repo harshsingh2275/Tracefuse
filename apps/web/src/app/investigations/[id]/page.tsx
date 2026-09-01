@@ -45,6 +45,7 @@ import { FollowMoneyController } from "@/components/graph/FollowMoneyController"
 import { AIAssistantPanel } from "@/components/ai/AIAssistantPanel";
 import { EmptyState } from "@/components/EmptyState";
 import { InvestigationSkeleton } from "@/components/LoadingSkeleton";
+import { formatCaseCode } from "@/lib/formatters";
 
 function InvestigationDetailContent() {
   const params = useParams();
@@ -88,8 +89,8 @@ function InvestigationDetailContent() {
   useEffect(() => {
     if (investigationId) {
       document.title = detail
-        ? `TraceFuse — ${detail.id.toUpperCase()}`
-        : `TraceFuse — ${investigationId.toUpperCase()}`;
+        ? `TraceFuse — ${formatCaseCode(detail.id)}`
+        : `TraceFuse — ${formatCaseCode(investigationId)}`;
       fetchData();
     }
   }, [investigationId, detail?.id]);
@@ -214,7 +215,7 @@ function InvestigationDetailContent() {
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
             <div className="min-w-0 max-w-4xl space-y-2">
               <div className="flex flex-wrap items-center gap-2.5">
-                <span className="font-mono text-xs text-navy font-semibold">{detail.id}</span>
+                <span className="font-mono text-xs text-navy font-semibold">{formatCaseCode(detail.id)}</span>
                 <span className="w-1 h-1 rounded-full bg-slate-300" />
                 <span className="text-xs text-ink-secondary capitalize font-medium">
                   {detail.scenario_tag.replace(/_/g, " ")}

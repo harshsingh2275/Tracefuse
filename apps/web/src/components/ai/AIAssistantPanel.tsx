@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { AskAssistantResponse } from "@tracefuse/shared";
+import { formatCaseCode } from "@/lib/formatters";
 
 interface Message {
   id: string;
@@ -144,7 +145,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               </span>
             </div>
             <p className="text-[10px] text-ink-secondary font-mono truncate max-w-[240px]">
-              Case Scope: {investigationId}
+              Case Scope: {formatCaseCode(investigationId)}
             </p>
           </div>
         </div>

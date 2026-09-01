@@ -21,6 +21,7 @@ import { api } from "@/lib/api";
 import { InvestigationReportResponse } from "@tracefuse/shared";
 import { Navbar } from "@/components/Navbar";
 import { ReportSkeleton } from "@/components/LoadingSkeleton";
+import { formatCaseCode } from "@/lib/formatters";
 
 export default function InvestigationReportPage() {
   const params = useParams();
@@ -46,7 +47,7 @@ export default function InvestigationReportPage() {
 
   useEffect(() => {
     if (investigationId) {
-      document.title = `TraceFuse — Compliance Report (${investigationId.toUpperCase()})`;
+      document.title = `TraceFuse — Compliance Report (${formatCaseCode(investigationId)})`;
       loadReport();
     }
   }, [investigationId]);
@@ -168,7 +169,7 @@ export default function InvestigationReportPage() {
                 {report.title}
               </h1>
               <p className="text-xs text-ink-secondary mt-1">
-                Case ID: <span className="font-mono text-navy font-semibold">{report.investigation_id}</span>
+                Case Reference: <span className="font-mono text-navy font-semibold">{formatCaseCode(report.investigation_id)}</span>
               </p>
             </div>
 
