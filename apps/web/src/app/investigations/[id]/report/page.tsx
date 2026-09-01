@@ -15,13 +15,12 @@ import {
   CheckCircle2,
   Download,
   Share2,
+  RefreshCw,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { InvestigationReportResponse } from "@tracefuse/shared";
 import { Navbar } from "@/components/Navbar";
-
 import { ReportSkeleton } from "@/components/LoadingSkeleton";
-import { RefreshCw } from "lucide-react";
 
 export default function InvestigationReportPage() {
   const params = useParams();
@@ -118,7 +117,7 @@ export default function InvestigationReportPage() {
         <Navbar />
       </div>
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-6 md:px-8 md:py-8 space-y-6 print:p-0 print:max-w-full">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-6 md:px-8 md:py-8 space-y-6 md:space-y-8 print:p-0 print:max-w-full">
         {/* Navigation & Print Actions Bar (Hidden when printing) */}
         <div className="flex items-center justify-between gap-4 print:hidden">
           <Link
@@ -148,7 +147,7 @@ export default function InvestigationReportPage() {
                 <FileText className="w-6 h-6" />
               </div>
               <div>
-                <div className="font-serif text-xs font-bold text-navy uppercase tracking-wider">
+                <div className="font-sans text-xs font-semibold text-navy">
                   Financial Intelligence Unit • AML Surveillance Report
                 </div>
                 <div className="text-xs text-ink-secondary">
@@ -182,13 +181,13 @@ export default function InvestigationReportPage() {
 
         {/* 1. Executive Summary & Recommended Action */}
         <section className="space-y-4">
-          <h2 className="text-base font-bold font-serif text-ink-primary print:text-black uppercase tracking-wider border-b border-border-warm print:border-gray-300 pb-1 flex items-center gap-2">
+          <h2 className="text-lg font-bold font-serif text-ink-primary print:text-black border-b border-border-warm print:border-gray-300 pb-2 flex items-center gap-2">
             <FileText className="w-4 h-4 text-navy print:text-black" />
             1. Executive Summary & Regulatory Determination
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2 bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 rounded-xl space-y-3 text-xs leading-relaxed shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            <div className="md:col-span-2 bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 text-xs leading-relaxed shadow-sm">
               <p className="text-ink-primary print:text-gray-800">{report.case_summary}</p>
               <div className="flex flex-wrap items-center gap-4 pt-3 text-xs text-ink-secondary border-t border-border-warm print:border-gray-200">
                 <span>Total Entities: <strong className="text-ink-primary">{report.entities_involved.length}</strong></span>
@@ -197,7 +196,7 @@ export default function InvestigationReportPage() {
               </div>
             </div>
 
-            <div className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 rounded-xl space-y-3 text-xs flex flex-col justify-between shadow-sm">
+            <div className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 text-xs flex flex-col justify-between shadow-sm">
               <div>
                 <span className="text-ink-secondary text-[10px] uppercase font-medium">Composite Risk Assessment</span>
                 <div className="text-2xl font-bold font-mono text-severity-critical print:text-red-700 mt-1">
@@ -230,13 +229,13 @@ export default function InvestigationReportPage() {
         </section>
 
         {/* 2. Entities in Scope Table */}
-        <section className="space-y-3">
-          <h2 className="text-base font-bold font-serif text-ink-primary print:text-black uppercase tracking-wider border-b border-border-warm print:border-gray-300 pb-1 flex items-center gap-2">
+        <section className="space-y-4">
+          <h2 className="text-lg font-bold font-serif text-ink-primary print:text-black border-b border-border-warm print:border-gray-300 pb-2 flex items-center gap-2">
             <Building2 className="w-4 h-4 text-navy print:text-black" />
             2. Counterparties & Entities Under Investigation
           </h2>
 
-          <div className="bg-white print:bg-white border border-border-warm print:border-gray-300 rounded-xl overflow-hidden shadow-sm">
+          <div className="bg-white print:bg-white border border-border-warm print:border-gray-300 rounded-2xl overflow-hidden shadow-sm">
             <table className="w-full text-left text-xs font-sans">
               <thead className="bg-slate-50 print:bg-gray-100 text-ink-secondary print:text-gray-700 text-[11px] uppercase border-b border-border-warm print:border-gray-300 font-medium">
                 <tr>
@@ -276,8 +275,8 @@ export default function InvestigationReportPage() {
         </section>
 
         {/* 3. Detected Patterns Breakdown */}
-        <section className="space-y-3">
-          <h2 className="text-base font-bold font-serif text-ink-primary print:text-black uppercase tracking-wider border-b border-border-warm print:border-gray-300 pb-1 flex items-center gap-2">
+        <section className="space-y-4">
+          <h2 className="text-lg font-bold font-serif text-ink-primary print:text-black border-b border-border-warm print:border-gray-300 pb-2 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-navy print:text-black" />
             3. Detected AML Pattern Typologies ({report.detected_patterns.length})
           </h2>
@@ -286,7 +285,7 @@ export default function InvestigationReportPage() {
             {report.detected_patterns.map((p, idx) => (
               <div
                 key={idx}
-                className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-4 rounded-xl space-y-2 text-xs shadow-sm"
+                className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-4 md:p-5 rounded-xl space-y-2 text-xs shadow-sm"
               >
                 <div className="flex items-center justify-between">
                   <div className="font-serif font-bold text-ink-primary print:text-black text-xs flex items-center gap-2">
@@ -317,13 +316,13 @@ export default function InvestigationReportPage() {
 
         {/* 4. Multi-Hop Money Trail Provenance */}
         {report.money_trail_summary && report.money_trail_summary.length > 0 && (
-          <section className="space-y-3">
-            <h2 className="text-base font-bold font-serif text-ink-primary print:text-black uppercase tracking-wider border-b border-border-warm print:border-gray-300 pb-1 flex items-center gap-2">
+          <section className="space-y-4">
+            <h2 className="text-lg font-bold font-serif text-ink-primary print:text-black border-b border-border-warm print:border-gray-300 pb-2 flex items-center gap-2">
               <Clock className="w-4 h-4 text-navy print:text-black" />
               4. Multi-Hop Fund Provenance Sequence ({report.money_trail_summary.length} Hops)
             </h2>
 
-            <div className="bg-white print:bg-white border border-border-warm print:border-gray-300 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-white print:bg-white border border-border-warm print:border-gray-300 rounded-2xl overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs font-sans">
                 <thead className="bg-slate-50 print:bg-gray-100 text-ink-secondary print:text-gray-700 text-[11px] uppercase border-b border-border-warm print:border-gray-300 font-medium">
                   <tr>
@@ -379,14 +378,14 @@ export default function InvestigationReportPage() {
 
         {/* 5. Investigator Notes & Case Action Audit History */}
         <section className="space-y-4">
-          <h2 className="text-base font-bold font-serif text-ink-primary print:text-black uppercase tracking-wider border-b border-border-warm print:border-gray-300 pb-1 flex items-center gap-2">
+          <h2 className="text-lg font-bold font-serif text-ink-primary print:text-black border-b border-border-warm print:border-gray-300 pb-2 flex items-center gap-2">
             <UserCheck className="w-4 h-4 text-navy print:text-black" />
             5. Case Notes & Status Workflow History
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 text-xs font-sans">
             {/* Notes */}
-            <div className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-4 rounded-xl space-y-2 shadow-sm">
+            <div className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 shadow-sm">
               <h3 className="font-serif font-bold text-ink-primary print:text-gray-800 text-xs">
                 Investigator Notes
               </h3>
@@ -397,7 +396,7 @@ export default function InvestigationReportPage() {
                   {report.investigator_notes.map((n, idx) => (
                     <div
                       key={idx}
-                      className="p-2.5 bg-slate-50 print:bg-white rounded-lg border border-border-warm print:border-gray-200 space-y-1"
+                      className="p-3 bg-slate-50 print:bg-white rounded-xl border border-border-warm print:border-gray-200 space-y-1"
                     >
                       <div className="flex items-center justify-between text-[10px] text-ink-secondary">
                         <span className="font-semibold text-navy">{String(n.user_id || "Analyst")}</span>
@@ -411,7 +410,7 @@ export default function InvestigationReportPage() {
             </div>
 
             {/* Status History */}
-            <div className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-4 rounded-xl space-y-2 shadow-sm">
+            <div className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 shadow-sm">
               <h3 className="font-serif font-bold text-ink-primary print:text-gray-800 text-xs">
                 Status Audit Trail
               </h3>
@@ -422,7 +421,7 @@ export default function InvestigationReportPage() {
                   {report.status_history.map((act, idx) => (
                     <div
                       key={idx}
-                      className="p-2 bg-slate-50 print:bg-white rounded-lg border border-border-warm print:border-gray-200 text-[11px] text-ink-primary"
+                      className="p-3 bg-slate-50 print:bg-white rounded-xl border border-border-warm print:border-gray-200 text-[11px] text-ink-primary"
                     >
                       <div>
                         {String(act.previous_value || "new")} ➔{" "}

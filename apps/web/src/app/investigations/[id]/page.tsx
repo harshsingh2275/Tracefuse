@@ -44,7 +44,6 @@ import { InvestigationTimeline } from "@/components/timeline/InvestigationTimeli
 import { FollowMoneyController } from "@/components/graph/FollowMoneyController";
 import { AIAssistantPanel } from "@/components/ai/AIAssistantPanel";
 import { EmptyState } from "@/components/EmptyState";
-
 import { InvestigationSkeleton } from "@/components/LoadingSkeleton";
 
 function InvestigationDetailContent() {
@@ -134,7 +133,7 @@ function InvestigationDetailContent() {
     return (
       <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
         <Navbar />
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-5 md:px-8 md:py-7">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6 md:px-8 md:py-8 space-y-6 md:space-y-8">
           <InvestigationSkeleton />
         </main>
       </div>
@@ -181,7 +180,7 @@ function InvestigationDetailContent() {
     <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-5 md:px-8 md:py-7 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6 md:px-8 md:py-8 space-y-6 md:space-y-8">
         {/* Breadcrumb & Top Action Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <Link
@@ -419,7 +418,7 @@ function InvestigationDetailContent() {
                 {detail.patterns.map((pat) => (
                   <div
                     key={pat.id}
-                    className="bg-white border border-border-warm p-5 rounded-xl space-y-3 shadow-sm"
+                    className="bg-white border border-border-warm p-5 md:p-6 rounded-2xl space-y-3 shadow-sm"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
@@ -457,7 +456,7 @@ function InvestigationDetailContent() {
                 Composite Risk Breakdown
               </h3>
 
-              <div className="bg-white border border-border-warm p-5 rounded-xl space-y-4 shadow-sm text-xs">
+              <div className="bg-white border border-border-warm p-5 md:p-6 rounded-2xl space-y-4 shadow-sm text-xs">
                 <div className="flex items-center justify-between pb-3 border-b border-border-warm">
                   <span className="text-ink-secondary">Composite Score:</span>
                   <span className="text-xl font-bold font-mono text-severity-critical">
@@ -492,8 +491,8 @@ function InvestigationDetailContent() {
 
         {/* Tab 5: Evidence Locker */}
         {activeTab === "evidence" && (
-          <section className="bg-white border border-border-warm rounded-xl overflow-hidden shadow-sm">
-            <div className="p-4 bg-slate-50 border-b border-border-warm">
+          <section className="bg-white border border-border-warm rounded-2xl overflow-hidden shadow-sm">
+            <div className="p-5 bg-slate-50 border-b border-border-warm">
               <h3 className="text-sm font-bold font-serif text-ink-primary">
                 Structured Evidence Items ({detail.evidence_items.length})
               </h3>
@@ -501,7 +500,7 @@ function InvestigationDetailContent() {
 
             <div className="divide-y divide-border-warm font-sans text-xs">
               {detail.evidence_items.map((item, idx) => (
-                <div key={item.id} className="p-4 hover:bg-slate-50/70 transition-colors space-y-2">
+                <div key={item.id} className="p-5 hover:bg-slate-50/70 transition-colors space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-navy font-semibold">
                       Evidence Item #{idx + 1}
@@ -538,13 +537,13 @@ function InvestigationDetailContent() {
               <h3 className="text-base font-bold font-serif text-ink-primary">Investigator Case Notes</h3>
 
               {/* Add Note Form */}
-              <form onSubmit={handleAddNote} className="bg-white border border-border-warm p-4 rounded-xl space-y-3 shadow-sm">
+              <form onSubmit={handleAddNote} className="bg-white border border-border-warm p-5 rounded-2xl space-y-3 shadow-sm">
                 <textarea
                   placeholder="Record investigative finding, subpoena note, or freeze confirmation..."
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   rows={3}
-                  className="w-full p-3 bg-slate-50 border border-border-warm rounded-lg text-xs text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy focus:bg-white font-sans"
+                  className="w-full p-3 bg-slate-50 border border-border-warm rounded-xl text-xs text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy focus:bg-white font-sans"
                 />
                 <div className="flex justify-end">
                   <button
@@ -588,7 +587,7 @@ function InvestigationDetailContent() {
             <div className="space-y-4">
               <h3 className="text-base font-bold font-serif text-ink-primary">Status Audit Trail</h3>
 
-              <div className="bg-white border border-border-warm p-4 rounded-xl space-y-3 text-xs shadow-sm">
+              <div className="bg-white border border-border-warm p-5 rounded-2xl space-y-3 text-xs shadow-sm">
                 {detail.actions.map((act) => (
                   <div key={act.id} className="pb-3 border-b border-border-warm last:border-0 last:pb-0 space-y-1">
                     <div className="flex items-center justify-between text-[11px]">
