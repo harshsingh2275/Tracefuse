@@ -321,15 +321,15 @@ export default function DashboardPage() {
             {/* Case List Table */}
             <div className="bg-white border border-border-warm rounded-2xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs font-sans">
+                <table className="w-full text-left text-xs font-sans min-w-[780px]">
                   <thead className="bg-slate-50 text-ink-secondary text-[11px] uppercase tracking-wider border-b border-border-warm font-medium">
                     <tr>
-                      <th className="py-3 px-4">Case Title & Entity Nexus</th>
-                      <th className="py-3 px-4">Detected Patterns</th>
-                      <th className="py-3 px-4">Risk Score</th>
-                      <th className="py-3 px-4">Total Flow</th>
-                      <th className="py-3 px-4">Status</th>
-                      <th className="py-3 px-4 text-right">Action</th>
+                      <th className="py-3 px-4 w-[42%] min-w-[280px]">Case Title & Entity Nexus</th>
+                      <th className="py-3 px-4 w-[20%] min-w-[150px]">Detected Patterns</th>
+                      <th className="py-3 px-4 whitespace-nowrap">Risk Score</th>
+                      <th className="py-3 px-4 whitespace-nowrap">Total Flow</th>
+                      <th className="py-3 px-4 whitespace-nowrap">Status</th>
+                      <th className="py-3 px-4 text-right whitespace-nowrap">Action</th>
                     </tr>
                   </thead>
 
@@ -337,7 +337,7 @@ export default function DashboardPage() {
                     {loading ? (
                       [1, 2, 3, 4, 5].map((i) => (
                         <tr key={i} className="animate-pulse">
-                          <td className="py-4 px-4"><div className="h-4 bg-slate-200 rounded w-48 mb-1" /><div className="h-3 bg-slate-200 rounded w-24" /></td>
+                          <td className="py-4 px-4"><div className="h-4 bg-slate-200 rounded w-64 mb-1.5" /><div className="h-3 bg-slate-200 rounded w-24" /></td>
                           <td className="py-4 px-4"><div className="h-5 bg-slate-200 rounded w-32" /></td>
                           <td className="py-4 px-4"><div className="h-6 bg-slate-200 rounded w-20" /></td>
                           <td className="py-4 px-4"><div className="h-4 bg-slate-200 rounded w-16" /></td>
@@ -365,12 +365,15 @@ export default function DashboardPage() {
                           key={inv.id}
                           className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
                         >
-                          <td className="py-3.5 px-4">
+                          <td className="py-3.5 px-4 w-[42%] min-w-[280px]">
                             <Link href={`/investigations/${inv.id}?tab=graph`} className="block">
-                              <div className="font-semibold text-slate-900 group-hover:text-navy transition-colors">
+                              <div
+                                className="font-semibold text-slate-900 group-hover:text-navy transition-colors line-clamp-2 leading-snug"
+                                title={inv.title}
+                              >
                                 {inv.title}
                               </div>
-                              <div className="text-[11px] text-ink-secondary flex items-center gap-2 mt-0.5">
+                              <div className="text-[11px] text-ink-secondary flex items-center gap-2 mt-1">
                                 <span className="font-mono text-slate-500 font-medium">{formatCaseCode(inv.id)}</span>
                                 <span>•</span>
                                 <span>{inv.entities_count} accounts</span>
