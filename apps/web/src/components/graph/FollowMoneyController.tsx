@@ -183,7 +183,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
           >
             {accounts.map((acc) => (
               <option key={acc.id} value={acc.id}>
-                {acc.holder_name} ({acc.id})
+                {acc.holder_name} ({formatAccountCode(acc.id)})
               </option>
             ))}
           </select>
@@ -199,7 +199,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
             <option value="">All Reachable Downstream</option>
             {accounts.map((acc) => (
               <option key={acc.id} value={acc.id}>
-                {acc.holder_name} ({acc.id})
+                {acc.holder_name} ({formatAccountCode(acc.id)})
               </option>
             ))}
           </select>

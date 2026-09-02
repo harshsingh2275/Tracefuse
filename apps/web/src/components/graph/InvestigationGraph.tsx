@@ -34,6 +34,12 @@ import { TransactionEdge } from "./CustomEdges";
 import { RiskBadge } from "@/components/RiskBadge";
 import { MoneyHopResponse, AccountSummaryResponse } from "@tracefuse/shared";
 import { FollowMoneyController } from "./FollowMoneyController";
+import {
+  formatEntityCode,
+  formatAccountCode,
+  formatTxnCode,
+  formatRelationshipCode,
+} from "@/lib/formatters";
 
 const nodeTypes = {
   account: AccountNode,
@@ -80,6 +86,46 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
     const found = accounts.find((a) => a.id === accId);
     return found?.holder_name || accId;
   };
+
+  const getNodeInfo = useCallback(
+    (nodeId: string) => {
+      const node = initialNodes.find((n) => n.id === nodeId);
+      const account = accounts.find((a) => a.id === nodeId);
+      const nodeType = String(
+        node?.type ||
+          (nodeId.startsWith("acc_")
+            ? "account"
+            : nodeId.startsWith("dev_")
+            ? "device"
+            : nodeId.startsWith("ent_person_") || nodeId.startsWith("person_")
+            ? "person"
+            : nodeId.startsWith("ent_merch_") || nodeId.startsWith("merch_")
+            ? "merchant"
+            : nodeId.startsWith("ent_ben_") || nodeId.startsWith("ben_")
+            ? "beneficiary"
+            : "entity")
+      );
+
+      const code = formatEntityCode(nodeId, nodeType);
+
+      let name = "";
+      if (nodeType === "device") {
+        name = "Shared Device Fingerprint";
+      } else {
+        const rawLabel = String(node?.data?.label || "");
+        name = String(
+          node?.data?.holder_name ||
+            node?.data?.name ||
+            (!rawLabel.startsWith("fp_") && !rawLabel.startsWith("acc_") && !rawLabel.startsWith("ent_") ? rawLabel : "") ||
+            account?.holder_name ||
+            code
+        );
+      }
+
+      return { name, code, type: nodeType, data: node?.data || {} };
+    },
+    [initialNodes, accounts]
+  );
 
   // Filter nodes & edges based on visibility toggles, search query, and active path highlights
   const filteredNodes = useMemo(() => {
@@ -282,137 +328,239 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
         </ReactFlow>
 
         {/* Entity Inspection Drawer */}
-        {selectedNode && (
-          <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-white/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col overflow-y-auto animate-in slide-in-from-right-4 duration-200">
-            <div className="flex items-start justify-between pb-3 border-b border-border-warm">
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-ink-secondary font-medium">
-                  Entity Inspector
-                </div>
-                <h4 className="text-base font-bold text-ink-primary font-serif mt-0.5">
-                  {String(selectedNode.data?.holder_name || selectedNode.data?.label || selectedNode.id)}
-                </h4>
-                <div className="text-[10px] font-mono text-slate-500 mt-0.5">
-                  ID: {selectedNode.id}
-                </div>
-              </div>
-              <button
-                onClick={closeSidebar}
-                className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+        {selectedNode && (() => {
+          const info = getNodeInfo(selectedNode.id);
+          const severity = String((selectedNode.data as Record<string, any>)?.severity || "");
+          const isDevice = info.type === "device";
+          const isAccount = info.type === "account";
 
-            <div className="mt-4 space-y-4 text-xs font-sans">
-              {/* Risk & Identifier Info */}
-              <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-ink-secondary text-[11px]">Node Type:</span>
-                  <span className="text-navy uppercase font-semibold text-[11px]">
-                    {selectedNode.type}
-                  </span>
+          return (
+            <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-white/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col overflow-y-auto animate-in slide-in-from-right-4 duration-200">
+              <div className="flex items-start justify-between pb-3 border-b border-border-warm">
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-ink-secondary font-medium">
+                    Entity Inspector
+                  </div>
+                  <h4 className="text-base font-bold text-ink-primary font-serif mt-0.5">
+                    {info.name}
+                  </h4>
+                  <div className="text-[10px] font-mono text-slate-500 mt-0.5" title={selectedNode.id}>
+                    Reference: {info.code}
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-ink-secondary text-[11px]">Account ID:</span>
-                  <span className="font-mono text-ink-primary font-medium">{selectedNode.id}</span>
+                <button
+                  onClick={closeSidebar}
+                  className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-4 text-xs font-sans">
+                {/* Risk & Identifier Info */}
+                <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-ink-secondary text-[11px]">Entity Type:</span>
+                    <span className="text-navy uppercase font-semibold text-[11px]">
+                      {info.type}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-ink-secondary text-[11px]">Reference Code:</span>
+                    <span className="font-mono text-ink-primary font-medium" title={selectedNode.id}>
+                      {info.code}
+                    </span>
+                  </div>
+                  {Boolean(severity) && (
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-ink-secondary text-[11px]">Risk Level:</span>
+                      <RiskBadge level={severity} showScore={false} />
+                    </div>
+                  )}
                 </div>
-                {Boolean((selectedNode.data as Record<string, any>)?.severity) && (
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-ink-secondary text-[11px]">Risk Level:</span>
-                    <RiskBadge level={String((selectedNode.data as Record<string, any>).severity)} showScore={false} />
+
+                {/* Account Specific Info */}
+                {isAccount && (
+                  <div className="space-y-3">
+                    <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-1.5 text-[11px]">
+                      <div className="text-ink-secondary">Account Number:</div>
+                      <div className="text-ink-primary font-semibold font-mono">
+                        {String(selectedNode.data?.account_number || "AC-99482910")}
+                      </div>
+                      <div className="text-ink-secondary pt-1">Account Type:</div>
+                      <div className="text-ink-primary capitalize font-medium">
+                        {String(selectedNode.data?.account_type || "Savings")}
+                      </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-navy-subtle border border-navy/15 text-ink-primary text-xs leading-relaxed">
+                      <span className="font-semibold text-navy">Topological Context: </span>
+                      Identified as a critical transit node within the multi-hop fund dispersion flow.
+                    </div>
+                  </div>
+                )}
+
+                {/* Device Specific Info */}
+                {isDevice && (
+                  <div className="p-3 rounded-lg bg-slate-50 border border-border-warm text-xs space-y-2">
+                    <div className="font-semibold text-navy flex items-center gap-1.5">
+                      <Smartphone className="w-3.5 h-3.5" />
+                      Shared Hardware Binding
+                    </div>
+                    <p className="text-ink-secondary leading-relaxed font-sans">
+                      Fingerprint correlated with multiple mule accounts operating concurrently across the syndicate.
+                    </p>
                   </div>
                 )}
               </div>
-
-              {/* Account Specific Info */}
-              {selectedNode.type === "account" && (
-                <div className="space-y-3">
-                  <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-1.5 text-[11px]">
-                    <div className="text-ink-secondary">Account Number:</div>
-                    <div className="text-ink-primary font-semibold font-mono">
-                      {String(selectedNode.data?.account_number || "AC-99482910")}
-                    </div>
-                    <div className="text-ink-secondary pt-1">Account Type:</div>
-                    <div className="text-ink-primary capitalize font-medium">
-                      {String(selectedNode.data?.account_type || "Savings")}
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-lg bg-navy-subtle border border-navy/15 text-ink-primary text-xs leading-relaxed">
-                    <span className="font-semibold text-navy">Topological Context: </span>
-                    Identified as a critical transit node within the multi-hop fund dispersion flow.
-                  </div>
-                </div>
-              )}
-
-              {/* Device Specific Info */}
-              {selectedNode.type === "device" && (
-                <div className="p-3 rounded-lg bg-slate-50 border border-border-warm text-xs space-y-2">
-                  <div className="font-semibold text-navy flex items-center gap-1.5">
-                    <Smartphone className="w-3.5 h-3.5" />
-                    Shared Hardware Binding
-                  </div>
-                  <p className="text-ink-secondary leading-relaxed font-sans">
-                    Fingerprint correlated with multiple mule accounts operating concurrently across the syndicate.
-                  </p>
-                </div>
-              )}
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Edge Inspection Drawer */}
-        {selectedEdge && (
-          <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-white/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col animate-in slide-in-from-right-4 duration-200">
-            <div className="flex items-start justify-between pb-3 border-b border-border-warm">
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-ink-secondary font-medium">
-                  Transaction Edge Inspector
+        {selectedEdge && (() => {
+          const edgeData = (selectedEdge.data || {}) as Record<string, any>;
+          const edgeType = String(edgeData.edgeType || selectedEdge.type || "").toLowerCase();
+          const amount = Number(edgeData.amount || 0);
+          const isTransaction = edgeType === "transaction" || edgeType === "customtransactionedge" || amount > 0 || String(selectedEdge.id).startsWith("txn_");
+
+          const sourceInfo = getNodeInfo(selectedEdge.source);
+          const targetInfo = getNodeInfo(selectedEdge.target);
+
+          if (isTransaction) {
+            return (
+              <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-white/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col animate-in slide-in-from-right-4 duration-200">
+                <div className="flex items-start justify-between pb-3 border-b border-border-warm">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-navy font-semibold flex items-center gap-1.5">
+                      <ArrowUpRight className="w-3.5 h-3.5 text-navy" />
+                      Transaction Flow Inspector
+                    </div>
+                    <h4 className="text-base font-bold text-ink-primary font-serif mt-0.5">
+                      Money Movement
+                    </h4>
+                    <div className="text-[10px] font-mono text-slate-500 mt-0.5" title={String(selectedEdge.id)}>
+                      Reference: {formatTxnCode(String(selectedEdge.id))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={closeSidebar}
+                    className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
-                <h4 className="text-base font-bold text-ink-primary font-serif mt-0.5">
-                  Transaction Flow
-                </h4>
-                <div className="text-[10px] font-mono text-slate-500 mt-0.5">
-                  {String(selectedEdge.id)}
+
+                <div className="mt-4 space-y-3 text-xs font-sans">
+                  <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-ink-secondary">Transfer Amount:</span>
+                      <span className="text-base font-bold font-mono text-emerald-700">
+                        ₹{amount.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                    <div className="flex flex-col pt-1 border-t border-border-warm">
+                      <span className="text-ink-secondary text-[11px]">Source Account:</span>
+                      <span className="font-semibold text-slate-900">{sourceInfo.name}</span>
+                      <span className="font-mono text-[10px] text-slate-500" title={selectedEdge.source}>
+                        ({sourceInfo.code})
+                      </span>
+                    </div>
+                    <div className="flex flex-col pt-1 border-t border-border-warm">
+                      <span className="text-ink-secondary text-[11px]">Destination Account:</span>
+                      <span className="font-semibold text-slate-900">{targetInfo.name}</span>
+                      <span className="font-mono text-[10px] text-slate-500" title={selectedEdge.target}>
+                        ({targetInfo.code})
+                      </span>
+                    </div>
+                  </div>
+
+                  {Boolean(edgeData.timestamp) && (
+                    <div className="p-2.5 bg-slate-50 rounded-lg border border-border-warm text-[11px] text-ink-secondary font-mono">
+                      Timestamp: <span className="text-ink-primary font-medium">{new Date(edgeData.timestamp).toLocaleString()}</span>
+                    </div>
+                  )}
+
+                  <div className="p-3 rounded-lg bg-navy-subtle border border-navy/15 text-ink-primary text-xs leading-relaxed">
+                    <span className="font-semibold text-navy">Forensic Topology: </span>
+                    Active capital transit hop between identified network counterparties.
+                  </div>
                 </div>
               </div>
-              <button
-                onClick={closeSidebar}
-                className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+            );
+          }
 
-            <div className="mt-4 space-y-3 text-xs font-sans">
-              <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-ink-secondary">Transfer Amount:</span>
-                  <span className="text-base font-bold font-mono text-emerald-700">
-                    ₹{Number(selectedEdge.data?.amount || 0).toLocaleString("en-IN")}
-                  </span>
+          // Structural Relationship Edge (owns, uses, linked_to, etc.)
+          const relLabel = String(edgeData.label || edgeData.relationship || edgeType || "Linked Relation").replace(/_/g, " ").toUpperCase();
+
+          return (
+            <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-white/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col animate-in slide-in-from-right-4 duration-200">
+              <div className="flex items-start justify-between pb-3 border-b border-border-warm">
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-amber-800 font-semibold flex items-center gap-1.5">
+                    <GitFork className="w-3.5 h-3.5 text-amber-700" />
+                    Structural Relationship
+                  </div>
+                  <h4 className="text-base font-bold text-ink-primary font-serif mt-0.5">
+                    Nexus Correlation
+                  </h4>
+                  <div className="text-[10px] font-mono text-slate-500 mt-0.5" title={String(selectedEdge.id)}>
+                    Reference: {formatRelationshipCode(String(selectedEdge.id))}
+                  </div>
                 </div>
-                <div className="flex flex-col pt-1 border-t border-border-warm">
-                  <span className="text-ink-secondary text-[11px]">Source Account:</span>
-                  <span className="font-semibold text-slate-900">{getAccountName(selectedEdge.source)}</span>
-                  <span className="font-mono text-[10px] text-slate-500">({selectedEdge.source})</span>
-                </div>
-                <div className="flex flex-col pt-1 border-t border-border-warm">
-                  <span className="text-ink-secondary text-[11px]">Destination Account:</span>
-                  <span className="font-semibold text-slate-900">{getAccountName(selectedEdge.target)}</span>
-                  <span className="font-mono text-[10px] text-slate-500">({selectedEdge.target})</span>
-                </div>
+                <button
+                  onClick={closeSidebar}
+                  className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
-              {Boolean((selectedEdge.data as Record<string, any>)?.timestamp) && (
-                <div className="p-2.5 bg-slate-50 rounded-lg border border-border-warm text-[11px] text-ink-secondary font-mono">
-                  Timestamp: <span className="text-ink-primary font-medium">{String((selectedEdge.data as Record<string, any>).timestamp)}</span>
+              <div className="mt-4 space-y-3 text-xs font-sans">
+                <div className="p-3 bg-amber-50/60 border border-amber-200/80 rounded-lg space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-amber-900 text-[11px] font-semibold">Relationship Type:</span>
+                    <span className="px-2 py-0.5 rounded bg-white text-amber-900 border border-amber-300 text-[10px] font-mono font-bold">
+                      {relLabel}
+                    </span>
+                  </div>
                 </div>
-              )}
+
+                <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-2.5">
+                  <div className="flex flex-col">
+                    <span className="text-ink-secondary text-[11px] capitalize">{sourceInfo.type} Entity:</span>
+                    <span className="font-semibold text-slate-900">{sourceInfo.name}</span>
+                    <span className="font-mono text-[10px] text-slate-500" title={selectedEdge.source}>
+                      ({sourceInfo.code})
+                    </span>
+                  </div>
+
+                  <div className="py-1 flex items-center gap-2 text-ink-secondary text-[11px] font-medium border-y border-border-warm">
+                    <ArrowDownLeft className="w-3 h-3 text-navy" />
+                    <span>Linked via <strong className="text-ink-primary lowercase font-mono">{relLabel.toLowerCase()}</strong></span>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <span className="text-ink-secondary text-[11px] capitalize">{targetInfo.type} Target:</span>
+                    <span className="font-semibold text-slate-900">{targetInfo.name}</span>
+                    <span className="font-mono text-[10px] text-slate-500" title={selectedEdge.target}>
+                      ({targetInfo.code})
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-lg bg-slate-50 border border-border-warm text-ink-primary text-xs leading-relaxed space-y-1">
+                  <div className="font-semibold text-navy text-[11px]">Nexus Analysis:</div>
+                  <p className="text-ink-secondary leading-relaxed">
+                    {sourceInfo.type === "device" || targetInfo.type === "device"
+                      ? "Hardware footprint correlation indicates shared device telemetry utilized across multiple syndicate accounts."
+                      : "Structural association establishing beneficial ownership, common control, or registered signatory nexus."}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
     </div>
   );

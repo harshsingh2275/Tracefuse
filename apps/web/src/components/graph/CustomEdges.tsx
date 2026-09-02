@@ -29,15 +29,25 @@ export const TransactionEdge = ({
   });
 
   const edgeData = data as Record<string, any> | undefined;
-  const amount = edgeData?.amount;
-  const formattedAmount =
-    amount !== undefined
-      ? `₹${Number(amount).toLocaleString("en-IN")}`
-      : edgeData?.label || "";
+  const edgeType = String(edgeData?.edgeType || "").toLowerCase();
+  const amount = Number(edgeData?.amount || 0);
+
+  // Strictly check if edge is a financial transaction
+  const isTransaction =
+    edgeType === "transaction" ||
+    (amount > 0 && edgeType !== "uses" && edgeType !== "owns" && edgeType !== "linked_to") ||
+    String(id).startsWith("txn_");
+
+  // Format label: only show rupee amount for actual monetary transactions with amount > 0
+  const formattedAmount = isTransaction && amount > 0 ? `₹${amount.toLocaleString("en-IN")}` : "";
 
   const isHighlighted = selected || edgeData?.is_highlighted;
-  const strokeColor = isHighlighted ? "#1F3A5F" : "#829ab1";
-  const strokeWidth = isHighlighted ? 3 : 2;
+  const strokeColor = isHighlighted
+    ? "#1F3A5F"
+    : isTransaction
+    ? "#829ab1"
+    : "#cbd5e1"; // Muted dashed/subtle tone for structural edges
+  const strokeWidth = isHighlighted ? 3 : isTransaction ? 2 : 1.5;
 
   return (
     <>
@@ -48,9 +58,10 @@ export const TransactionEdge = ({
           ...style,
           stroke: strokeColor,
           strokeWidth,
+          strokeDasharray: !isTransaction ? "4,4" : undefined,
         }}
       />
-      {formattedAmount && (
+      {Boolean(formattedAmount) && (
         <EdgeLabelRenderer>
           <div
             style={{

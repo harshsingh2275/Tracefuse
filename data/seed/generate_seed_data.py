@@ -922,10 +922,13 @@ def generate_seed():
         )
         to_add.extend([note1, note2, act1])
         investigations.append(inv_s9)
+        to_add.extend(investigations)
 
-        print(f"[Seed] Writing {len(to_add)} records to database...", flush=True)
-        db.add_all(to_add)
-        db.commit()
+        print(f"[Seed] Writing {len(to_add)} records to database in batches...", flush=True)
+        batch_size = 100
+        for i in range(0, len(to_add), batch_size):
+            db.add_all(to_add[i:i + batch_size])
+            db.commit()
 
         # Summary
         total_accounts = db.query(Account).count()

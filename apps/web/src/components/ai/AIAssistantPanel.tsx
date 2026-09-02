@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { AskAssistantResponse } from "@tracefuse/shared";
-import { formatCaseCode } from "@/lib/formatters";
+import { formatCaseCode, formatAccountCode, formatTxnCode, humanizeEvidenceText } from "@/lib/formatters";
 
 interface Message {
   id: string;
@@ -209,7 +209,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               >
                 {/* Message Body formatted with linebreaks / markdown elements */}
                 <div className="whitespace-pre-wrap font-sans text-xs space-y-2">
-                  {msg.text.split("\n\n").map((paragraph, pIdx) => {
+                  {humanizeEvidenceText(msg.text).split("\n\n").map((paragraph, pIdx) => {
                     if (paragraph.startsWith("### ")) {
                       return (
                         <h4 key={pIdx} className="font-serif font-bold text-navy text-xs mt-2">
@@ -219,11 +219,10 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                     }
                     if (paragraph.startsWith("- ")) {
                       return (
-                        <ul key={pIdx} className="space-y-1 list-disc list-inside text-ink-primary">
-                          {paragraph.split("\n").map((line, lIdx) => (
-                            <li key={lIdx}>{line.replace("- ", "")}</li>
-                          ))}
-                        </ul>
+                        <div key={pIdx} className="flex items-start gap-1.5 pl-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-navy shrink-0 mt-1.5" />
+                          <span>{paragraph.replace("- ", "")}</span>
+                        </div>
                       );
                     }
                     return <p key={pIdx}>{paragraph}</p>;
@@ -234,14 +233,24 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                 {!isUser && msg.citations && msg.citations.length > 0 && (
                   <div className="pt-2 border-t border-border-warm flex flex-wrap items-center gap-1 text-[10px]">
                     <span className="text-ink-secondary">Citations:</span>
-                    {msg.citations.map((c) => (
-                      <span
-                        key={c}
-                        className="px-1.5 py-0.2 rounded bg-navy-subtle border border-navy/20 text-navy font-mono"
-                      >
-                        {c}
-                      </span>
-                    ))}
+                    {msg.citations.map((c) => {
+                      const displayCode = c.startsWith("acc_")
+                        ? formatAccountCode(c)
+                        : c.startsWith("txn_")
+                        ? formatTxnCode(c)
+                        : c.startsWith("inv_")
+                        ? formatCaseCode(c)
+                        : c;
+                      return (
+                        <span
+                          key={c}
+                          title={c}
+                          className="px-1.5 py-0.2 rounded bg-navy-subtle border border-navy/20 text-navy font-mono"
+                        >
+                          {displayCode}
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
 

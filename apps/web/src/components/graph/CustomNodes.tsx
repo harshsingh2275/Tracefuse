@@ -9,7 +9,7 @@ import {
   Flame,
   ShieldCheck,
 } from "lucide-react";
-import { formatAccountCode } from "@/lib/formatters";
+import { formatAccountCode, formatEntityCode } from "@/lib/formatters";
 
 // Account Node Component
 export const AccountNode = memo(({ data, selected }: NodeProps) => {
@@ -19,6 +19,7 @@ export const AccountNode = memo(({ data, selected }: NodeProps) => {
   const holderName = nodeData.holder_name || label;
   const accountNumber = nodeData.account_number || "";
   const accountType = nodeData.account_type || "savings";
+  const accountCode = formatAccountCode(nodeData.id);
 
   let borderStyle = "border-border-warm bg-white";
   let ringStyle = "";
@@ -76,7 +77,7 @@ export const AccountNode = memo(({ data, selected }: NodeProps) => {
           {holderName}
         </div>
         <div className="font-mono text-[10px] text-slate-500 truncate" title={nodeData.id}>
-          {accountNumber ? `${accountNumber} • ${formatAccountCode(nodeData.id)}` : formatAccountCode(nodeData.id)}
+          {accountNumber ? `${accountNumber} • ${accountCode}` : accountCode}
         </div>
       </div>
     </div>
@@ -89,29 +90,31 @@ AccountNode.displayName = "AccountNode";
 // Device Node Component (Shared Hardware Fingerprint)
 export const DeviceNode = memo(({ data, selected }: NodeProps) => {
   const nodeData = data as Record<string, any>;
-  const fingerprint = nodeData.device_fingerprint || nodeData.label || "Hardware Device";
+  const deviceCode = formatEntityCode(nodeData.id, "device");
+  const fingerprint = nodeData.device_fingerprint || nodeData.label || "";
 
   return (
     <div
-      className={`px-3 py-2 rounded-xl border border-border-warm bg-white ${
+      className={`px-3 py-2.5 rounded-xl border border-border-warm bg-white ${
         selected ? "ring-2 ring-navy shadow-md" : "shadow-sm"
-      } min-w-[170px] max-w-[200px] text-xs font-sans relative cursor-pointer`}
+      } min-w-[180px] max-w-[220px] text-xs font-sans relative cursor-pointer`}
+      title={fingerprint ? `Hardware Fingerprint: ${fingerprint}` : undefined}
     >
       <Handle type="target" position={Position.Top} className="!bg-navy !w-2 !h-2" />
       <Handle type="source" position={Position.Bottom} className="!bg-navy !w-2 !h-2" />
       <Handle type="target" position={Position.Left} id="left" className="!bg-navy !w-2 !h-2" />
       <Handle type="source" position={Position.Right} id="right" className="!bg-navy !w-2 !h-2" />
 
-      <div className="flex items-center gap-2">
-        <div className="p-1 rounded bg-slate-100 text-navy border border-border-warm shrink-0">
-          <Smartphone className="w-3.5 h-3.5" />
+      <div className="flex items-center gap-2.5">
+        <div className="p-1.5 rounded-lg bg-navy-subtle text-navy border border-navy/20 shrink-0">
+          <Smartphone className="w-4 h-4" />
         </div>
-        <div className="overflow-hidden">
-          <div className="text-[10px] font-semibold text-navy uppercase">
+        <div className="overflow-hidden space-y-0.5">
+          <div className="text-xs font-semibold text-slate-900 truncate">
             Shared Device
           </div>
-          <div className="font-mono text-[10px] text-slate-500 truncate" title={fingerprint}>
-            {fingerprint.length > 16 ? `${fingerprint.slice(0, 14)}...` : fingerprint}
+          <div className="font-mono text-[10px] text-slate-500 font-medium">
+            {deviceCode}
           </div>
         </div>
       </div>
@@ -122,32 +125,36 @@ export const DeviceNode = memo(({ data, selected }: NodeProps) => {
 DeviceNode.displayName = "DeviceNode";
 
 
-// Entity Node Component (Owner / Person / Merchant)
+// Entity Node Component (Owner / Person / Merchant / Beneficiary)
 export const EntityNode = memo(({ data, selected }: NodeProps) => {
   const nodeData = data as Record<string, any>;
-  const name = nodeData.name || nodeData.label || "Entity";
-  const entityType = nodeData.type || "person";
+  const entityType = String(nodeData.type || nodeData.nodeType || "person").toLowerCase();
   const isMerchant = entityType === "merchant";
+  const isBeneficiary = entityType === "beneficiary";
+  const name = nodeData.name || nodeData.label || (isMerchant ? "Merchant Entity" : isBeneficiary ? "Beneficiary Entity" : "Individual");
+  const code = formatEntityCode(nodeData.id, entityType);
 
   return (
     <div
-      className={`px-3 py-2 rounded-xl border border-border-warm bg-white ${
+      className={`px-3 py-2.5 rounded-xl border border-border-warm bg-white ${
         selected ? "ring-2 ring-navy shadow-md" : "shadow-sm"
-      } min-w-[160px] text-xs font-sans relative cursor-pointer`}
+      } min-w-[170px] max-w-[210px] text-xs font-sans relative cursor-pointer`}
     >
       <Handle type="target" position={Position.Top} className="!bg-navy !w-2 !h-2" />
       <Handle type="source" position={Position.Bottom} className="!bg-navy !w-2 !h-2" />
+      <Handle type="target" position={Position.Left} id="left" className="!bg-navy !w-2 !h-2" />
+      <Handle type="source" position={Position.Right} id="right" className="!bg-navy !w-2 !h-2" />
 
-      <div className="flex items-center gap-2">
-        <div className="p-1 rounded bg-navy-subtle text-navy border border-navy/20 shrink-0">
-          {isMerchant ? <Building2 className="w-3.5 h-3.5" /> : <User className="w-3.5 h-3.5" />}
+      <div className="flex items-center gap-2.5">
+        <div className="p-1.5 rounded-lg bg-navy-subtle text-navy border border-navy/20 shrink-0">
+          {isMerchant ? <Building2 className="w-4 h-4" /> : <User className="w-4 h-4" />}
         </div>
-        <div className="overflow-hidden">
-          <div className="text-[10px] font-sans font-semibold text-navy uppercase">
-            {entityType}
-          </div>
-          <div className="font-semibold text-slate-900 truncate" title={name}>
+        <div className="overflow-hidden space-y-0.5">
+          <div className="font-semibold text-slate-900 text-xs truncate" title={name}>
             {name}
+          </div>
+          <div className="font-mono text-[10px] text-slate-500 font-medium truncate" title={nodeData.id}>
+            {code}
           </div>
         </div>
       </div>
