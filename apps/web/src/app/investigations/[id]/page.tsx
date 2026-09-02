@@ -45,7 +45,13 @@ import { FollowMoneyController } from "@/components/graph/FollowMoneyController"
 import { AIAssistantPanel } from "@/components/ai/AIAssistantPanel";
 import { EmptyState } from "@/components/EmptyState";
 import { InvestigationSkeleton } from "@/components/LoadingSkeleton";
-import { formatCaseCode, formatAccountCode, humanizeEvidenceText, formatTxnCode } from "@/lib/formatters";
+import {
+  formatCaseCode,
+  formatAccountCode,
+  humanizeEvidenceText,
+  formatTxnCode,
+  formatISTDateTime,
+} from "@/lib/formatters";
 
 function InvestigationDetailContent() {
   const params = useParams();
@@ -578,7 +584,7 @@ function InvestigationDetailContent() {
                           {n.user_name || n.user_id}
                         </span>
                         <span className="font-mono text-ink-secondary text-[10px]">
-                          {new Date(n.created_at).toLocaleString()}
+                          {formatISTDateTime(n.created_at)}
                         </span>
                       </div>
                       <p className="text-xs text-ink-primary font-sans leading-relaxed">{n.note_text}</p>

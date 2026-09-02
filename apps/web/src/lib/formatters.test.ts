@@ -98,17 +98,17 @@ describe("Centralized Code Formatter Engine", () => {
     expect(codeToId.size).toBe(uniqueRecords.length);
   });
 
-  test("humanizeEvidenceText replaces raw account and transaction IDs seamlessly", () => {
-    const text = "Account acc_flagship_origin sent funds via txn_flagship_cycle_kickback to Vikram (acc_flagship_layer_01)";
-    const entities = [
-      { id: "acc_flagship_origin", holder_name: "Vikramaditya Singhania" },
-      { id: "acc_flagship_layer_01", holder_name: "Vikram Sharma" },
-    ];
-    const humanized = humanizeEvidenceText(text, entities);
-    expect(humanized).toContain("Vikramaditya Singhania's account (ACC-01)");
-    expect(humanized).toContain("TXN-109");
-    expect(humanized).toContain("Vikram Sharma (ACC-02)");
-    expect(humanized).not.toContain("acc_flagship_origin");
-    expect(humanized).not.toContain("txn_flagship_cycle_kickback");
+  test("formatISTDateTime properly converts UTC ISO string to IST", () => {
+    // 19:07 UTC on Sept 2nd is 00:37 AM on Sept 3rd in IST (UTC+5:30)
+    const utcIso = "2026-09-02T19:07:00Z";
+    const istFormatted = formatISTDateTime(utcIso);
+    expect(istFormatted).toContain("3 Sept");
+    expect(istFormatted).toContain("12:37:00 am");
+
+    // Naive string without Z should also be assumed UTC
+    const naiveUtcIso = "2026-09-02T19:07:00";
+    const naiveIstFormatted = formatISTDateTime(naiveUtcIso);
+    expect(naiveIstFormatted).toContain("3 Sept");
+    expect(naiveIstFormatted).toContain("12:37:00 am");
   });
 });

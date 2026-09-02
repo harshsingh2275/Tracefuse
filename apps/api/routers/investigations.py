@@ -4,7 +4,7 @@ Core API endpoints for case management, graph visualization, timeline analysis,
 Follow-the-Money provenance, AI assistant copilot, and compliance reporting (Section 18).
 """
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from apps.api.database import get_db
@@ -469,11 +469,11 @@ def add_case_note(
     user_id = user.id if user else None
 
     note = CaseNote(
-        id=f"note_{int(datetime.utcnow().timestamp() * 1000)}",
+        id=f"note_{int(datetime.now(timezone.utc).timestamp() * 1000)}",
         investigation_id=inv.id,
         user_id=user_id,
         note_text=req.note_text,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
     db.add(note)
     db.commit()

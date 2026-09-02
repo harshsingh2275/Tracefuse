@@ -174,6 +174,32 @@ export function formatRelationshipCode(id: string): string {
 }
 
 /**
+ * Formats any UTC or ISO timestamp strictly in Indian Standard Time (IST, UTC+5:30)
+ */
+export function formatISTDateTime(dateInput: string | Date | number): string {
+  if (!dateInput) return "";
+  let d: Date;
+  if (typeof dateInput === "string") {
+    const isIsoWithoutTz = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(dateInput);
+    d = new Date(isIsoWithoutTz ? `${dateInput}Z` : dateInput);
+  } else {
+    d = new Date(dateInput);
+  }
+  if (isNaN(d.getTime())) return String(dateInput);
+
+  return d.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+}
+
+/**
  * Humanizes investigative evidence sentences by replacing raw internal IDs (acc_*, txn_*, ent_*, dev_*)
  * with formatted entity names and short codes like "Vikramaditya Singhania's account (ACC-01)"
  */

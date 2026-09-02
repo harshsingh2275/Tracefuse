@@ -901,7 +901,7 @@ def generate_seed():
             id="note_flagship_01",
             investigation_id=inv_s9.id,
             user_id=demo_user.id,
-            note_text="High priority multi-pattern nexus detected: 5 rapid fan-out hops from origin within 21 mins, 3 accounts sharing device fingerprint fp_flagship_syndicate_core_88x. Layered forward via Nexus Enterprises and Pacific Meridian Trading.",
+            note_text="High priority multi-pattern nexus detected: 5 rapid fan-out hops from origin within 21 mins, 3 accounts sharing registered device (DEV-01). Layered forward via Nexus Enterprises and Pacific Meridian Trading.",
             created_at=s9_time + timedelta(hours=1, minutes=10),
         )
         note2 = CaseNote(
