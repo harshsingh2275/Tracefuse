@@ -43,10 +43,10 @@ export const TransactionEdge = ({
 
   const isHighlighted = selected || edgeData?.is_highlighted;
   const strokeColor = isHighlighted
-    ? "#1F3A5F"
+    ? "var(--accent)"
     : isTransaction
-    ? "#829ab1"
-    : "#cbd5e1"; // Muted dashed/subtle tone for structural edges
+    ? "var(--text-secondary)"
+    : "var(--border)";
   const strokeWidth = isHighlighted ? 3 : isTransaction ? 2 : 1.5;
 
   return (
@@ -75,7 +75,7 @@ export const TransactionEdge = ({
               className={`px-2 py-0.5 rounded-full border text-[10px] font-mono font-semibold transition-all ${
                 isHighlighted
                   ? "bg-navy text-white border-navy shadow-md shadow-navy/30 scale-105"
-                  : "bg-white/95 text-ink-primary border-border-warm shadow-sm hover:border-navy"
+                  : "bg-surface/95 text-ink-primary border-border-warm shadow-sm hover:border-navy"
               }`}
             >
               {formattedAmount}

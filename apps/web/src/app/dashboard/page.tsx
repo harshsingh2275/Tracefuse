@@ -94,10 +94,10 @@ export default function DashboardPage() {
 
   // Risk Distribution Chart Data
   const riskDistributionData = [
-    { name: "Low", count: investigations.filter((i) => i.risk_level === "low").length, color: "#6B655A" },
-    { name: "Medium", count: investigations.filter((i) => i.risk_level === "medium").length, color: "#B8792F" },
-    { name: "High", count: investigations.filter((i) => i.risk_level === "high").length, color: "#B8792F" },
-    { name: "Critical", count: investigations.filter((i) => i.risk_level === "critical").length, color: "#8C2F2F" },
+    { name: "Low", count: investigations.filter((i) => i.risk_level === "low").length, color: "var(--severity-normal)" },
+    { name: "Medium", count: investigations.filter((i) => i.risk_level === "medium").length, color: "var(--severity-suspicious)" },
+    { name: "High", count: investigations.filter((i) => i.risk_level === "high").length, color: "var(--severity-suspicious)" },
+    { name: "Critical", count: investigations.filter((i) => i.risk_level === "critical").length, color: "var(--severity-critical)" },
   ];
 
   // Top Patterns Distribution Data
@@ -128,7 +128,7 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
         <Navbar />
         <div className="flex-1 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white border border-border-warm p-8 rounded-2xl text-center space-y-4 shadow-sm">
+          <div className="max-w-md w-full bg-surface border border-border-warm p-8 rounded-2xl text-center space-y-4 shadow-sm">
             <div className="w-12 h-12 rounded-2xl bg-severity-critical-bg border border-severity-critical-border text-severity-critical flex items-center justify-center mx-auto">
               <ShieldAlert className="w-6 h-6" />
             </div>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
             </div>
             <button
               onClick={fetchData}
-              className="px-3 py-1.5 bg-white hover:bg-slate-50 text-severity-critical text-xs rounded-lg border border-severity-critical-border flex items-center gap-1.5 transition-all cursor-pointer font-medium"
+              className="px-3 py-1.5 bg-surface hover:bg-navy-subtle text-severity-critical text-xs rounded-lg border border-severity-critical-border flex items-center gap-1.5 transition-all cursor-pointer font-medium"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Retry</span>
@@ -179,7 +179,7 @@ export default function DashboardPage() {
         )}
 
         {/* Flagship Case Hero Callout */}
-        <div className="relative overflow-hidden rounded-2xl bg-white border border-border-warm p-6 md:p-8 shadow-sm">
+        <div className="relative overflow-hidden rounded-2xl bg-surface border border-border-warm p-6 md:p-8 shadow-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider text-navy bg-navy-subtle border border-navy/20 rounded-full">
@@ -279,7 +279,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Status Filter Tabs */}
-              <div className="flex items-center gap-1 bg-white border border-border-warm p-1 rounded-xl shadow-sm text-xs font-sans">
+              <div className="flex items-center gap-1 bg-surface border border-border-warm p-1 rounded-xl shadow-sm text-xs font-sans">
                 {["all", "new", "investigating", "escalated", "resolved"].map((st) => (
                   <button
                     key={st}
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                     className={`px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer font-medium ${
                       statusFilter === st
                         ? "bg-navy text-white shadow-sm"
-                        : "text-ink-secondary hover:text-ink-primary hover:bg-slate-100"
+                        : "text-ink-secondary hover:text-ink-primary hover:bg-navy-subtle"
                     }`}
                   >
                     {st}
@@ -304,14 +304,14 @@ export default function DashboardPage() {
                   placeholder="Search by case title, entity name, ID, or pattern..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-white border border-border-warm rounded-xl text-xs text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy shadow-sm"
+                  className="w-full pl-9 pr-4 py-2 bg-surface border border-border-warm rounded-xl text-xs text-ink-primary placeholder-ink-secondary/60 focus:outline-none focus:border-navy shadow-sm"
                 />
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <Search className="w-4 h-4 text-ink-secondary/60 absolute left-3 top-2.5" />
               </div>
 
               <button
                 onClick={() => setSortAsc(!sortAsc)}
-                className="px-3 py-2 bg-white border border-border-warm text-ink-primary hover:bg-slate-50 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                className="px-3 py-2 bg-surface border border-border-warm text-ink-primary hover:bg-navy-subtle rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
                 title="Toggle Risk Score Sort"
               >
                 <ArrowUpDown className="w-3.5 h-3.5 text-navy" />
@@ -320,10 +320,10 @@ export default function DashboardPage() {
             </div>
 
             {/* Case List Table */}
-            <div className="bg-white border border-border-warm rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-surface border border-border-warm rounded-2xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-sans min-w-[780px]">
-                  <thead className="bg-slate-50 text-ink-secondary text-[11px] uppercase tracking-wider border-b border-border-warm font-medium">
+                  <thead className="bg-linen text-ink-secondary text-[11px] uppercase tracking-wider border-b border-border-warm font-medium">
                     <tr>
                       <th className="py-3 px-4 w-[42%] min-w-[280px]">Case Title & Entity Nexus</th>
                       <th className="py-3 px-4 w-[20%] min-w-[150px]">Detected Patterns</th>
@@ -338,12 +338,12 @@ export default function DashboardPage() {
                     {loading ? (
                       [1, 2, 3, 4, 5].map((i) => (
                         <tr key={i} className="animate-pulse">
-                          <td className="py-4 px-4"><div className="h-4 bg-slate-200 rounded w-64 mb-1.5" /><div className="h-3 bg-slate-200 rounded w-24" /></td>
-                          <td className="py-4 px-4"><div className="h-5 bg-slate-200 rounded w-32" /></td>
-                          <td className="py-4 px-4"><div className="h-6 bg-slate-200 rounded w-20" /></td>
-                          <td className="py-4 px-4"><div className="h-4 bg-slate-200 rounded w-16" /></td>
-                          <td className="py-4 px-4"><div className="h-5 bg-slate-200 rounded w-16" /></td>
-                          <td className="py-4 px-4 text-right"><div className="h-7 bg-slate-200 rounded w-24 ml-auto" /></td>
+                          <td className="py-4 px-4"><div className="h-4 bg-border-warm dark:bg-slate-800 rounded w-64 mb-1.5" /><div className="h-3 bg-border-warm dark:bg-slate-800 rounded w-24" /></td>
+                          <td className="py-4 px-4"><div className="h-5 bg-border-warm dark:bg-slate-800 rounded w-32" /></td>
+                          <td className="py-4 px-4"><div className="h-6 bg-border-warm dark:bg-slate-800 rounded w-20" /></td>
+                          <td className="py-4 px-4"><div className="h-4 bg-border-warm dark:bg-slate-800 rounded w-16" /></td>
+                          <td className="py-4 px-4"><div className="h-5 bg-border-warm dark:bg-slate-800 rounded w-16" /></td>
+                          <td className="py-4 px-4 text-right"><div className="h-7 bg-border-warm dark:bg-slate-800 rounded w-24 ml-auto" /></td>
                         </tr>
                       ))
                     ) : filteredInvestigations.length === 0 ? (
@@ -364,18 +364,18 @@ export default function DashboardPage() {
                       filteredInvestigations.slice(0, 5).map((inv) => (
                         <tr
                           key={inv.id}
-                          className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
+                          className="hover:bg-navy-subtle/50 transition-colors group cursor-pointer"
                         >
                           <td className="py-3.5 px-4 w-[42%] min-w-[280px]">
                             <Link href={`/investigations/${inv.id}?tab=graph`} className="block">
                               <div
-                                className="font-semibold text-slate-900 group-hover:text-navy transition-colors line-clamp-2 leading-snug"
+                                className="font-semibold text-ink-primary group-hover:text-navy transition-colors line-clamp-2 leading-snug"
                                 title={inv.title}
                               >
                                 {inv.title}
                               </div>
                               <div className="text-[11px] text-ink-secondary flex items-center gap-2 mt-1">
-                                <span className="font-mono text-slate-500 font-medium">{formatCaseCode(inv.id)}</span>
+                                <span className="font-mono text-ink-secondary font-medium">{formatCaseCode(inv.id)}</span>
                                 <span>•</span>
                                 <span>{inv.entities_count} accounts</span>
                               </div>
@@ -394,7 +394,7 @@ export default function DashboardPage() {
                             <RiskBadge level={inv.risk_level} score={inv.risk_score} />
                           </td>
 
-                          <td className="py-3.5 px-4 font-mono font-bold text-emerald-700 whitespace-nowrap">
+                          <td className="py-3.5 px-4 font-mono font-bold text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
                             ₹{inv.total_flow_amount.toLocaleString("en-IN")}
                           </td>
 
@@ -420,7 +420,7 @@ export default function DashboardPage() {
 
               {/* Table Footer: View All Link */}
               {!loading && filteredInvestigations.length > 0 && (
-                <div className="p-3.5 bg-slate-50 border-t border-border-warm flex items-center justify-between text-xs font-sans">
+                <div className="p-3.5 bg-linen border-t border-border-warm flex items-center justify-between text-xs font-sans">
                   <span className="text-ink-secondary">
                     Showing top <strong className="text-ink-primary font-mono">{Math.min(5, filteredInvestigations.length)}</strong> prioritized cases
                   </span>
@@ -439,7 +439,7 @@ export default function DashboardPage() {
           {/* Sidebar Column: Visual Analytics & Breakdown (1 Col) */}
           <div className="space-y-6">
             {/* Risk Severity Breakdown Chart */}
-            <div className="bg-white border border-border-warm p-5 rounded-2xl space-y-4 shadow-sm">
+            <div className="bg-surface border border-border-warm p-5 rounded-2xl space-y-4 shadow-sm">
               <div>
                 <h4 className="text-sm font-bold font-serif text-ink-primary tracking-tight">
                   Risk Band Distribution
@@ -450,10 +450,11 @@ export default function DashboardPage() {
               <div className="h-48 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={riskDistributionData}>
-                    <XAxis dataKey="name" stroke="#6B655A" fontSize={11} tickLine={false} />
-                    <YAxis stroke="#6B655A" fontSize={11} allowDecimals={false} tickLine={false} />
+                    <XAxis dataKey="name" stroke="var(--text-secondary)" fontSize={11} tickLine={false} />
+                    <YAxis stroke="var(--text-secondary)" fontSize={11} allowDecimals={false} tickLine={false} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E5E0D6", borderRadius: "8px", fontSize: "12px" }}
+                      contentStyle={{ backgroundColor: "var(--surface)", borderColor: "var(--border)", borderRadius: "8px", fontSize: "12px", color: "var(--text-primary)" }}
+                      itemStyle={{ color: "var(--text-primary)" }}
                     />
                     <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                       {riskDistributionData.map((entry, index) => (
@@ -466,7 +467,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Pattern Type Frequency Chart */}
-            <div className="bg-white border border-border-warm p-5 rounded-2xl space-y-4 shadow-sm">
+            <div className="bg-surface border border-border-warm p-5 rounded-2xl space-y-4 shadow-sm">
               <div>
                 <h4 className="text-sm font-bold font-serif text-ink-primary tracking-tight">
                   Detected Pattern Signatures
@@ -491,3 +492,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

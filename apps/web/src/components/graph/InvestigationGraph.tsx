@@ -185,12 +185,12 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
           },
           markerEnd: {
             type: MarkerType.ArrowClosed,
-            color: isCurrentHop ? "#1F3A5F" : "#627d98",
+            color: isCurrentHop ? "var(--accent)" : "var(--text-secondary)",
             width: 16,
             height: 16,
           },
           style: {
-            stroke: isCurrentHop ? "#1F3A5F" : isPathEdge ? "#334e68" : "#829ab1",
+            stroke: isCurrentHop ? "var(--accent)" : isPathEdge ? "var(--accent-hover)" : "var(--border)",
             strokeWidth: isCurrentHop ? 4 : isPathEdge ? 2.5 : 2,
           },
         };
@@ -226,7 +226,7 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
       </div>
 
       {/* Top Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-white border border-border-warm rounded-xl shadow-sm text-xs font-sans">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-surface border border-border-warm rounded-xl shadow-sm text-xs font-sans">
         <div className="flex items-center gap-3 flex-wrap">
           {/* Search Box */}
           <div className="relative">
@@ -235,9 +235,9 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
               placeholder="Filter node or account..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 bg-slate-50 border border-border-warm rounded-lg text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy text-xs w-48 sm:w-56"
+              className="pl-8 pr-3 py-1.5 bg-linen border border-border-warm rounded-lg text-ink-primary placeholder-ink-muted focus:outline-none focus:border-navy text-xs w-48 sm:w-56"
             />
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-ink-muted absolute left-2.5 top-2.5" />
           </div>
 
           {/* Toggle Device Nodes */}
@@ -246,7 +246,7 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
             className={`px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
               showDevices
                 ? "bg-navy-subtle text-navy border border-navy/20"
-                : "bg-slate-50 text-ink-secondary border border-border-warm hover:text-ink-primary"
+                : "bg-linen text-ink-secondary border border-border-warm hover:text-ink-primary"
             }`}
           >
             <Smartphone className="w-3.5 h-3.5" />
@@ -260,7 +260,7 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
               className={`px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                 showFollowMoney
                   ? "bg-navy text-white shadow-sm"
-                  : "bg-slate-50 text-ink-secondary border border-border-warm hover:text-ink-primary"
+                  : "bg-linen text-ink-secondary border border-border-warm hover:text-ink-primary"
               }`}
             >
               <GitFork className="w-3.5 h-3.5" />
@@ -311,18 +311,18 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
           minZoom={0.2}
           maxZoom={2.0}
         >
-          <Background color="#E5E0D6" gap={20} size={1} />
+          <Background color="var(--border)" gap={20} size={1} />
           <Controls className="!left-3 !bottom-3 !top-auto" />
           <MiniMap
             nodeColor={(n) => {
-              if (n.type === "device") return "#829ab1";
+              if (n.type === "device") return "var(--text-secondary)";
               const sev = (n.data?.severity as string)?.toLowerCase();
-              if (sev === "critical") return "#8C2F2F";
-              if (sev === "high") return "#B8792F";
-              if (sev === "medium") return "#B8792F";
-              return "#1F3A5F";
+              if (sev === "critical") return "var(--severity-critical)";
+              if (sev === "high") return "var(--severity-suspicious)";
+              if (sev === "medium") return "var(--severity-suspicious)";
+              return "var(--accent)";
             }}
-            maskColor="rgba(247, 244, 238, 0.7)"
+            maskColor="rgba(var(--background-rgb) / 0.7)"
             className="!right-3 !bottom-3"
           />
         </ReactFlow>
@@ -335,7 +335,7 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
           const isAccount = info.type === "account";
 
           return (
-            <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-white/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col overflow-y-auto animate-in slide-in-from-right-4 duration-200">
+            <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-surface/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col overflow-y-auto animate-in slide-in-from-right-4 duration-200">
               <div className="flex items-start justify-between pb-3 border-b border-border-warm">
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-ink-secondary font-medium">
@@ -344,13 +344,13 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
                   <h4 className="text-base font-bold text-ink-primary font-serif mt-0.5">
                     {info.name}
                   </h4>
-                  <div className="text-[10px] font-mono text-slate-500 mt-0.5" title={selectedNode.id}>
+                  <div className="text-[10px] font-mono text-ink-secondary mt-0.5" title={selectedNode.id}>
                     Reference: {info.code}
                   </div>
                 </div>
                 <button
                   onClick={closeSidebar}
-                  className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-navy-subtle transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -358,7 +358,7 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
 
               <div className="mt-4 space-y-4 text-xs font-sans">
                 {/* Risk & Identifier Info */}
-                <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-2">
+                <div className="p-3 bg-linen rounded-lg border border-border-warm space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-ink-secondary text-[11px]">Entity Type:</span>
                     <span className="text-navy uppercase font-semibold text-[11px]">
@@ -382,7 +382,7 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
                 {/* Account Specific Info */}
                 {isAccount && (
                   <div className="space-y-3">
-                    <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-1.5 text-[11px]">
+                    <div className="p-3 bg-linen rounded-lg border border-border-warm space-y-1.5 text-[11px]">
                       <div className="text-ink-secondary">Account Number:</div>
                       <div className="text-ink-primary font-semibold font-mono">
                         {String(selectedNode.data?.account_number || "AC-99482910")}
@@ -402,7 +402,7 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
 
                 {/* Device Specific Info */}
                 {isDevice && (
-                  <div className="p-3 rounded-lg bg-slate-50 border border-border-warm text-xs space-y-2">
+                  <div className="p-3 rounded-lg bg-linen border border-border-warm text-xs space-y-2">
                     <div className="font-semibold text-navy flex items-center gap-1.5">
                       <Smartphone className="w-3.5 h-3.5" />
                       Shared Hardware Binding
@@ -429,7 +429,7 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
 
           if (isTransaction) {
             return (
-              <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-white/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col animate-in slide-in-from-right-4 duration-200">
+              <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-surface/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col animate-in slide-in-from-right-4 duration-200">
                 <div className="flex items-start justify-between pb-3 border-b border-border-warm">
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-navy font-semibold flex items-center gap-1.5">
@@ -439,44 +439,44 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
                     <h4 className="text-base font-bold text-ink-primary font-serif mt-0.5">
                       Money Movement
                     </h4>
-                    <div className="text-[10px] font-mono text-slate-500 mt-0.5" title={String(selectedEdge.id)}>
+                    <div className="text-[10px] font-mono text-ink-secondary mt-0.5" title={String(selectedEdge.id)}>
                       Reference: {formatTxnCode(String(selectedEdge.id))}
                     </div>
                   </div>
                   <button
                     onClick={closeSidebar}
-                    className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-navy-subtle transition-colors cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
 
                 <div className="mt-4 space-y-3 text-xs font-sans">
-                  <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-2.5">
+                  <div className="p-3 bg-linen rounded-lg border border-border-warm space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-ink-secondary">Transfer Amount:</span>
-                      <span className="text-base font-bold font-mono text-emerald-700">
+                      <span className="text-base font-bold font-mono text-emerald-700 dark:text-emerald-400">
                         ₹{amount.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="flex flex-col pt-1 border-t border-border-warm">
                       <span className="text-ink-secondary text-[11px]">Source Account:</span>
-                      <span className="font-semibold text-slate-900">{sourceInfo.name}</span>
-                      <span className="font-mono text-[10px] text-slate-500" title={selectedEdge.source}>
+                      <span className="font-semibold text-ink-primary">{sourceInfo.name}</span>
+                      <span className="font-mono text-[10px] text-ink-secondary" title={selectedEdge.source}>
                         ({sourceInfo.code})
                       </span>
                     </div>
                     <div className="flex flex-col pt-1 border-t border-border-warm">
                       <span className="text-ink-secondary text-[11px]">Destination Account:</span>
-                      <span className="font-semibold text-slate-900">{targetInfo.name}</span>
-                      <span className="font-mono text-[10px] text-slate-500" title={selectedEdge.target}>
+                      <span className="font-semibold text-ink-primary">{targetInfo.name}</span>
+                      <span className="font-mono text-[10px] text-ink-secondary" title={selectedEdge.target}>
                         ({targetInfo.code})
                       </span>
                     </div>
                   </div>
 
                   {Boolean(edgeData.timestamp) && (
-                    <div className="p-2.5 bg-slate-50 rounded-lg border border-border-warm text-[11px] text-ink-secondary font-mono">
+                    <div className="p-2.5 bg-linen rounded-lg border border-border-warm text-[11px] text-ink-secondary font-mono">
                       Timestamp: <span className="text-ink-primary font-medium">{new Date(edgeData.timestamp).toLocaleString()}</span>
                     </div>
                   )}
@@ -494,43 +494,43 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
           const relLabel = String(edgeData.label || edgeData.relationship || edgeType || "Linked Relation").replace(/_/g, " ").toUpperCase();
 
           return (
-            <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-white/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col animate-in slide-in-from-right-4 duration-200">
+            <div className="absolute top-3 right-3 bottom-3 w-80 sm:w-96 bg-surface/95 backdrop-blur-md border border-border-warm rounded-xl p-5 shadow-xl z-20 flex flex-col animate-in slide-in-from-right-4 duration-200">
               <div className="flex items-start justify-between pb-3 border-b border-border-warm">
                 <div>
-                  <div className="text-[10px] uppercase tracking-wider text-amber-800 font-semibold flex items-center gap-1.5">
-                    <GitFork className="w-3.5 h-3.5 text-amber-700" />
+                  <div className="text-[10px] uppercase tracking-wider text-severity-suspicious font-semibold flex items-center gap-1.5">
+                    <GitFork className="w-3.5 h-3.5 text-severity-suspicious" />
                     Structural Relationship
                   </div>
                   <h4 className="text-base font-bold text-ink-primary font-serif mt-0.5">
                     Nexus Correlation
                   </h4>
-                  <div className="text-[10px] font-mono text-slate-500 mt-0.5" title={String(selectedEdge.id)}>
+                  <div className="text-[10px] font-mono text-ink-secondary mt-0.5" title={String(selectedEdge.id)}>
                     Reference: {formatRelationshipCode(String(selectedEdge.id))}
                   </div>
                 </div>
                 <button
                   onClick={closeSidebar}
-                  className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="p-1 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-navy-subtle transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="mt-4 space-y-3 text-xs font-sans">
-                <div className="p-3 bg-amber-50/60 border border-amber-200/80 rounded-lg space-y-2">
+                <div className="p-3 bg-severity-suspicious-bg/50 border border-severity-suspicious-border rounded-lg space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-amber-900 text-[11px] font-semibold">Relationship Type:</span>
-                    <span className="px-2 py-0.5 rounded bg-white text-amber-900 border border-amber-300 text-[10px] font-mono font-bold">
+                    <span className="text-severity-suspicious text-[11px] font-semibold">Relationship Type:</span>
+                    <span className="px-2 py-0.5 rounded bg-surface text-severity-suspicious border border-severity-suspicious-border text-[10px] font-mono font-bold">
                       {relLabel}
                     </span>
                   </div>
                 </div>
 
-                <div className="p-3 bg-slate-50 rounded-lg border border-border-warm space-y-2.5">
+                <div className="p-3 bg-linen rounded-lg border border-border-warm space-y-2.5">
                   <div className="flex flex-col">
                     <span className="text-ink-secondary text-[11px] capitalize">{sourceInfo.type} Entity:</span>
-                    <span className="font-semibold text-slate-900">{sourceInfo.name}</span>
-                    <span className="font-mono text-[10px] text-slate-500" title={selectedEdge.source}>
+                    <span className="font-semibold text-ink-primary">{sourceInfo.name}</span>
+                    <span className="font-mono text-[10px] text-ink-secondary" title={selectedEdge.source}>
                       ({sourceInfo.code})
                     </span>
                   </div>
@@ -542,14 +542,14 @@ export const InvestigationGraph: React.FC<InvestigationGraphProps> = ({
 
                   <div className="flex flex-col">
                     <span className="text-ink-secondary text-[11px] capitalize">{targetInfo.type} Target:</span>
-                    <span className="font-semibold text-slate-900">{targetInfo.name}</span>
-                    <span className="font-mono text-[10px] text-slate-500" title={selectedEdge.target}>
+                    <span className="font-semibold text-ink-primary">{targetInfo.name}</span>
+                    <span className="font-mono text-[10px] text-ink-secondary" title={selectedEdge.target}>
                       ({targetInfo.code})
                     </span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-slate-50 border border-border-warm text-ink-primary text-xs leading-relaxed space-y-1">
+                <div className="p-3 rounded-lg bg-linen border border-border-warm text-ink-primary text-xs leading-relaxed space-y-1">
                   <div className="font-semibold text-navy text-[11px]">Nexus Analysis:</div>
                   <p className="text-ink-secondary leading-relaxed">
                     {sourceInfo.type === "device" || targetInfo.type === "device"

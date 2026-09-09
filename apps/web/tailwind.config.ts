@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,13 +10,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        linen: "#F7F4EE",
-        surface: "#FFFFFF",
-        "border-warm": "#E5E0D6",
+        linen: "rgb(var(--background-rgb) / <alpha-value>)",
+        surface: "rgb(var(--surface-rgb) / <alpha-value>)",
+        "border-warm": "rgb(var(--border-rgb) / <alpha-value>)",
         navy: {
-          DEFAULT: "#1F3A5F",
-          hover: "#152740",
-          subtle: "#EBF1F8",
+          DEFAULT: "rgb(var(--accent-rgb) / <alpha-value>)",
+          hover: "rgb(var(--accent-hover-rgb) / <alpha-value>)",
+          subtle: "rgb(var(--accent-subtle-rgb) / <alpha-value>)",
           50: "#f0f4f8",
           100: "#d9e2ec",
           200: "#bcccdc",
@@ -28,43 +29,43 @@ const config: Config = {
           900: "#102a43",
         },
         ink: {
-          primary: "#24211D",
-          secondary: "#6B655A",
-          muted: "#8C8578",
+          primary: "rgb(var(--text-primary-rgb) / <alpha-value>)",
+          secondary: "rgb(var(--text-secondary-rgb) / <alpha-value>)",
+          muted: "rgb(var(--text-muted-rgb) / <alpha-value>)",
         },
         severity: {
           critical: {
-            DEFAULT: "#8C2F2F",
-            bg: "#F9EBEB",
-            border: "#F0CECE",
+            DEFAULT: "rgb(var(--severity-critical-rgb) / <alpha-value>)",
+            bg: "rgb(var(--severity-critical-bg-rgb) / <alpha-value>)",
+            border: "rgb(var(--severity-critical-border-rgb) / <alpha-value>)",
           },
           suspicious: {
-            DEFAULT: "#B8792F",
-            bg: "#FAF3EA",
-            border: "#F3E2CF",
+            DEFAULT: "rgb(var(--severity-suspicious-rgb) / <alpha-value>)",
+            bg: "rgb(var(--severity-suspicious-bg-rgb) / <alpha-value>)",
+            border: "rgb(var(--severity-suspicious-border-rgb) / <alpha-value>)",
           },
           normal: {
-            DEFAULT: "#6B655A",
-            bg: "#F2EFE9",
-            border: "#E5E0D6",
+            DEFAULT: "rgb(var(--severity-normal-rgb) / <alpha-value>)",
+            bg: "rgb(var(--severity-normal-bg-rgb) / <alpha-value>)",
+            border: "rgb(var(--severity-normal-border-rgb) / <alpha-value>)",
           },
         },
         // Backward-compatible semantic bindings
-        background: "#F7F4EE",
-        foreground: "#24211D",
-        card: "#FFFFFF",
-        "card-border": "#E5E0D6",
+        background: "rgb(var(--background-rgb) / <alpha-value>)",
+        foreground: "rgb(var(--text-primary-rgb) / <alpha-value>)",
+        card: "rgb(var(--surface-rgb) / <alpha-value>)",
+        "card-border": "rgb(var(--border-rgb) / <alpha-value>)",
         brand: {
-          50: "#EBF1F8",
-          500: "#1F3A5F",
-          600: "#1F3A5F",
-          700: "#152740",
+          50: "rgb(var(--accent-subtle-rgb) / <alpha-value>)",
+          500: "rgb(var(--accent-rgb) / <alpha-value>)",
+          600: "rgb(var(--accent-rgb) / <alpha-value>)",
+          700: "rgb(var(--accent-hover-rgb) / <alpha-value>)",
         },
         risk: {
-          low: "#6B655A",
-          medium: "#B8792F",
-          high: "#B8792F",
-          critical: "#8C2F2F",
+          low: "rgb(var(--severity-normal-rgb) / <alpha-value>)",
+          medium: "rgb(var(--severity-suspicious-rgb) / <alpha-value>)",
+          high: "rgb(var(--severity-suspicious-rgb) / <alpha-value>)",
+          critical: "rgb(var(--severity-critical-rgb) / <alpha-value>)",
         },
       },
       fontFamily: {

@@ -21,23 +21,23 @@ export const AccountNode = memo(({ data, selected }: NodeProps) => {
   const accountType = nodeData.account_type || "savings";
   const accountCode = formatAccountCode(nodeData.id);
 
-  let borderStyle = "border-border-warm bg-white";
+  let borderStyle = "border-border-warm bg-surface";
   let ringStyle = "";
-  let badgeBg = "bg-slate-100 text-slate-700 border-border-warm";
+  let badgeBg = "bg-severity-normal-bg text-severity-normal border-severity-normal-border";
   let RiskIcon = ShieldCheck;
 
   if (severity === "critical") {
-    borderStyle = "border-severity-critical/70 bg-red-50/40";
+    borderStyle = "border-severity-critical/70 bg-severity-critical-bg/50";
     ringStyle = "shadow-md ring-1 ring-severity-critical/30";
     badgeBg = "bg-severity-critical-bg text-severity-critical border-severity-critical-border";
     RiskIcon = Flame;
   } else if (severity === "high") {
-    borderStyle = "border-severity-suspicious/70 bg-amber-50/40";
+    borderStyle = "border-severity-suspicious/70 bg-severity-suspicious-bg/50";
     ringStyle = "shadow-sm ring-1 ring-severity-suspicious/30";
     badgeBg = "bg-severity-suspicious-bg text-severity-suspicious border-severity-suspicious-border";
     RiskIcon = AlertOctagon;
   } else if (severity === "medium") {
-    borderStyle = "border-severity-suspicious/50 bg-amber-50/20";
+    borderStyle = "border-severity-suspicious/50 bg-severity-suspicious-bg/25";
     badgeBg = "bg-severity-suspicious-bg text-severity-suspicious border-severity-suspicious-border";
     RiskIcon = AlertOctagon;
   }
@@ -73,10 +73,10 @@ export const AccountNode = memo(({ data, selected }: NodeProps) => {
 
       {/* Account Info */}
       <div className="pt-2 space-y-0.5">
-        <div className="font-semibold text-slate-900 text-xs truncate" title={holderName}>
+        <div className="font-semibold text-ink-primary text-xs truncate" title={holderName}>
           {holderName}
         </div>
-        <div className="font-mono text-[10px] text-slate-500 truncate" title={nodeData.id}>
+        <div className="font-mono text-[10px] text-ink-secondary truncate" title={nodeData.id}>
           {accountNumber ? `${accountNumber} • ${accountCode}` : accountCode}
         </div>
       </div>
@@ -95,7 +95,7 @@ export const DeviceNode = memo(({ data, selected }: NodeProps) => {
 
   return (
     <div
-      className={`px-3 py-2.5 rounded-xl border border-border-warm bg-white ${
+      className={`px-3 py-2.5 rounded-xl border border-border-warm bg-surface ${
         selected ? "ring-2 ring-navy shadow-md" : "shadow-sm"
       } min-w-[180px] max-w-[220px] text-xs font-sans relative cursor-pointer`}
       title={fingerprint ? `Hardware Fingerprint: ${fingerprint}` : undefined}
@@ -110,10 +110,10 @@ export const DeviceNode = memo(({ data, selected }: NodeProps) => {
           <Smartphone className="w-4 h-4" />
         </div>
         <div className="overflow-hidden space-y-0.5">
-          <div className="text-xs font-semibold text-slate-900 truncate">
+          <div className="text-xs font-semibold text-ink-primary truncate">
             Shared Device
           </div>
-          <div className="font-mono text-[10px] text-slate-500 font-medium">
+          <div className="font-mono text-[10px] text-ink-secondary font-medium">
             {deviceCode}
           </div>
         </div>
@@ -136,7 +136,7 @@ export const EntityNode = memo(({ data, selected }: NodeProps) => {
 
   return (
     <div
-      className={`px-3 py-2.5 rounded-xl border border-border-warm bg-white ${
+      className={`px-3 py-2.5 rounded-xl border border-border-warm bg-surface ${
         selected ? "ring-2 ring-navy shadow-md" : "shadow-sm"
       } min-w-[170px] max-w-[210px] text-xs font-sans relative cursor-pointer`}
     >
@@ -150,10 +150,10 @@ export const EntityNode = memo(({ data, selected }: NodeProps) => {
           {isMerchant ? <Building2 className="w-4 h-4" /> : <User className="w-4 h-4" />}
         </div>
         <div className="overflow-hidden space-y-0.5">
-          <div className="font-semibold text-slate-900 text-xs truncate" title={name}>
+          <div className="font-semibold text-ink-primary text-xs truncate" title={name}>
             {name}
           </div>
-          <div className="font-mono text-[10px] text-slate-500 font-medium truncate" title={nodeData.id}>
+          <div className="font-mono text-[10px] text-ink-secondary font-medium truncate" title={nodeData.id}>
             {code}
           </div>
         </div>

@@ -124,14 +124,14 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
 
   return (
     <div
-      className={`fixed z-50 bg-white border border-border-warm rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ${
+      className={`fixed z-50 bg-surface border border-border-warm rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ${
         isExpanded
           ? "bottom-4 right-4 left-4 sm:left-auto sm:w-[700px] h-[85vh]"
           : "bottom-4 right-4 w-full sm:w-[460px] h-[600px] max-w-[calc(100vw-2rem)]"
       } ${className}`}
     >
       {/* Header */}
-      <div className="p-4 bg-slate-50 border-b border-border-warm rounded-t-2xl flex items-center justify-between gap-3">
+      <div className="p-4 bg-linen border-b border-border-warm rounded-t-2xl flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-xl bg-navy-subtle text-navy border border-navy/20">
             <Sparkles className="w-4 h-4 text-navy" />
@@ -139,8 +139,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-serif text-sm font-bold text-ink-primary">Grounded AI Copilot</h3>
-              <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-sans font-medium flex items-center gap-1">
-                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-700" />
+              <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-sans font-medium flex items-center gap-1 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300">
+                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-700 dark:text-emerald-400" />
                 Grounded
               </span>
             </div>
@@ -153,7 +153,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         <div className="flex items-center gap-1 text-ink-secondary">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1.5 hover:text-ink-primary hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 hover:text-ink-primary hover:bg-navy-subtle rounded-lg transition-colors cursor-pointer"
             title={isExpanded ? "Collapse" : "Expand"}
           >
             {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -170,14 +170,14 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                 },
               ])
             }
-            className="p-1.5 hover:text-ink-primary hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 hover:text-ink-primary hover:bg-navy-subtle rounded-lg transition-colors cursor-pointer"
             title="Clear Chat"
           >
             <Trash2 className="w-4 h-4" />
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 hover:text-ink-primary hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 hover:text-ink-primary hover:bg-navy-subtle rounded-lg transition-colors cursor-pointer"
             title="Close"
           >
             <X className="w-4 h-4" />
@@ -186,7 +186,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       </div>
 
       {/* Messages Thread */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 font-sans text-xs bg-white">
+      <div className="flex-1 p-4 overflow-y-auto space-y-4 font-sans text-xs bg-surface">
         {messages.map((msg) => {
           const isUser = msg.sender === "user";
           return (
@@ -204,7 +204,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                 className={`max-w-[85%] rounded-2xl p-3.5 space-y-2 leading-relaxed ${
                   isUser
                     ? "bg-navy text-white font-medium rounded-tr-none shadow-md shadow-navy/20"
-                    : "bg-slate-50 border border-border-warm text-ink-primary rounded-tl-none shadow-sm"
+                    : "bg-linen border border-border-warm text-ink-primary rounded-tl-none shadow-sm"
                 }`}
               >
                 {/* Message Body formatted with linebreaks / markdown elements */}
@@ -281,13 +281,13 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       </div>
 
       {/* Suggested Quick Prompt Pills */}
-      <div className="px-4 py-2 border-t border-border-warm bg-slate-50 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+      <div className="px-4 py-2 border-t border-border-warm bg-linen flex items-center gap-1.5 overflow-x-auto no-scrollbar">
         {QUICK_PROMPTS.map((prompt, idx) => (
           <button
             key={idx}
             onClick={() => handleSend(prompt)}
             disabled={loading}
-            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 border border-border-warm text-ink-primary text-[11px] whitespace-nowrap transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+            className="px-2.5 py-1 rounded-lg bg-surface hover:bg-navy-subtle border border-border-warm text-ink-primary text-[11px] whitespace-nowrap transition-all cursor-pointer disabled:opacity-50 shadow-sm"
           >
             {prompt}
           </button>
@@ -300,7 +300,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           e.preventDefault();
           handleSend();
         }}
-        className="p-3 bg-slate-50 border-t border-border-warm rounded-b-2xl flex items-center gap-2"
+        className="p-3 bg-linen border-t border-border-warm rounded-b-2xl flex items-center gap-2"
       >
         <input
           type="text"
@@ -308,7 +308,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           value={inputQuery}
           onChange={(e) => setInputQuery(e.target.value)}
           disabled={loading}
-          className="flex-1 px-3.5 py-2 bg-white border border-border-warm rounded-xl text-xs text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy font-sans shadow-sm"
+          className="flex-1 px-3.5 py-2 bg-surface border border-border-warm rounded-xl text-xs text-ink-primary placeholder-ink-muted focus:outline-none focus:border-navy font-sans shadow-sm"
         />
         <button
           type="submit"

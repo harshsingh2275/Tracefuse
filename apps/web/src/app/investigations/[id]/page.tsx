@@ -152,7 +152,7 @@ function InvestigationDetailContent() {
       <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
         <Navbar />
         <div className="flex-1 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white border border-border-warm p-8 rounded-2xl text-center space-y-4 shadow-sm">
+          <div className="max-w-md w-full bg-surface border border-border-warm p-8 rounded-2xl text-center space-y-4 shadow-sm">
             <div className="w-12 h-12 rounded-2xl bg-severity-critical-bg border border-severity-critical-border text-severity-critical flex items-center justify-center mx-auto">
               <ShieldAlert className="w-6 h-6" />
             </div>
@@ -172,7 +172,7 @@ function InvestigationDetailContent() {
               </button>
               <Link
                 href="/dashboard"
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium transition-all"
+                className="px-4 py-2 bg-navy-subtle hover:bg-navy-subtle/80 text-ink-primary rounded-xl text-xs font-medium transition-all"
               >
                 Back to Case Queue
               </Link>
@@ -208,7 +208,7 @@ function InvestigationDetailContent() {
             </button>
             <Link
               href={`/investigations/${investigationId}/report`}
-              className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-border-warm rounded-lg text-xs font-medium text-ink-primary flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+              className="px-3.5 py-2 bg-surface hover:bg-navy-subtle border border-border-warm rounded-lg text-xs font-medium text-ink-primary flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
             >
               <Printer className="w-3.5 h-3.5 text-navy" />
               <span>Compliance Report</span>
@@ -217,12 +217,12 @@ function InvestigationDetailContent() {
         </div>
 
         {/* Case Dossier Main Header */}
-        <section className="bg-white border border-border-warm p-6 md:p-8 rounded-2xl shadow-sm relative overflow-hidden">
+        <section className="bg-surface border border-border-warm p-6 md:p-8 rounded-2xl shadow-sm relative overflow-hidden">
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
             <div className="min-w-0 max-w-4xl space-y-2">
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="font-mono text-xs text-navy font-semibold">{formatCaseCode(detail.id)}</span>
-                <span className="w-1 h-1 rounded-full bg-slate-300" />
+                <span className="w-1 h-1 rounded-full bg-border-warm" />
                 <span className="text-xs text-ink-secondary capitalize font-medium">
                   {detail.scenario_tag.replace(/_/g, " ")}
                 </span>
@@ -231,13 +231,13 @@ function InvestigationDetailContent() {
                 {detail.title}
               </h1>
               <p className="text-xs text-ink-secondary">
-                Financial crime forensic investigation dossier <span className="text-slate-300">/</span> internal intelligence
+                Financial crime forensic investigation dossier <span className="text-ink-secondary/40">/</span> internal intelligence
               </p>
             </div>
 
             <div className="lg:min-w-48 flex flex-row lg:flex-col items-start lg:items-end gap-3">
               <RiskBadge level={detail.risk_level} score={detail.risk_score} className="py-2 px-3.5 text-xs shadow-sm" />
-              <div className="flex items-center gap-2 bg-slate-50 border border-border-warm px-3.5 py-2 rounded-lg text-xs">
+              <div className="flex items-center gap-2 bg-linen border border-border-warm px-3.5 py-2 rounded-lg text-xs">
                 <span className="text-ink-secondary">Status</span>
                 <select
                   value={detail.status}
@@ -245,10 +245,10 @@ function InvestigationDetailContent() {
                   onChange={(e) => handleStatusChange(e.target.value)}
                   className="bg-transparent text-ink-primary font-semibold focus:outline-none cursor-pointer capitalize"
                 >
-                  <option value="new" className="bg-white">New</option>
-                  <option value="investigating" className="bg-white">Investigating</option>
-                  <option value="escalated" className="bg-white">Escalated</option>
-                  <option value="resolved" className="bg-white">Resolved</option>
+                  <option value="new" className="bg-surface text-ink-primary">New</option>
+                  <option value="investigating" className="bg-surface text-ink-primary">Investigating</option>
+                  <option value="escalated" className="bg-surface text-ink-primary">Escalated</option>
+                  <option value="resolved" className="bg-surface text-ink-primary">Resolved</option>
                 </select>
               </div>
             </div>
@@ -258,7 +258,7 @@ function InvestigationDetailContent() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8 pt-6 border-t border-border-warm">
             <div className="pr-4 lg:border-r border-border-warm">
               <span className="text-ink-secondary text-[11px] uppercase tracking-wider font-medium">Money at Risk</span>
-              <div className="text-xl md:text-2xl font-bold font-mono text-emerald-700 mt-1.5">
+              <div className="text-xl md:text-2xl font-bold font-mono text-emerald-700 dark:text-emerald-400 mt-1.5">
                 ₹{detail.total_flow_amount.toLocaleString("en-IN")}
               </div>
             </div>
@@ -290,7 +290,7 @@ function InvestigationDetailContent() {
 
         {/* Case Genesis Drawer (Sentence Case Header) */}
         {detail.case_genesis && (
-          <div className="bg-white border border-border-warm rounded-2xl p-5 md:p-6 shadow-sm">
+          <div className="bg-surface border border-border-warm rounded-2xl p-5 md:p-6 shadow-sm">
             <button
               onClick={() => setShowGenesis(!showGenesis)}
               className="w-full flex items-center justify-between text-xs font-semibold text-navy cursor-pointer"
@@ -300,9 +300,9 @@ function InvestigationDetailContent() {
                 <span className="font-serif text-sm font-bold text-ink-primary">Case Genesis & Detection Trigger</span>
               </div>
               {showGenesis ? (
-                <ChevronUp className="w-4 h-4 text-slate-400" />
+                <ChevronUp className="w-4 h-4 text-ink-secondary/60" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-slate-400" />
+                <ChevronDown className="w-4 h-4 text-ink-secondary/60" />
               )}
             </button>
 
@@ -358,7 +358,7 @@ function InvestigationDetailContent() {
                 className={`px-4 py-2 rounded-xl text-xs font-medium flex items-center gap-2 transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                   isActive
                     ? "bg-navy text-white shadow-md shadow-navy/20"
-                    : "text-ink-secondary hover:text-ink-primary hover:bg-slate-200/60"
+                    : "text-ink-secondary hover:text-ink-primary hover:bg-navy-subtle"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -366,7 +366,7 @@ function InvestigationDetailContent() {
                 {tab.count !== undefined && (
                   <span
                     className={`px-1.5 py-0.2 rounded text-[10px] font-mono ${
-                      isActive ? "bg-navy-hover text-white" : "bg-slate-200 text-slate-700"
+                      isActive ? "bg-navy-hover text-white" : "bg-navy-subtle text-ink-secondary"
                     }`}
                   >
                     {tab.count}
@@ -425,7 +425,7 @@ function InvestigationDetailContent() {
                 {detail.patterns.map((pat) => (
                   <div
                     key={pat.id}
-                    className="bg-white border border-border-warm p-5 md:p-6 rounded-2xl space-y-3 shadow-sm"
+                    className="bg-surface border border-border-warm p-5 md:p-6 rounded-2xl space-y-3 shadow-sm"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
@@ -447,7 +447,7 @@ function InvestigationDetailContent() {
                         <span
                           key={tid}
                           title={tid}
-                          className="px-1.5 py-0.5 rounded bg-slate-100 border border-border-warm text-navy font-mono text-[10px]"
+                          className="px-1.5 py-0.5 rounded bg-navy-subtle border border-border-warm text-navy font-mono text-[10px]"
                         >
                           {formatTxnCode(tid)}
                         </span>
@@ -464,7 +464,7 @@ function InvestigationDetailContent() {
                 Composite Risk Breakdown
               </h3>
 
-              <div className="bg-white border border-border-warm p-5 md:p-6 rounded-2xl space-y-4 shadow-sm text-xs">
+              <div className="bg-surface border border-border-warm p-5 md:p-6 rounded-2xl space-y-4 shadow-sm text-xs">
                 <div className="flex items-center justify-between pb-3 border-b border-border-warm">
                   <span className="text-ink-secondary">Composite Score:</span>
                   <span className="text-xl font-bold font-mono text-severity-critical">
@@ -483,7 +483,7 @@ function InvestigationDetailContent() {
                           {sig.score.toFixed(0)} pts
                         </span>
                       </div>
-                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div className="w-full bg-linen h-2 rounded-full overflow-hidden">
                         <div
                           className="bg-navy h-full rounded-full"
                           style={{ width: `${Math.min(100, sig.score)}%` }}
@@ -499,8 +499,8 @@ function InvestigationDetailContent() {
 
         {/* Tab 5: Evidence Locker */}
         {activeTab === "evidence" && (
-          <section className="bg-white border border-border-warm rounded-2xl overflow-hidden shadow-sm">
-            <div className="p-5 bg-slate-50 border-b border-border-warm">
+          <section className="bg-surface border border-border-warm rounded-2xl overflow-hidden shadow-sm">
+            <div className="p-5 bg-linen border-b border-border-warm">
               <h3 className="text-sm font-bold font-serif text-ink-primary">
                 Structured Evidence Items ({detail.evidence_items.length})
               </h3>
@@ -508,7 +508,7 @@ function InvestigationDetailContent() {
 
             <div className="divide-y divide-border-warm font-sans text-xs">
               {detail.evidence_items.map((item, idx) => (
-                <div key={item.id} className="p-5 hover:bg-slate-50/70 transition-colors space-y-2">
+                <div key={item.id} className="p-5 hover:bg-navy-subtle/50 transition-colors space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-navy font-semibold">
                       Evidence Item #{idx + 1}
@@ -528,7 +528,7 @@ function InvestigationDetailContent() {
                       <span
                         key={tid}
                         title={tid}
-                        className="px-1.5 py-0.5 bg-slate-100 border border-border-warm text-ink-primary font-mono text-[10px] rounded"
+                        className="px-1.5 py-0.5 bg-navy-subtle border border-border-warm text-ink-primary font-mono text-[10px] rounded"
                       >
                         {formatTxnCode(tid)}
                       </span>
@@ -548,13 +548,13 @@ function InvestigationDetailContent() {
               <h3 className="text-base font-bold font-serif text-ink-primary">Investigator Case Notes</h3>
 
               {/* Add Note Form */}
-              <form onSubmit={handleAddNote} className="bg-white border border-border-warm p-5 rounded-2xl space-y-3 shadow-sm">
+              <form onSubmit={handleAddNote} className="bg-surface border border-border-warm p-5 rounded-2xl space-y-3 shadow-sm">
                 <textarea
                   placeholder="Record investigative finding, subpoena note, or freeze confirmation..."
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   rows={3}
-                  className="w-full p-3 bg-slate-50 border border-border-warm rounded-xl text-xs text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy focus:bg-white font-sans"
+                  className="w-full p-3 bg-linen border border-border-warm rounded-xl text-xs text-ink-primary placeholder-ink-secondary/60 focus:outline-none focus:border-navy focus:bg-surface font-sans"
                 />
                 <div className="flex justify-end">
                   <button
@@ -577,10 +577,10 @@ function InvestigationDetailContent() {
                   />
                 ) : (
                   detail.notes.map((n) => (
-                    <div key={n.id} className="bg-white border border-border-warm p-4 rounded-xl space-y-2 shadow-sm">
+                    <div key={n.id} className="bg-surface border border-border-warm p-4 rounded-xl space-y-2 shadow-sm">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-navy font-semibold flex items-center gap-1">
-                          <UserCheck className="w-3.5 h-3.5 text-emerald-700" />
+                          <UserCheck className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                           {n.user_name || n.user_id}
                         </span>
                         <span className="font-mono text-ink-secondary text-[10px]">
@@ -598,7 +598,7 @@ function InvestigationDetailContent() {
             <div className="space-y-4">
               <h3 className="text-base font-bold font-serif text-ink-primary">Status Audit Trail</h3>
 
-              <div className="bg-white border border-border-warm p-5 rounded-2xl space-y-3 text-xs shadow-sm">
+              <div className="bg-surface border border-border-warm p-5 rounded-2xl space-y-3 text-xs shadow-sm">
                 {detail.actions.map((act) => (
                   <div key={act.id} className="pb-3 border-b border-border-warm last:border-0 last:pb-0 space-y-1">
                     <div className="flex items-center justify-between text-[11px]">

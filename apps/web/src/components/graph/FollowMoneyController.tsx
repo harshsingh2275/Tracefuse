@@ -125,7 +125,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
   };
 
   return (
-    <div className={`bg-white border border-border-warm rounded-xl p-5 shadow-sm space-y-4 ${className}`}>
+    <div className={`bg-surface border border-border-warm rounded-xl p-5 shadow-sm space-y-4 ${className}`}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-warm">
         <div className="flex items-center gap-2">
@@ -159,7 +159,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
 
             <button
               onClick={resetTrace}
-              className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer"
+              className="p-1.5 rounded-lg bg-linen hover:bg-navy-subtle text-ink-secondary hover:text-ink-primary border border-border-warm transition-all cursor-pointer"
               title="Reset to First Hop"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -179,10 +179,10 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
           <select
             value={sourceAccount}
             onChange={(e) => setSourceAccount(e.target.value)}
-            className="w-full p-2 bg-slate-50 border border-border-warm rounded-lg text-ink-primary focus:outline-none focus:border-navy text-xs"
+            className="w-full p-2 bg-linen border border-border-warm rounded-lg text-ink-primary focus:outline-none focus:border-navy text-xs"
           >
             {accounts.map((acc) => (
-              <option key={acc.id} value={acc.id}>
+              <option key={acc.id} value={acc.id} className="bg-surface text-ink-primary">
                 {acc.holder_name} ({formatAccountCode(acc.id)})
               </option>
             ))}
@@ -194,11 +194,11 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
           <select
             value={destinationAccount}
             onChange={(e) => setDestinationAccount(e.target.value)}
-            className="w-full p-2 bg-slate-50 border border-border-warm rounded-lg text-ink-primary focus:outline-none focus:border-navy text-xs"
+            className="w-full p-2 bg-linen border border-border-warm rounded-lg text-ink-primary focus:outline-none focus:border-navy text-xs"
           >
-            <option value="">All Reachable Downstream</option>
+            <option value="" className="bg-surface text-ink-primary">All Reachable Downstream</option>
             {accounts.map((acc) => (
-              <option key={acc.id} value={acc.id}>
+              <option key={acc.id} value={acc.id} className="bg-surface text-ink-primary">
                 {acc.holder_name} ({formatAccountCode(acc.id)})
               </option>
             ))}
@@ -233,7 +233,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
       </div>
 
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center gap-2">
+        <div className="p-3 bg-severity-critical-bg border border-severity-critical-border rounded-lg text-xs text-severity-critical flex items-center gap-2">
           <AlertOctagon className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
@@ -246,7 +246,7 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
             <span className="text-ink-secondary uppercase tracking-wider text-[11px] font-semibold">
               Discovered Multi-Hop Trail ({hops.length} Hops)
             </span>
-            <span className="text-emerald-700 font-bold font-mono">
+            <span className="text-emerald-700 dark:text-emerald-400 font-bold font-mono">
               Total Trail: ₹
               {hops[hops.length - 1]?.cumulative_amount?.toLocaleString("en-IN") || 0}
             </span>
@@ -264,13 +264,13 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
                   className={`p-3 rounded-xl border transition-all cursor-pointer space-y-2 ${
                     isActive
                       ? "bg-navy-subtle border-navy shadow-md ring-2 ring-navy/30"
-                      : "bg-slate-50 border-border-warm hover:border-slate-300"
+                      : "bg-linen border-border-warm hover:border-navy/30"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        isActive ? "bg-navy text-white" : "bg-slate-200 text-slate-700"
+                        isActive ? "bg-navy text-white" : "bg-surface text-ink-secondary border border-border-warm"
                       }`}
                     >
                       HOP {hop.hop_number}
@@ -280,26 +280,26 @@ export const FollowMoneyController: React.FC<FollowMoneyControllerProps> = ({
                     </span>
                   </div>
 
-                  <div className="text-sm font-bold font-mono text-emerald-700">
+                  <div className="text-sm font-bold font-mono text-emerald-700 dark:text-emerald-400">
                     ₹{hop.amount.toLocaleString("en-IN")}
                   </div>
 
                   <div className="text-[11px] text-ink-primary space-y-1">
                     <div className="flex flex-col truncate">
                       <span className="text-ink-secondary text-[10px]">From:</span>
-                      <span className="font-semibold text-slate-900 truncate">
+                      <span className="font-semibold text-ink-primary truncate">
                         {getAccountName(hop.from_account_id)}
                       </span>
-                      <span className="text-slate-400 font-mono text-[10px]" title={hop.from_account_id}>
+                      <span className="text-ink-secondary font-mono text-[10px]" title={hop.from_account_id}>
                         ({formatAccountCode(hop.from_account_id)})
                       </span>
                     </div>
                     <div className="flex flex-col truncate pt-0.5">
                       <span className="text-ink-secondary text-[10px]">To:</span>
-                      <span className="font-semibold text-slate-900 truncate">
+                      <span className="font-semibold text-ink-primary truncate">
                         {getAccountName(hop.to_account_id)}
                       </span>
-                      <span className="text-slate-400 font-mono text-[10px]" title={hop.to_account_id}>
+                      <span className="text-ink-secondary font-mono text-[10px]" title={hop.to_account_id}>
                         ({formatAccountCode(hop.to_account_id)})
                       </span>
                     </div>

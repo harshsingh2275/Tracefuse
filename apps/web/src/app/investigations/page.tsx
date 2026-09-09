@@ -118,7 +118,7 @@ export default function InvestigationsDirectoryPage() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6 md:space-y-8">
         {/* Header Hero Banner */}
-        <section className="bg-white border border-border-warm rounded-2xl p-6 md:p-8 shadow-sm space-y-4">
+        <section className="bg-surface border border-border-warm rounded-2xl p-6 md:p-8 shadow-sm space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider text-navy bg-navy-subtle border border-navy/20 rounded-full">
@@ -157,7 +157,7 @@ export default function InvestigationsDirectoryPage() {
             </div>
             <button
               onClick={fetchInvestigations}
-              className="px-3 py-1.5 bg-white hover:bg-slate-50 text-severity-critical text-xs rounded-lg border border-severity-critical-border flex items-center gap-1.5 transition-all cursor-pointer font-medium"
+              className="px-3 py-1.5 bg-surface hover:bg-navy-subtle text-severity-critical text-xs rounded-lg border border-severity-critical-border flex items-center gap-1.5 transition-all cursor-pointer font-medium"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Retry</span>
@@ -166,7 +166,7 @@ export default function InvestigationsDirectoryPage() {
         )}
 
         {/* Main Content: Filters + Table + Pagination */}
-        <section className="bg-white border border-border-warm rounded-2xl p-5 md:p-6 shadow-sm space-y-6">
+        <section className="bg-surface border border-border-warm rounded-2xl p-5 md:p-6 shadow-sm space-y-6">
           {/* Top Filter & Search Controls */}
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 pb-2 border-b border-border-warm">
             {/* Status Tabs */}
@@ -187,7 +187,7 @@ export default function InvestigationsDirectoryPage() {
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     statusFilter === tab.id
                       ? "bg-navy text-white shadow-sm"
-                      : "text-ink-secondary hover:text-ink-primary hover:bg-slate-100"
+                      : "text-ink-secondary hover:text-ink-primary hover:bg-navy-subtle"
                   }`}
                 >
                   <span>{tab.label}</span>
@@ -195,7 +195,7 @@ export default function InvestigationsDirectoryPage() {
                     className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
                       statusFilter === tab.id
                         ? "bg-navy-hover text-white"
-                        : "bg-slate-200 text-slate-700"
+                        : "bg-navy-subtle text-ink-secondary"
                     }`}
                   >
                     {tab.count}
@@ -215,15 +215,15 @@ export default function InvestigationsDirectoryPage() {
                     setSearchQuery(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-border-warm rounded-xl text-xs text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy focus:bg-white font-sans"
+                  className="w-full pl-8 pr-3 py-1.5 bg-linen border border-border-warm rounded-xl text-xs text-ink-primary placeholder-ink-secondary/60 focus:outline-none focus:border-navy focus:bg-surface font-sans"
                 />
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-ink-secondary/60 absolute left-2.5 top-2.5" />
               </div>
 
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="px-3 py-1.5 bg-slate-50 border border-border-warm rounded-xl text-xs text-ink-primary font-medium focus:outline-none focus:border-navy cursor-pointer"
+                className="px-3 py-1.5 bg-linen border border-border-warm rounded-xl text-xs text-ink-primary font-medium focus:outline-none focus:border-navy cursor-pointer"
               >
                 <option value="risk_desc">Highest Risk First</option>
                 <option value="risk_asc">Lowest Risk First</option>
@@ -237,7 +237,7 @@ export default function InvestigationsDirectoryPage() {
           <div className="rounded-xl border border-border-warm overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-sans min-w-[780px]">
-                <thead className="bg-slate-50 text-ink-secondary text-[11px] uppercase tracking-wider border-b border-border-warm font-medium">
+                <thead className="bg-linen text-ink-secondary text-[11px] uppercase tracking-wider border-b border-border-warm font-medium">
                   <tr>
                     <th className="py-3 px-4 w-[42%] min-w-[280px]">Case Title & Entity Nexus</th>
                     <th className="py-3 px-4 w-[20%] min-w-[150px]">Detected Patterns</th>
@@ -253,13 +253,13 @@ export default function InvestigationsDirectoryPage() {
                     Array.from({ length: 5 }).map((_, i) => (
                       <tr key={i} className="animate-pulse">
                         <td className="py-4 px-4">
-                          <Skeleton className="h-4 w-64 bg-slate-200 mb-1.5" />
-                          <Skeleton className="h-3 w-28 bg-slate-100" />
+                          <Skeleton className="h-4 w-64 bg-border-warm dark:bg-slate-800 mb-1.5" />
+                          <Skeleton className="h-3 w-28 bg-border-warm dark:bg-slate-800" />
                         </td>
-                        <td className="py-4 px-4"><Skeleton className="h-5 w-32 bg-slate-200 rounded" /></td>
-                        <td className="py-4 px-4"><Skeleton className="h-6 w-20 bg-slate-200 rounded" /></td>
-                        <td className="py-4 px-4"><Skeleton className="h-4 w-16 bg-slate-200" /></td>
-                        <td className="py-4 px-4"><Skeleton className="h-5 w-16 bg-slate-200 rounded" /></td>
+                        <td className="py-4 px-4"><Skeleton className="h-5 w-32 bg-border-warm dark:bg-slate-800 rounded" /></td>
+                        <td className="py-4 px-4"><Skeleton className="h-6 w-20 bg-border-warm dark:bg-slate-800 rounded" /></td>
+                        <td className="py-4 px-4"><Skeleton className="h-4 w-16 bg-border-warm dark:bg-slate-800" /></td>
+                        <td className="py-4 px-4"><Skeleton className="h-5 w-16 bg-border-warm dark:bg-slate-800 rounded" /></td>
                         <td className="py-4 px-4 text-right"><Skeleton className="h-7 w-24 bg-navy-subtle rounded-lg ml-auto" /></td>
                       </tr>
                     ))
@@ -281,18 +281,18 @@ export default function InvestigationsDirectoryPage() {
                     paginatedItems.map((inv) => (
                       <tr
                         key={inv.id}
-                        className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
+                        className="hover:bg-navy-subtle/50 transition-colors group cursor-pointer"
                       >
                         <td className="py-3.5 px-4 w-[42%] min-w-[280px]">
                           <Link href={`/investigations/${inv.id}?tab=graph`} className="block">
                             <div
-                              className="font-semibold text-slate-900 group-hover:text-navy transition-colors line-clamp-2 leading-snug"
+                              className="font-semibold text-ink-primary group-hover:text-navy transition-colors line-clamp-2 leading-snug"
                               title={inv.title}
                             >
                               {inv.title}
                             </div>
                             <div className="text-[11px] text-ink-secondary flex items-center gap-2 mt-1">
-                              <span className="font-mono text-slate-500 font-medium">{formatCaseCode(inv.id)}</span>
+                              <span className="font-mono text-ink-secondary font-medium">{formatCaseCode(inv.id)}</span>
                               <span>•</span>
                               <span>{inv.entities_count} accounts</span>
                             </div>
@@ -311,7 +311,7 @@ export default function InvestigationsDirectoryPage() {
                           <RiskBadge level={inv.risk_level} score={inv.risk_score} />
                         </td>
 
-                        <td className="py-3.5 px-4 font-mono font-bold text-emerald-700 whitespace-nowrap">
+                        <td className="py-3.5 px-4 font-mono font-bold text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
                           ₹{inv.total_flow_amount.toLocaleString("en-IN")}
                         </td>
 
@@ -349,7 +349,7 @@ export default function InvestigationsDirectoryPage() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={validPage <= 1}
-                  className="p-1.5 rounded-lg border border-border-warm bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  className="p-1.5 rounded-lg border border-border-warm bg-surface hover:bg-navy-subtle disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
                   title="Previous Page"
                 >
                   <ChevronLeft className="w-4 h-4 text-ink-primary" />
@@ -365,7 +365,7 @@ export default function InvestigationsDirectoryPage() {
                       className={`w-8 h-8 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
                         isCurrent
                           ? "bg-navy text-white shadow-sm"
-                          : "border border-border-warm bg-white hover:bg-slate-50 text-ink-primary"
+                          : "border border-border-warm bg-surface hover:bg-navy-subtle text-ink-primary"
                       }`}
                     >
                       {pageNum}
@@ -376,7 +376,7 @@ export default function InvestigationsDirectoryPage() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={validPage >= totalPages}
-                  className="p-1.5 rounded-lg border border-border-warm bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  className="p-1.5 rounded-lg border border-border-warm bg-surface hover:bg-navy-subtle disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
                   title="Next Page"
                 >
                   <ChevronRight className="w-4 h-4 text-ink-primary" />

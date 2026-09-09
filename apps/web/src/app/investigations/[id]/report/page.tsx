@@ -80,7 +80,7 @@ export default function InvestigationReportPage() {
       <div className="min-h-screen bg-linen text-ink-primary flex flex-col font-sans">
         <Navbar />
         <div className="flex-1 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white border border-border-warm p-8 rounded-2xl text-center space-y-4 shadow-sm">
+          <div className="max-w-md w-full bg-surface border border-border-warm p-8 rounded-2xl text-center space-y-4 shadow-sm">
             <div className="w-12 h-12 rounded-2xl bg-severity-critical-bg border border-severity-critical-border text-severity-critical flex items-center justify-center mx-auto">
               <ShieldAlert className="w-6 h-6" />
             </div>
@@ -100,7 +100,7 @@ export default function InvestigationReportPage() {
               </button>
               <Link
                 href={`/investigations/${investigationId}`}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium transition-all"
+                className="px-4 py-2 bg-navy-subtle hover:bg-navy-subtle/80 text-ink-primary rounded-xl text-xs font-medium transition-all"
               >
                 Back to Dossier
               </Link>
@@ -141,7 +141,7 @@ export default function InvestigationReportPage() {
         </div>
 
         {/* Report Official Document Header */}
-        <div className="bg-white print:bg-transparent border border-border-warm print:border-b-2 print:border-gray-900 rounded-2xl p-6 md:p-8 shadow-sm space-y-4">
+        <div className="bg-surface print:bg-transparent border border-border-warm print:border-b-2 print:border-gray-900 rounded-2xl p-6 md:p-8 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border-warm print:border-gray-300">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-navy-subtle text-navy border border-navy/20 print:border-gray-900 print:text-black">
@@ -188,7 +188,7 @@ export default function InvestigationReportPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            <div className="md:col-span-2 bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 text-xs leading-relaxed shadow-sm">
+            <div className="md:col-span-2 bg-surface print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 text-xs leading-relaxed shadow-sm">
               <p className="text-ink-primary print:text-gray-800">{report.case_summary}</p>
               <div className="flex flex-wrap items-center gap-4 pt-3 text-xs text-ink-secondary border-t border-border-warm print:border-gray-200">
                 <span>Total Entities: <strong className="text-ink-primary">{report.entities_involved.length}</strong></span>
@@ -197,7 +197,7 @@ export default function InvestigationReportPage() {
               </div>
             </div>
 
-            <div className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 text-xs flex flex-col justify-between shadow-sm">
+            <div className="bg-surface print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 text-xs flex flex-col justify-between shadow-sm">
               <div>
                 <span className="text-ink-secondary text-[10px] uppercase font-medium">Composite Risk Assessment</span>
                 <div className="text-2xl font-bold font-mono text-severity-critical print:text-red-700 mt-1">
@@ -210,7 +210,7 @@ export default function InvestigationReportPage() {
 
               <div>
                 <span className="text-ink-secondary text-[10px] uppercase font-medium">Total Flow Amount</span>
-                <div className="text-lg font-bold font-mono text-emerald-700 mt-0.5">
+                <div className="text-lg font-bold font-mono text-emerald-700 dark:text-emerald-400 mt-0.5">
                   ₹{report.total_amount_involved.toLocaleString("en-IN")}
                 </div>
               </div>
@@ -236,9 +236,9 @@ export default function InvestigationReportPage() {
             2. Counterparties & Entities Under Investigation
           </h2>
 
-          <div className="bg-white print:bg-white border border-border-warm print:border-gray-300 rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-surface print:bg-white border border-border-warm print:border-gray-300 rounded-2xl overflow-hidden shadow-sm">
             <table className="w-full text-left text-xs font-sans">
-              <thead className="bg-slate-50 print:bg-gray-100 text-ink-secondary print:text-gray-700 text-[11px] uppercase border-b border-border-warm print:border-gray-300 font-medium">
+              <thead className="bg-linen print:bg-gray-100 text-ink-secondary print:text-gray-700 text-[11px] uppercase border-b border-border-warm print:border-gray-300 font-medium">
                 <tr>
                   <th className="py-3 px-4">Entity / Account Holder</th>
                   <th className="py-3 px-4">Account Number</th>
@@ -248,12 +248,12 @@ export default function InvestigationReportPage() {
               </thead>
               <tbody className="divide-y divide-border-warm print:divide-gray-200">
                 {report.entities_involved.map((ent, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50/70 print:hover:bg-transparent">
+                  <tr key={idx} className="hover:bg-navy-subtle/50 print:hover:bg-transparent">
                     <td className="py-3 px-4">
-                      <div className="font-semibold text-slate-900">
+                      <div className="font-semibold text-ink-primary">
                         {String(ent.holder_name || ent.name || "Entity Record")}
                       </div>
-                      <div className="font-mono text-[10px] text-slate-500" title={String(ent.account_id || ent.id || "")}>
+                      <div className="font-mono text-[10px] text-ink-secondary" title={String(ent.account_id || ent.id || "")}>
                         ({formatAccountCode(String(ent.account_id || ent.id || ""))})
                       </div>
                     </td>
@@ -264,7 +264,7 @@ export default function InvestigationReportPage() {
                       {String(ent.account_type || "Savings")}
                     </td>
                     <td className="py-3 px-4">
-                      <span className="px-2 py-0.5 rounded bg-slate-100 border border-border-warm text-[10px] font-mono text-slate-700">
+                      <span className="px-2 py-0.5 rounded bg-navy-subtle border border-border-warm text-[10px] font-mono text-ink-secondary">
                         {String(ent.risk_level || "Flagged")}
                       </span>
                     </td>
@@ -286,7 +286,7 @@ export default function InvestigationReportPage() {
             {report.detected_patterns.map((p, idx) => (
               <div
                 key={idx}
-                className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-4 md:p-5 rounded-xl space-y-2 text-xs shadow-sm"
+                className="bg-surface print:bg-gray-50 border border-border-warm print:border-gray-300 p-4 md:p-5 rounded-xl space-y-2 text-xs shadow-sm"
               >
                 <div className="flex items-center justify-between">
                   <div className="font-serif font-bold text-ink-primary print:text-black text-xs flex items-center gap-2">
@@ -323,9 +323,9 @@ export default function InvestigationReportPage() {
               4. Multi-Hop Fund Provenance Sequence ({report.money_trail_summary.length} Hops)
             </h2>
 
-            <div className="bg-white print:bg-white border border-border-warm print:border-gray-300 rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-surface print:bg-white border border-border-warm print:border-gray-300 rounded-2xl overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs font-sans">
-                <thead className="bg-slate-50 print:bg-gray-100 text-ink-secondary print:text-gray-700 text-[11px] uppercase border-b border-border-warm print:border-gray-300 font-medium">
+                <thead className="bg-linen print:bg-gray-100 text-ink-secondary print:text-gray-700 text-[11px] uppercase border-b border-border-warm print:border-gray-300 font-medium">
                   <tr>
                     <th className="py-2.5 px-4">Hop</th>
                     <th className="py-2.5 px-4">Origin Account</th>
@@ -337,27 +337,27 @@ export default function InvestigationReportPage() {
                 </thead>
                 <tbody className="divide-y divide-border-warm print:divide-gray-200 text-xs">
                   {report.money_trail_summary.map((hop, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50/70 print:hover:bg-transparent">
+                    <tr key={idx} className="hover:bg-navy-subtle/50 print:hover:bg-transparent">
                       <td className="py-2.5 px-4 font-bold font-mono text-navy print:text-black">
                         #{String(hop.hop_number || idx + 1)}
                       </td>
                       <td className="py-2.5 px-4">
-                        <div className="font-semibold text-slate-900">
+                        <div className="font-semibold text-ink-primary">
                           {getAccountName(String(hop.from_account_id || ""))}
                         </div>
-                        <div className="font-mono text-[10px] text-slate-500" title={String(hop.from_account_id || "")}>
+                        <div className="font-mono text-[10px] text-ink-secondary" title={String(hop.from_account_id || "")}>
                           ({formatAccountCode(String(hop.from_account_id || ""))})
                         </div>
                       </td>
                       <td className="py-2.5 px-4">
-                        <div className="font-semibold text-slate-900">
+                        <div className="font-semibold text-ink-primary">
                           {getAccountName(String(hop.to_account_id || ""))}
                         </div>
-                        <div className="font-mono text-[10px] text-slate-500" title={String(hop.to_account_id || "")}>
+                        <div className="font-mono text-[10px] text-ink-secondary" title={String(hop.to_account_id || "")}>
                           ({formatAccountCode(String(hop.to_account_id || ""))})
                         </div>
                       </td>
-                      <td className="py-2.5 px-4 font-bold font-mono text-emerald-700">
+                      <td className="py-2.5 px-4 font-bold font-mono text-emerald-700 dark:text-emerald-400">
                         ₹{Number(hop.amount || 0).toLocaleString("en-IN")}
                       </td>
                       <td className="py-2.5 px-4 text-ink-secondary text-[11px] font-mono">
@@ -386,7 +386,7 @@ export default function InvestigationReportPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 text-xs font-sans">
             {/* Notes */}
-            <div className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 shadow-sm">
+            <div className="bg-surface print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 shadow-sm">
               <h3 className="font-serif font-bold text-ink-primary print:text-gray-800 text-xs">
                 Investigator Notes
               </h3>
@@ -397,7 +397,7 @@ export default function InvestigationReportPage() {
                   {report.investigator_notes.map((n, idx) => (
                     <div
                       key={idx}
-                      className="p-3 bg-slate-50 print:bg-white rounded-xl border border-border-warm print:border-gray-200 space-y-1"
+                      className="p-3 bg-linen print:bg-white rounded-xl border border-border-warm print:border-gray-200 space-y-1"
                     >
                       <div className="flex items-center justify-between text-[10px] text-ink-secondary">
                         <span className="font-semibold text-navy">{String(n.user_id || "Analyst")}</span>
@@ -411,7 +411,7 @@ export default function InvestigationReportPage() {
             </div>
 
             {/* Status History */}
-            <div className="bg-white print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 shadow-sm">
+            <div className="bg-surface print:bg-gray-50 border border-border-warm print:border-gray-300 p-5 md:p-6 rounded-2xl space-y-3 shadow-sm">
               <h3 className="font-serif font-bold text-ink-primary print:text-gray-800 text-xs">
                 Status Audit Trail
               </h3>
@@ -422,7 +422,7 @@ export default function InvestigationReportPage() {
                   {report.status_history.map((act, idx) => (
                     <div
                       key={idx}
-                      className="p-3 bg-slate-50 print:bg-white rounded-xl border border-border-warm print:border-gray-200 text-[11px] text-ink-primary"
+                      className="p-3 bg-linen print:bg-white rounded-xl border border-border-warm print:border-gray-200 text-[11px] text-ink-primary"
                     >
                       <div>
                         {String(act.previous_value || "new")} ➔{" "}

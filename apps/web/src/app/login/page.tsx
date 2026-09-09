@@ -1,38 +1,57 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ShieldAlert, ArrowRight, Lock, Sparkles } from "lucide-react";
+import { api } from "@/lib/api";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 function LoginForm() {
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     document.title = "TraceFuse — Investigator Access";
   }, []);
 
-  const handleLogin = (codeToTest?: string) => {
-    const code = codeToTest ?? passcode;
+  const handleLogin = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!passcode.trim()) {
+      setError("Please enter your investigator passcode.");
+      return;
+    }
     setError("");
     setLoading(true);
 
-    // Passcode for demo evaluation
-    if (code === "demo2026" || code === "admin") {
-      document.cookie = "tracefuse_session=authenticated_analyst; path=/; max-age=86400; SameSite=Lax";
-      const destination = searchParams.get("from") || "/dashboard";
+    try {
+      await api.login(passcode.trim());
+      const search = typeof window !== "undefined" ? window.location.search : "";
+      const destination = new URLSearchParams(search).get("from") || "/dashboard";
       router.push(destination);
-    } else {
+    } catch (err: unknown) {
       setLoading(false);
-      setError("Invalid access passcode. Please enter 'demo2026' for hackathon demo access.");
+      const msg = err instanceof Error ? err.message : "Invalid access passcode.";
+      setError(msg);
+    }
+  };
+
+  const handleDemoAccess = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      await api.demoLogin();
+      router.push("/investigations/inv_flagship_demo?tab=graph");
+    } catch (err: unknown) {
+      setLoading(false);
+      const msg = err instanceof Error ? err.message : "Demo authentication failed.";
+      setError(msg);
     }
   };
 
   return (
-    <div className="w-full max-w-md bg-white border border-border-warm p-8 rounded-2xl shadow-sm space-y-6 relative z-10">
+    <div className="w-full max-w-md bg-surface border border-border-warm p-8 rounded-2xl shadow-sm space-y-6 relative z-10">
       {/* Header Badge */}
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wide text-navy bg-navy-subtle border border-navy/20 rounded-full">
@@ -68,10 +87,10 @@ function LoginForm() {
                 setPasscode(e.target.value);
                 setError("");
               }}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-border-warm rounded-xl text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy font-mono text-sm transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-linen border border-border-warm rounded-xl text-ink-primary placeholder-ink-muted focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy font-mono text-sm transition-all"
               autoFocus
             />
-            <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
+            <Lock className="w-4 h-4 text-ink-muted absolute left-3.5 top-3 pointer-events-none" />
           </div>
         </div>
 
@@ -96,11 +115,9 @@ function LoginForm() {
       <div className="pt-3 border-t border-border-warm space-y-3">
         <button
           type="button"
-          onClick={() => {
-            document.cookie = "tracefuse_session=authenticated_analyst; path=/; max-age=86400; SameSite=Lax";
-            router.push("/investigations/inv_flagship_demo?tab=graph");
-          }}
-          className="w-full py-3 px-4 bg-navy hover:bg-navy-hover text-white text-xs font-semibold rounded-xl border border-navy shadow-md shadow-navy/20 transition-all flex items-center justify-between group cursor-pointer"
+          onClick={handleDemoAccess}
+          disabled={loading}
+          className="w-full py-3 px-4 bg-navy hover:bg-navy-hover text-white text-xs font-semibold rounded-xl border border-navy shadow-md shadow-navy/20 transition-all flex items-center justify-between group cursor-pointer disabled:opacity-70"
         >
           <span className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
@@ -114,7 +131,7 @@ function LoginForm() {
           <p className="text-[11px] text-ink-secondary">
             Access restricted to authorized fraud investigation personnel.
           </p>
-          <p className="text-[11px] text-slate-400 font-sans">
+          <p className="text-[11px] text-ink-muted font-sans">
             Build Bank Hackathon 2026
           </p>
         </div>
@@ -126,9 +143,10 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-linen text-ink-primary relative overflow-hidden font-sans">
-      <Suspense fallback={<div className="text-ink-secondary text-xs">Loading Auth Gate...</div>}>
-        <LoginForm />
-      </Suspense>
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
+      <LoginForm />
     </div>
   );
 }

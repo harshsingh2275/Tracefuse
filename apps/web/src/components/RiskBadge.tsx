@@ -16,7 +16,7 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({
 }) => {
   const normLevel = level.toLowerCase();
 
-  let bg = "bg-slate-100 border-border-warm text-slate-700";
+  let bg = "bg-severity-normal-bg border-severity-normal-border text-severity-normal font-medium";
   let Icon = ShieldCheck;
   let label = "Low Risk";
 
@@ -33,7 +33,7 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({
     Icon = AlertTriangle;
     label = "Medium Risk";
   } else {
-    bg = "bg-slate-100 border-border-warm text-slate-700 font-medium";
+    bg = "bg-severity-normal-bg border-severity-normal-border text-severity-normal font-medium";
     Icon = ShieldCheck;
     label = "Low Risk";
   }

@@ -25,14 +25,14 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   } else if (variant === "warning") {
     iconBg = "bg-severity-suspicious-bg text-severity-suspicious border-severity-suspicious-border";
   } else if (variant === "success") {
-    iconBg = "bg-emerald-50 text-emerald-700 border-emerald-200";
+    iconBg = "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60";
   } else if (variant === "accent") {
     iconBg = "bg-navy-subtle text-navy border-navy/20";
   }
 
   return (
     <div
-      className={`bg-white border border-border-warm hover:border-slate-300 p-4 sm:p-5 rounded-xl transition-all duration-200 shadow-sm relative overflow-hidden group ${className}`}
+      className={`bg-surface border border-border-warm hover:border-navy/30 p-4 sm:p-5 rounded-xl transition-all duration-200 shadow-sm relative overflow-hidden group ${className}`}
     >
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-sans font-medium text-ink-secondary uppercase tracking-wider">

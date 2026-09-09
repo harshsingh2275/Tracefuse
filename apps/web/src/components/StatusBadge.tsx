@@ -14,7 +14,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = ""
   let label = "New";
 
   if (s === "investigating") {
-    bg = "bg-amber-100 border-amber-300 text-amber-800";
+    bg = "bg-severity-suspicious-bg border-severity-suspicious-border text-severity-suspicious";
     Icon = Search;
     label = "Investigating";
   } else if (s === "escalated") {
@@ -22,7 +22,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = ""
     Icon = AlertCircle;
     label = "Escalated";
   } else if (s === "resolved") {
-    bg = "bg-emerald-100 border-emerald-300 text-emerald-800";
+    bg = "bg-emerald-100 border-emerald-300 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300";
     Icon = CheckCircle2;
     label = "Resolved";
   }

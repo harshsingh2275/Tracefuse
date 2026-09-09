@@ -23,6 +23,7 @@ async function fetchJson<T>(endpoint: string, options?: RequestInit): Promise<T>
   try {
     const res = await fetch(url, {
       ...options,
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         ...options?.headers,
@@ -32,6 +33,20 @@ async function fetchJson<T>(endpoint: string, options?: RequestInit): Promise<T>
 
     if (!res.ok) {
       const errorBody = await res.json().catch(() => ({}));
+
+      // Auto-redirect to /login on 401 only if made from an already-authenticated page context
+      // (skip if already on /login or if the request is an auth endpoint itself)
+      if (
+        res.status === 401 &&
+        typeof window !== "undefined" &&
+        window.location.pathname !== "/login" &&
+        !endpoint.startsWith("/auth") &&
+        !endpoint.startsWith("/api/auth")
+      ) {
+        const currentPath = window.location.pathname + window.location.search;
+        window.location.href = `/login?from=${encodeURIComponent(currentPath)}`;
+      }
+
       throw new Error(errorBody.detail || `API request failed with status ${res.status}: ${res.statusText}`);
     }
 
@@ -137,5 +152,40 @@ export const api = {
   // Transaction Record
   getTransactionDetail: (id: string): Promise<TransactionResponse> => {
     return fetchJson<TransactionResponse>(`/transactions/${id}`);
+  },
+
+  // Auth Operations
+  login: async (passcode: string): Promise<{ status: string }> => {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ passcode }),
+      credentials: "include",
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || "Login failed");
+    }
+    return res.json();
+  },
+
+  demoLogin: async (): Promise<{ status: string }> => {
+    const res = await fetch("/api/auth/demo-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || "Demo login failed");
+    }
+    return res.json();
+  },
+
+  logout: async (): Promise<void> => {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    }).catch(() => {});
   },
 };

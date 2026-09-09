@@ -88,7 +88,7 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
   const firstTimestamp = sortedEvents.length > 0 ? new Date(sortedEvents[0].timestamp) : null;
 
   return (
-    <div className={`bg-white border border-border-warm rounded-xl p-6 shadow-sm space-y-6 ${className}`}>
+    <div className={`bg-surface border border-border-warm rounded-xl p-6 shadow-sm space-y-6 ${className}`}>
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-border-warm">
         <div>
@@ -102,7 +102,7 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
         </div>
 
         {/* Playback Controls & Scrubber */}
-        <div className="flex items-center gap-3 w-full md:w-auto bg-slate-50 border border-border-warm p-2 rounded-xl">
+        <div className="flex items-center gap-3 w-full md:w-auto bg-linen border border-border-warm p-2 rounded-xl">
           <button
             onClick={() => {
               if (scrubIndex >= events.length) setScrubIndex(1);
@@ -119,7 +119,7 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
               setIsPlaying(false);
               setScrubIndex(events.length);
             }}
-            className="p-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 transition-all cursor-pointer"
+            className="p-1.5 rounded-lg bg-linen hover:bg-navy-subtle text-ink-secondary hover:text-ink-primary border border-border-warm transition-all cursor-pointer"
             title="Reset Timeline to End"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -141,23 +141,23 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
 
       {/* Metrics Banner */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-        <div className="p-3 bg-slate-50 rounded-lg border border-border-warm">
+        <div className="p-3 bg-surface rounded-lg border border-border-warm">
           <span className="text-ink-secondary uppercase text-[10px]">Events in View</span>
           <div className="text-base font-bold text-ink-primary mt-0.5">{filteredEvents.length} txns</div>
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border border-border-warm">
+        <div className="p-3 bg-surface rounded-lg border border-border-warm">
           <span className="text-ink-secondary uppercase text-[10px]">Cumulative Volume</span>
-          <div className="text-base font-bold text-emerald-700 mt-0.5">
+          <div className="text-base font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
             ₹{totalVolume.toLocaleString("en-IN")}
           </div>
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border border-border-warm">
+        <div className="p-3 bg-surface rounded-lg border border-border-warm">
           <span className="text-ink-secondary uppercase text-[10px]">High-Value Transfers</span>
-          <div className="text-base font-bold text-amber-700 mt-0.5">
+          <div className="text-base font-bold text-severity-suspicious mt-0.5">
             {filteredEvents.filter((e) => e.is_high_value).length}
           </div>
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border border-border-warm">
+        <div className="p-3 bg-surface rounded-lg border border-border-warm">
           <span className="text-ink-secondary uppercase text-[10px]">Pattern State</span>
           <div className="text-base font-bold text-navy mt-0.5 font-sans">Active Sequence</div>
         </div>
@@ -171,7 +171,7 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filterType === "all"
                 ? "bg-navy text-white shadow-sm"
-                : "text-ink-secondary hover:text-ink-primary hover:bg-slate-100"
+                : "text-ink-secondary hover:text-ink-primary hover:bg-navy-subtle"
             }`}
           >
             All Events
@@ -180,8 +180,8 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
             onClick={() => setFilterType("high_value")}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filterType === "high_value"
-                ? "bg-amber-100 text-amber-800 border border-amber-300 font-semibold"
-                : "text-ink-secondary hover:text-ink-primary hover:bg-slate-100"
+                ? "bg-severity-suspicious-bg text-severity-suspicious border border-severity-suspicious-border font-semibold"
+                : "text-ink-secondary hover:text-ink-primary hover:bg-navy-subtle"
             }`}
           >
             High Value (≥ ₹1L)
@@ -194,14 +194,14 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
             placeholder="Search account name, ID, or txn..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-border-warm rounded-lg text-xs text-ink-primary placeholder-slate-400 focus:outline-none focus:border-navy"
+            className="w-full pl-8 pr-3 py-1.5 bg-linen border border-border-warm rounded-lg text-xs text-ink-primary placeholder-ink-muted focus:outline-none focus:border-navy"
           />
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+          <Search className="w-3.5 h-3.5 text-ink-muted absolute left-2.5 top-2.5" />
         </div>
       </div>
 
       {/* Timeline Event Feed */}
-      <div className="relative pl-6 border-l-2 border-slate-200 space-y-4">
+      <div className="relative pl-6 border-l-2 border-border-warm space-y-4">
         {filteredEvents.map((evt, idx) => {
           const evtTime = new Date(evt.timestamp);
           const elapsedMins = firstTimestamp
@@ -215,20 +215,20 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
             <div key={evt.id} className="relative group">
               {/* Timeline Node Dot */}
               <div
-                className={`absolute -left-[31px] top-3.5 w-3.5 h-3.5 rounded-full border-2 border-white transition-transform group-hover:scale-125 ${
-                  evt.is_high_value ? "bg-amber-500 ring-2 ring-amber-200" : "bg-navy ring-2 ring-navy-subtle"
+                className={`absolute -left-[31px] top-3.5 w-3.5 h-3.5 rounded-full border-2 border-surface transition-transform group-hover:scale-125 ${
+                  evt.is_high_value ? "bg-severity-suspicious ring-2 ring-severity-suspicious/30" : "bg-navy ring-2 ring-navy-subtle"
                 }`}
               />
 
               {/* Event Card */}
-              <div className="bg-slate-50 border border-border-warm hover:border-slate-300 p-4 rounded-xl transition-all shadow-sm">
+              <div className="bg-surface border border-border-warm hover:border-navy/30 p-4 rounded-xl transition-all shadow-sm">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 border-b border-border-warm">
                   <div className="flex items-center gap-2 font-mono text-xs">
                     <span className="px-1.5 py-0.5 rounded bg-navy-subtle text-navy border border-navy/20 font-semibold">
                       #{idx + 1}
                     </span>
                     <span className="text-ink-secondary" title={evt.id}>{formatTxnCode(evt.id)}</span>
-                    <span className="text-slate-300">•</span>
+                    <span className="text-ink-muted">•</span>
                     <span className="text-ink-secondary uppercase text-[11px]">
                       {evt.transaction_type}
                     </span>
@@ -246,8 +246,8 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
                 <div className="mt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-sans">
                   <div className="flex items-center gap-2 text-ink-primary">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-slate-900">{sourceName}</span>
-                      <span className="font-mono text-[10px] text-slate-500" title={evt.source_account_id}>
+                      <span className="font-semibold text-ink-primary">{sourceName}</span>
+                      <span className="font-mono text-[10px] text-ink-secondary" title={evt.source_account_id}>
                         ({formatAccountCode(evt.source_account_id)})
                       </span>
                     </div>
@@ -255,15 +255,15 @@ export const InvestigationTimeline: React.FC<InvestigationTimelineProps> = ({
                     <ArrowRight className="w-3.5 h-3.5 text-navy shrink-0 mx-1" />
 
                     <div className="flex flex-col">
-                      <span className="font-semibold text-slate-900">{destName}</span>
-                      <span className="font-mono text-[10px] text-slate-500" title={evt.destination_account_id}>
+                      <span className="font-semibold text-ink-primary">{destName}</span>
+                      <span className="font-mono text-[10px] text-ink-secondary" title={evt.destination_account_id}>
                         ({formatAccountCode(evt.destination_account_id)})
                       </span>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <div className="text-base font-bold font-mono text-emerald-700">
+                    <div className="text-base font-bold font-mono text-emerald-700 dark:text-emerald-400">
                       ₹{evt.amount.toLocaleString("en-IN")}
                     </div>
                   </div>

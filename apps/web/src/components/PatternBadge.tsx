@@ -22,7 +22,7 @@ export const PatternBadge: React.FC<PatternBadgeProps> = ({ type, className = ""
   let label = type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   let tooltip = "Algorithmic forensic pattern signature detected";
   let Icon = Zap;
-  let bg = "bg-slate-100 text-slate-700 border-border-warm";
+  let bg = "bg-severity-normal-bg text-severity-normal border-severity-normal-border";
 
   switch (norm) {
     case "fan_out":
@@ -41,20 +41,20 @@ export const PatternBadge: React.FC<PatternBadgeProps> = ({ type, className = ""
       label = "Velocity";
       tooltip = "Unusually high transaction speed for this account";
       Icon = Activity;
-      bg = "bg-amber-100 text-amber-800 border-amber-300";
+      bg = "bg-severity-suspicious-bg text-severity-suspicious border-severity-suspicious-border";
       break;
     case "rapid_pass_through":
     case "pass_through":
       label = "Pass-Through";
       tooltip = "Funds moved onward almost immediately after arriving";
       Icon = ArrowRightLeft;
-      bg = "bg-amber-100 text-amber-800 border-amber-300";
+      bg = "bg-severity-suspicious-bg text-severity-suspicious border-severity-suspicious-border";
       break;
     case "fragmentation":
       label = "Fragmentation";
       tooltip = "One large amount split into many smaller transfers";
       Icon = Layers;
-      bg = "bg-amber-100 text-amber-800 border-amber-300";
+      bg = "bg-severity-suspicious-bg text-severity-suspicious border-severity-suspicious-border";
       break;
     case "circular_movement":
     case "circular_loop":
@@ -67,7 +67,7 @@ export const PatternBadge: React.FC<PatternBadgeProps> = ({ type, className = ""
       label = "Shared Device";
       tooltip = "Multiple accounts linked to the same device";
       Icon = Smartphone;
-      bg = "bg-slate-100 text-slate-800 border-slate-300";
+      bg = "bg-navy-subtle text-navy border-navy/20";
       break;
     case "new_intermediary":
     case "new_conduit":

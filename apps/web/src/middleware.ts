@@ -13,9 +13,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Read session authentication cookie
-  const sessionCookie = request.cookies.get("tracefuse_session");
-  const isAuthenticated = sessionCookie?.value === "authenticated_analyst";
+  // Read session authentication JWT cookie
+  const jwtCookie = request.cookies.get("tracefuse_jwt");
+  const isAuthenticated = Boolean(jwtCookie?.value);
 
   // If NOT authenticated:
   if (!isAuthenticated) {
