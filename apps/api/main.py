@@ -32,20 +32,21 @@ app = FastAPI(
 )
 
 # CORS configuration with explicit credentials support
-allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "")
-allowed_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
-if not allowed_origins:
-    allowed_origins = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-    ]
+cors_env = os.getenv("CORS_ORIGINS") or os.getenv("ALLOWED_ORIGINS", "")
+env_origins = [o.strip() for o in cors_env.split(",") if o.strip()]
+default_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://tracefuse.vercel.app",
+]
+# Merge origins without duplicates, explicitly including production Vercel origin
+allowed_origins = list(dict.fromkeys(default_origins + env_origins))
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_origin_regex=r"https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

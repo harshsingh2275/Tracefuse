@@ -17,18 +17,19 @@ Browser request to any UI route (dashboard, investigations, etc.)
        │         /login page (apps/web/src/app/login/page.tsx)
        │           ├─ Manual Passcode:
        │           │    └─ POST /api/auth/login  (apps/web/src/app/api/auth/login/route.ts)
-       │           │         └─ Server-to-server: POST http://localhost:8000/auth/login
+       │           │         ├─ Cross-origin client fetch: POST `${API_BASE_URL}/auth/login` { credentials: "include" }
+       │           │         │    └─ Backend returns HttpOnly, Secure=True, SameSite=None cookie: tracefuse_jwt
+       │           │         └─ Server-to-server: POST http://localhost:8000/auth/login via Next.js route
        │           │              ├─ Validates passcode against DEMO_PASSCODE / ADMIN_PASSCODE
        │           │              ├─ Issues signed HS256 JWT (12h expiry, secret from JWT_SECRET)
-       │           │              └─ Sets HttpOnly, Secure, SameSite=Lax cookie: tracefuse_jwt
+       │           │              └─ Sets local Next.js route gating cookie: tracefuse_jwt
        │           └─ Judge Fast-Track ("Load Demo Investigation" button):
+       │                ├─ Cross-origin client fetch: POST `${API_BASE_URL}/auth/login` with "demo2026"
        │                └─ POST /api/auth/demo-login  (apps/web/src/app/api/auth/demo-login/route.ts)
-       │                     └─ Server-side fetch: POST http://localhost:8000/auth/login with DEMO_PASSCODE
-       │                          ├─ Validates server-side (zero credentials exposed in client JS)
-       │                          ├─ Issues signed JWT and forwards Set-Cookie: tracefuse_jwt
-       │                          └─ router.push("/investigations/inv_flagship_demo?tab=graph")
+       │                     └─ Sets local route gating cookie and router.push("/investigations/inv_flagship_demo?tab=graph")
        └─ If authenticated + visiting /login or /:
-            └─ Redirect 307 → /dashboard
+            └─ If query has ?expired=true or ?reauth=true: exempt from redirect & clear stale cookie
+            └─ Otherwise: Redirect 307 → /dashboard
 
 Browser / Client Direct API Requests:
   └─ fetch(`${NEXT_PUBLIC_API_URL}${endpoint}`, { credentials: "include" })
@@ -43,12 +44,14 @@ Browser / Client Direct API Requests:
 
 **Non-obvious:** The Next.js middleware performs fast edge UI gating by checking the cookie's presence,
 but the FastAPI backend independently decodes and verifies the cryptographic HS256 signature on EVERY
-data and mutating endpoint via the `verify_session_token` dependency. Client-side JavaScript never has
-access to the raw token (HttpOnly) and contains zero hardcoded passcodes or credentials.
-`/login` renders synchronously in SSR without `<Suspense>` or `useSearchParams()`, ensuring instant
-form visibility without fallback states. `fetchJson` includes a guarded 401 auto-redirect that automatically
-redirects authenticated pages to `/login` if a session expires, while allowing `/login` attempts to
-display inline error messages without redirect loops.
+data and mutating endpoint via the `verify_session_token` dependency. Because the frontend (Vercel) and
+backend (Render) reside on different domains in production, FastAPI issues `SameSite=None; Secure=True`
+cookies, and the frontend client authenticates directly against the backend with `credentials: "include"`.
+Client-side JavaScript never has access to the raw token (HttpOnly) and contains zero hardcoded passcodes
+or credentials. `/login` renders synchronously in SSR without `<Suspense>` or `useSearchParams()`.
+`fetchJson` guards against 401 redirect loops by clearing local cookies and redirecting with `expired=true`
+at most once (tracked via `sessionStorage`), while the dashboard component halts loading on error with
+a clean manual retry / re-login interface.
 
 ---
 

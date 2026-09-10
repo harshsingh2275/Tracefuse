@@ -36,20 +36,13 @@ def login(payload: LoginRequest, request: Request, response: Response):
     # Issue 12-hour signed JWT session token
     token = create_access_token(user_id="usr_analyst_01", role="analyst")
 
-    # Determine Secure flag: enabled in production, HTTPS requests, or when COOKIE_SECURE is true
-    is_secure = (
-        os.getenv("COOKIE_SECURE", "false").lower() == "true"
-        or os.getenv("ENVIRONMENT", "development").lower() == "production"
-        or request.url.scheme == "https"
-    )
-
-    # Set HttpOnly, Secure, SameSite cookie
+    # Set HttpOnly, Secure, SameSite=none cookie for cross-origin authentication
     response.set_cookie(
         key=COOKIE_NAME,
         value=token,
         httponly=True,
-        secure=is_secure,
-        samesite="lax",
+        secure=True,
+        samesite="none",
         max_age=12 * 3600,
         path="/",
     )
@@ -65,7 +58,12 @@ def login(payload: LoginRequest, request: Request, response: Response):
 @router.post("/logout")
 def logout(response: Response):
     """Revoke session by clearing the HttpOnly session cookie."""
-    response.delete_cookie(key=COOKIE_NAME, path="/")
+    response.delete_cookie(
+        key=COOKIE_NAME,
+        path="/",
+        secure=True,
+        samesite="none",
+    )
     return {"status": "ok", "message": "Signed out successfully"}
 
 

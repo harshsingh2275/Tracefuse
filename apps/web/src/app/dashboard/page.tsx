@@ -46,6 +46,7 @@ export default function DashboardPage() {
   const [investigations, setInvestigations] = useState<InvestigationListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthError, setIsAuthError] = useState<boolean>(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortAsc, setSortAsc] = useState<boolean>(false);
@@ -54,6 +55,7 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       setError(null);
+      setIsAuthError(false);
       const [sumData, invData] = await Promise.all([
         api.getDashboardSummary(),
         api.getInvestigations(),
@@ -61,8 +63,12 @@ export default function DashboardPage() {
       setSummary(sumData);
       setInvestigations(invData);
     } catch (err: unknown) {
+      const is401 =
+        (err as { status?: number })?.status === 401 ||
+        (err instanceof Error && err.message.includes("401"));
       const msg = err instanceof Error ? err.message : "Failed to load dashboard data.";
       setError(msg);
+      setIsAuthError(Boolean(is401));
     } finally {
       setLoading(false);
     }
@@ -133,15 +139,32 @@ export default function DashboardPage() {
               <ShieldAlert className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-lg font-bold font-serif text-ink-primary">Unable to Connect</h3>
+              <h3 className="text-lg font-bold font-serif text-ink-primary">
+                {isAuthError ? "Authentication Required" : "Unable to Connect"}
+              </h3>
               <p className="text-xs text-ink-secondary leading-relaxed">
-                We couldn't retrieve the active surveillance feed and case queue. Please check the backend server status or retry.
+                {isAuthError
+                  ? "Your session could not be verified by the backend API or has expired. Please sign in again."
+                  : "We couldn't retrieve the active surveillance feed and case queue. Please check the backend server status or retry."}
               </p>
             </div>
-            <div className="pt-2">
+            <div className="pt-2 flex items-center justify-center gap-3">
+              {isAuthError ? (
+                <button
+                  onClick={() => {
+                    api.logout().then(() => {
+                      window.location.href = "/login?expired=true";
+                    });
+                  }}
+                  className="px-4 py-2 bg-navy hover:bg-navy-hover text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-md shadow-navy/20"
+                >
+                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>Sign In Again</span>
+                </button>
+              ) : null}
               <button
                 onClick={fetchData}
-                className="px-4 py-2 bg-navy hover:bg-navy-hover text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all mx-auto cursor-pointer shadow-md shadow-navy/20"
+                className="px-4 py-2 bg-surface hover:bg-linen border border-border-warm text-ink-primary rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Retry Connection</span>

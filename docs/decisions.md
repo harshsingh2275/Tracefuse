@@ -364,3 +364,31 @@ when offline (obscures engine transparency from investigators).
 
 **Tradeoff accepted:** Header status reflects the outcome of the most recent response rather than polling backend
 health proactively; avoids extraneous background health-check network requests.
+
+---
+
+## Cross-Origin SameSite=None JWT cookie & infinite reload loop prevention
+**Commit:** post-history update · 2026-09-10
+
+**Rationale:** When deploying the frontend on Vercel (`https://tracefuse.vercel.app`) and backend on Render
+(`https://<api>.onrender.com`), requests between them are cross-origin and cross-site.
+1. **Cross-Site Cookies:** Modern browsers reject `SameSite=Lax` cookies on cross-site asynchronous fetch requests.
+   Updated FastAPI's `response.set_cookie` to strictly specify `samesite="none"` and `secure=True`, allowing
+   browsers to persist and transmit `tracefuse_jwt` cross-origin.
+2. **Direct Cross-Origin Cookie Exchange:** Updated the frontend `login` and `demoLogin` methods to authenticate
+   directly against the backend API with `credentials: "include"`, ensuring the browser receives and stores the
+   cross-origin cookie on the backend domain while also establishing the local Next.js route gating cookie.
+3. **CORS Credentials:** Explicitly added `https://tracefuse.vercel.app` to FastAPI's `allowed_origins` list alongside
+   support for `CORS_ORIGINS` and `ALLOWED_ORIGINS` environment variables, ensuring compliant preflight headers
+   without using wildcard `allow_origins=["*"]`.
+4. **Infinite Reload Loop Prevention:** Guarded `fetchJson` on 401 errors using `sessionStorage` and cleared local
+   frontend cookies before redirecting to `/login?expired=true`. Next.js middleware was updated to exempt requests
+   with `expired=true`, preventing a ping-pong redirect loop between frontend middleware and the client API layer.
+   Dashboard error handling now halts loading and displays a manual retry/sign-in interface on failure.
+
+**Alternative(s) considered:** Storing JWT in `localStorage` or memory and sending `Authorization: Bearer` headers
+(violates the strict HttpOnly cookie architecture constraint), Next.js API proxy for all backend traffic (adds latency
+and double data transfer overhead across Vercel serverless functions).
+
+**Tradeoff accepted:** `SameSite=None` cookies require `Secure=True` (HTTPS), which is natively satisfied in
+production on Vercel and Render.

@@ -33,9 +33,11 @@ async function fetchJson<T>(endpoint: string, options?: RequestInit): Promise<T>
 
     if (!res.ok) {
       const errorBody = await res.json().catch(() => ({}));
+      const errorMessage =
+        errorBody.detail ||
+        `API request failed with status ${res.status}: ${res.statusText}`;
 
-      // Auto-redirect to /login on 401 only if made from an already-authenticated page context
-      // (skip if already on /login or if the request is an auth endpoint itself)
+      // Gracefully redirect to /login on 401 exactly once to prevent infinite reload loops
       if (
         res.status === 401 &&
         typeof window !== "undefined" &&
@@ -43,18 +45,33 @@ async function fetchJson<T>(endpoint: string, options?: RequestInit): Promise<T>
         !endpoint.startsWith("/auth") &&
         !endpoint.startsWith("/api/auth")
       ) {
-        const currentPath = window.location.pathname + window.location.search;
-        window.location.href = `/login?from=${encodeURIComponent(currentPath)}`;
+        const redirectKey = "tf_auth_redirected";
+        const alreadyRedirected = sessionStorage.getItem(redirectKey);
+        if (!alreadyRedirected) {
+          sessionStorage.setItem(redirectKey, "true");
+          // Clear frontend cookie so Next.js middleware doesn't bounce back to dashboard
+          document.cookie =
+            "tracefuse_jwt=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+          }).catch(() => {});
+
+          const currentPath = window.location.pathname + window.location.search;
+          window.location.href = `/login?from=${encodeURIComponent(currentPath)}&expired=true`;
+        }
       }
 
-      throw new Error(errorBody.detail || `API request failed with status ${res.status}: ${res.statusText}`);
+      const err = new Error(errorMessage) as Error & { status?: number };
+      err.status = res.status;
+      throw err;
     }
 
     return await res.json();
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`[API Client Error] ${endpoint}:`, message);
-    throw new Error(message);
+    throw err instanceof Error ? err : new Error(message);
   }
 }
 
@@ -156,6 +173,21 @@ export const api = {
 
   // Auth Operations
   login: async (passcode: string): Promise<{ status: string }> => {
+    // 1. Direct fetch to FastAPI backend if cross-origin, ensuring browser receives cross-origin SameSite=None cookie
+    if (API_BASE_URL && !API_BASE_URL.startsWith("/")) {
+      try {
+        await fetch(`${API_BASE_URL}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ passcode }),
+          credentials: "include",
+        });
+      } catch (e) {
+        console.warn("[API] Direct cross-origin auth warning:", e);
+      }
+    }
+
+    // 2. Next.js route handler to set local session cookie for Next.js middleware route gating
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -166,10 +198,28 @@ export const api = {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || "Login failed");
     }
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("tf_auth_redirected");
+    }
     return res.json();
   },
 
   demoLogin: async (): Promise<{ status: string }> => {
+    // 1. Direct fetch to FastAPI backend for cross-origin cookie
+    if (API_BASE_URL && !API_BASE_URL.startsWith("/")) {
+      try {
+        await fetch(`${API_BASE_URL}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ passcode: "demo2026" }),
+          credentials: "include",
+        });
+      } catch (e) {
+        console.warn("[API] Direct cross-origin demo auth warning:", e);
+      }
+    }
+
+    // 2. Next.js route handler
     const res = await fetch("/api/auth/demo-login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -179,10 +229,28 @@ export const api = {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || "Demo login failed");
     }
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("tf_auth_redirected");
+    }
     return res.json();
   },
 
   logout: async (): Promise<void> => {
+    if (API_BASE_URL && !API_BASE_URL.startsWith("/")) {
+      try {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: "POST",
+          credentials: "include",
+        });
+      } catch {
+        // ignore
+      }
+    }
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("tf_auth_redirected");
+      document.cookie =
+        "tracefuse_jwt=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
     await fetch("/api/auth/logout", {
       method: "POST",
       credentials: "include",

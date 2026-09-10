@@ -32,6 +32,14 @@ export function middleware(request: NextRequest) {
 
   // If ALREADY authenticated:
   if (isAuthenticated) {
+    if (
+      request.nextUrl.searchParams.has("expired") ||
+      request.nextUrl.searchParams.has("reauth")
+    ) {
+      const response = NextResponse.next();
+      response.cookies.delete("tracefuse_jwt");
+      return response;
+    }
     if (pathname === "/login" || pathname === "/") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
