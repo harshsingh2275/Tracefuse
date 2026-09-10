@@ -194,8 +194,48 @@ tbody tr:hover {
   height: 8px !important;
 }
 
-.react-flow__node {
+/* Edge label renderer layer priority — sits below nodes */
+.react-flow__edgelabel-renderer {
+  z-index: 10 !important;
+  pointer-events: none;
+}
+.react-flow__edgelabel-renderer > * {
+  pointer-events: all;
+}
+
+/* React Flow Nodes layer priority — nodes strictly elevated above edge labels */
+.react-flow__nodes {
+  z-index: 40 !important;
+}
+
+/* React Flow Node wrapper resets — eliminate rogue white background boxes on custom and default nodes */
+.react-flow__node,
+.react-flow__node-default,
+.react-flow__node-input,
+.react-flow__node-output,
+.react-flow__node-group {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  z-index: 40 !important;
   transition: transform 150ms ease, filter 150ms ease;
+}
+
+.react-flow__node.selected,
+.react-flow__node:focus,
+.react-flow__node:focus-visible,
+.react-flow__node-default.selected,
+.react-flow__node-default:focus,
+.react-flow__node-default:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  z-index: 45 !important;
 }
 
 .react-flow__node:hover {

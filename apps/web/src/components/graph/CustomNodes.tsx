@@ -21,32 +21,32 @@ export const AccountNode = memo(({ data, selected }: NodeProps) => {
   const accountType = nodeData.account_type || "savings";
   const accountCode = formatAccountCode(nodeData.id);
 
-  let borderStyle = "border-border-warm bg-surface";
+  let borderStyle = "border-border-warm bg-[#0a0d14]";
   let ringStyle = "";
   let badgeBg = "bg-severity-normal-bg text-severity-normal border-severity-normal-border";
   let RiskIcon = ShieldCheck;
 
   if (severity === "critical") {
-    borderStyle = "border-severity-critical/70 bg-severity-critical-bg/50";
+    borderStyle = "border-severity-critical/70 bg-[#0a0d14]";
     ringStyle = "shadow-md ring-1 ring-severity-critical/30";
     badgeBg = "bg-severity-critical-bg text-severity-critical border-severity-critical-border";
     RiskIcon = Flame;
   } else if (severity === "high") {
-    borderStyle = "border-severity-suspicious/70 bg-severity-suspicious-bg/50";
+    borderStyle = "border-severity-suspicious/70 bg-[#0a0d14]";
     ringStyle = "shadow-sm ring-1 ring-severity-suspicious/30";
     badgeBg = "bg-severity-suspicious-bg text-severity-suspicious border-severity-suspicious-border";
     RiskIcon = AlertOctagon;
   } else if (severity === "medium") {
-    borderStyle = "border-severity-suspicious/50 bg-severity-suspicious-bg/25";
+    borderStyle = "border-severity-suspicious/50 bg-[#0a0d14]";
     badgeBg = "bg-severity-suspicious-bg text-severity-suspicious border-severity-suspicious-border";
     RiskIcon = AlertOctagon;
   }
 
   return (
     <div
-      className={`px-3.5 py-2.5 rounded-xl border ${borderStyle} ${ringStyle} ${
-        selected ? "ring-2 ring-navy shadow-lg" : "shadow-sm"
-      } min-w-[200px] max-w-[240px] text-xs font-sans transition-all duration-150 relative cursor-pointer`}
+      className={`relative z-40 px-3.5 py-2.5 rounded-xl border ${borderStyle} ${ringStyle} ${
+        selected ? "ring-2 ring-indigo-500 shadow-lg" : "shadow-sm"
+      } min-w-[200px] max-w-[240px] text-xs font-sans transition-all duration-150 cursor-pointer bg-[#0a0d14]`}
     >
       <Handle type="target" position={Position.Top} className="!bg-navy !w-2 !h-2" />
       <Handle type="source" position={Position.Bottom} className="!bg-navy !w-2 !h-2" />
@@ -95,9 +95,9 @@ export const DeviceNode = memo(({ data, selected }: NodeProps) => {
 
   return (
     <div
-      className={`px-3 py-2.5 rounded-xl border border-border-warm bg-surface ${
-        selected ? "ring-2 ring-navy shadow-md" : "shadow-sm"
-      } min-w-[180px] max-w-[220px] text-xs font-sans relative cursor-pointer`}
+      className={`relative z-40 px-3 py-2.5 rounded-xl border border-border-warm bg-[#0a0d14] ${
+        selected ? "ring-2 ring-indigo-500 shadow-md" : "shadow-sm"
+      } min-w-[180px] max-w-[220px] text-xs font-sans cursor-pointer`}
       title={fingerprint ? `Hardware Fingerprint: ${fingerprint}` : undefined}
     >
       <Handle type="target" position={Position.Top} className="!bg-navy !w-2 !h-2" />
@@ -136,9 +136,9 @@ export const EntityNode = memo(({ data, selected }: NodeProps) => {
 
   return (
     <div
-      className={`px-3 py-2.5 rounded-xl border border-border-warm bg-surface ${
-        selected ? "ring-2 ring-navy shadow-md" : "shadow-sm"
-      } min-w-[170px] max-w-[210px] text-xs font-sans relative cursor-pointer`}
+      className={`relative z-40 px-3 py-2.5 rounded-xl border border-border-warm bg-[#0a0d14] ${
+        selected ? "ring-2 ring-indigo-500 shadow-md" : "shadow-sm"
+      } min-w-[170px] max-w-[210px] text-xs font-sans cursor-pointer`}
     >
       <Handle type="target" position={Position.Top} className="!bg-navy !w-2 !h-2" />
       <Handle type="source" position={Position.Bottom} className="!bg-navy !w-2 !h-2" />

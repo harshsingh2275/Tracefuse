@@ -216,8 +216,8 @@ def get_investigation_graph_payload(investigation_id: str, db: Session) -> Dict[
                 **attrs,
             },
             "position": {
-                "x": 120 + (idx % 4) * 220,
-                "y": 100 + (idx // 4) * 160,
+                "x": 120 + (idx % 4) * 260,
+                "y": 100 + (idx // 4) * 220,
             },
         })
 

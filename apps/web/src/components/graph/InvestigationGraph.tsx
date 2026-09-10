@@ -46,11 +46,13 @@ const nodeTypes = {
   device: DeviceNode,
   person: EntityNode,
   merchant: EntityNode,
+  beneficiary: EntityNode,
   default: AccountNode,
 };
 
 const edgeTypes = {
   transaction: TransactionEdge,
+  customTransactionEdge: TransactionEdge,
   default: TransactionEdge,
 };
 

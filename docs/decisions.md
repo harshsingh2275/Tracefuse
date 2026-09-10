@@ -392,3 +392,18 @@ and double data transfer overhead across Vercel serverless functions).
 
 **Tradeoff accepted:** `SameSite=None` cookies require `Secure=True` (HTTPS), which is natively satisfied in
 production on Vercel and Render.
+
+---
+
+## React Flow edge label overlay pills & node background reset
+**Commit:** post-history update · 2026-09-10
+
+**Rationale:** On the investigation graph canvas, edge labels and node layering were calibrated for dark mode:
+1. **Edge Labels Stacking Context:** Transaction amounts are wrapped in an opaque, high-contrast dark pill (`bg-[#0a0d14] border-slate-700 text-slate-200 text-xs font-mono`). To ensure edge labels never render over nodes and obscure entity names, edge label containers are calibrated to `z-index: 10`, while `.react-flow__nodes` and node components (`AccountNode`, `DeviceNode`, `EntityNode`) are elevated with `relative z-40` and solid backgrounds (`bg-[#0a0d14]`).
+2. **Node Wrapper White Box Defect:** When nodes were rendered or selected, a stark white rectangular box bled out from behind custom cards due to `@xyflow/react`'s default `.react-flow__node-default` styles (`background: #fff; padding: 10px`). Overrode `.react-flow__node`, `.react-flow__node-default`, and related wrappers in `globals.css` with `background: transparent !important`, `padding: 0 !important`, and `box-shadow: none !important`. Selected states apply `ring-2 ring-indigo-500`.
+3. **Vertical & Horizontal Tier Spacing:** In `analytics/graph/builder.py`, increased node grid spacing from `160px` to `220px` vertical rank separation and `220px` to `260px` horizontal spacing, providing ample breathing room for curved transaction edges and labels without crowding adjacent nodes.
+
+**Alternative(s) considered:** Setting node types to empty strings (breaks type-based edge connection logic), SVG `<text>`
+labels with SVG `<rect>` backgrounds (lacks flexbox padding, font metrics differ across browsers).
+
+**Tradeoff accepted:** Solid `#0a0d14` node background completely masks edges routed directly behind the card, requiring curved bezier paths around nodes; accepted because node text clarity and hierarchy must be preserved.

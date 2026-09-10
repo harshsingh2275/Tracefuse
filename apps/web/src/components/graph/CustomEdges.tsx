@@ -68,14 +68,15 @@ export const TransactionEdge = ({
               position: "absolute",
               transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
               pointerEvents: "all",
+              zIndex: 10,
             }}
-            className="nodrag nopan"
+            className="nodrag nopan z-10 pointer-events-auto"
           >
             <div
-              className={`px-2 py-0.5 rounded-full border text-[10px] font-mono font-semibold transition-all ${
+              className={`bg-[#0a0d14] px-2 py-0.5 rounded-md border text-xs font-mono font-semibold shadow-md whitespace-nowrap transition-all ${
                 isHighlighted
-                  ? "bg-navy text-white border-navy shadow-md shadow-navy/30 scale-105"
-                  : "bg-surface/95 text-ink-primary border-border-warm shadow-sm hover:border-navy"
+                  ? "border-indigo-500 text-indigo-300 ring-1 ring-indigo-500 shadow-lg scale-105"
+                  : "border-slate-700 text-slate-200 hover:border-slate-500"
               }`}
             >
               {formattedAmount}
