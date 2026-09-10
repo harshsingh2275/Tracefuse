@@ -51,8 +51,13 @@ from analytics.risk.scorer import RiskScoringEngine
 from analytics.temporal.analysis import get_timeline_events
 from apps.api.services.context_builder import build_investigation_context
 from apps.api.services.ai_service import ask_investigation_assistant
+from apps.api.auth import verify_session_token
 
-router = APIRouter(prefix="/investigations", tags=["Investigations"])
+router = APIRouter(
+    prefix="/investigations",
+    tags=["Investigations"],
+    dependencies=[Depends(verify_session_token)],
+)
 
 
 def _compute_investigation_analytics(inv: Investigation, db: Session):
@@ -230,12 +235,15 @@ def get_investigation_detail(investigation_id: str, db: Session = Depends(get_db
     notes = db.query(CaseNote).filter(CaseNote.investigation_id == inv.id).order_by(CaseNote.created_at.asc()).all()
     actions = db.query(CaseAction).filter(CaseAction.investigation_id == inv.id).order_by(CaseAction.created_at.asc()).all()
 
+    user_ids = {n.user_id for n in notes if n.user_id} | {a.user_id for a in actions if a.user_id}
+    users_by_id = {u.id: u.name for u in db.query(User).filter(User.id.in_(user_ids)).all()} if user_ids else {}
+
     notes_res = [
         CaseNoteResponse(
             id=n.id,
             investigation_id=n.investigation_id,
             user_id=n.user_id,
-            user_name="Priya Sharma" if n.user_id == "usr_analyst_01" else "Analyst",
+            user_name=users_by_id.get(n.user_id, "Lead AML Investigator"),
             note_text=n.note_text,
             created_at=n.created_at,
         )
@@ -247,7 +255,7 @@ def get_investigation_detail(investigation_id: str, db: Session = Depends(get_db
             id=a.id,
             investigation_id=a.investigation_id,
             user_id=a.user_id,
-            user_name="Priya Sharma" if a.user_id == "usr_analyst_01" else "System",
+            user_name=users_by_id.get(a.user_id, "System"),
             action_type=a.action_type,
             previous_value=a.previous_value,
             new_value=a.new_value,

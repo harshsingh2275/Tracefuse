@@ -1,4 +1,4 @@
-﻿# TraceFuse — Execution Flow Map
+# TraceFuse — Execution Flow Map
 
 Real call paths through the system, updated after every change that alters routing,
 component hierarchy, or API shape. This is a "what calls what" reference, not a prose
@@ -9,22 +9,46 @@ architecture overview.
 ## Auth + Route Guard Flow
 
 ```
-Browser request to any URL
+Browser request to any UI route (dashboard, investigations, etc.)
   └─ Next.js Edge Middleware  (apps/web/src/middleware.ts)
-       ├─ Reads cookie: tracefuse_session
+       ├─ Reads HttpOnly cookie: tracefuse_jwt
        ├─ If unauthenticated:
-       │    └─ Redirect 302 → /login?from=<original_path>
+       │    └─ Redirect 307 → /login?from=<original_path>
        │         /login page (apps/web/src/app/login/page.tsx)
-       │           └─ handleLogin()
-       │                ├─ Check passcode against "demo2026" / "admin"
-       │                ├─ Set cookie: tracefuse_session=authenticated_analyst (max-age 86400)
-       │                └─ router.push(destination)   ← returns to ?from= path or /dashboard
+       │           ├─ Manual Passcode:
+       │           │    └─ POST /api/auth/login  (apps/web/src/app/api/auth/login/route.ts)
+       │           │         └─ Server-to-server: POST http://localhost:8000/auth/login
+       │           │              ├─ Validates passcode against DEMO_PASSCODE / ADMIN_PASSCODE
+       │           │              ├─ Issues signed HS256 JWT (12h expiry, secret from JWT_SECRET)
+       │           │              └─ Sets HttpOnly, Secure, SameSite=Lax cookie: tracefuse_jwt
+       │           └─ Judge Fast-Track ("Load Demo Investigation" button):
+       │                └─ POST /api/auth/demo-login  (apps/web/src/app/api/auth/demo-login/route.ts)
+       │                     └─ Server-side fetch: POST http://localhost:8000/auth/login with DEMO_PASSCODE
+       │                          ├─ Validates server-side (zero credentials exposed in client JS)
+       │                          ├─ Issues signed JWT and forwards Set-Cookie: tracefuse_jwt
+       │                          └─ router.push("/investigations/inv_flagship_demo?tab=graph")
        └─ If authenticated + visiting /login or /:
-            └─ Redirect 302 → /dashboard
+            └─ Redirect 307 → /dashboard
+
+Browser / Client Direct API Requests:
+  └─ fetch(`${NEXT_PUBLIC_API_URL}${endpoint}`, { credentials: "include" })
+       └─ FastAPI Backend Route Protection:
+            └─ verify_session_token dependency  (apps/api/auth.py)
+                 ├─ Extracts token from HttpOnly cookie `tracefuse_jwt` (or Authorization: Bearer header)
+                 ├─ Missing token → HTTPException 401 ("Authentication required. Missing session token.")
+                 ├─ Validates HS256 signature against JWT_SECRET and expiration
+                 ├─ Expired / Invalid → HTTPException 401 ("Session expired" / "Invalid session token")
+                 └─ Injects decoded analyst payload: {"sub": "usr_analyst_01", "role": "analyst"}
 ```
 
-**Non-obvious:** Middleware runs at the edge before any page component renders. There is no
-server-side session store — the cookie value itself is the auth token (static string, not signed).
+**Non-obvious:** The Next.js middleware performs fast edge UI gating by checking the cookie's presence,
+but the FastAPI backend independently decodes and verifies the cryptographic HS256 signature on EVERY
+data and mutating endpoint via the `verify_session_token` dependency. Client-side JavaScript never has
+access to the raw token (HttpOnly) and contains zero hardcoded passcodes or credentials.
+`/login` renders synchronously in SSR without `<Suspense>` or `useSearchParams()`, ensuring instant
+form visibility without fallback states. `fetchJson` includes a guarded 401 auto-redirect that automatically
+redirects authenticated pages to `/login` if a session expires, while allowing `/login` attempts to
+display inline error messages without redirect loops.
 
 ---
 
@@ -190,6 +214,10 @@ time** (DetectionEngine + RiskScoringEngine + follow_the_money) independently fr
 detail endpoint — results are not shared. This is intentional for isolation but doubles the
 DB read + compute work on `/ask` requests.
 
+**Frontend Badge:** `AIAssistantPanel` inspects the most recent assistant response's `fallback_used`
+flag: if `fallback_used === false`, renders green "Grounded" badge; if `true` (or initial), renders
+amber "Offline Deterministic Mode" badge with `AlertTriangle`.
+
 ---
 
 ## Status Update & Audit Trail
@@ -316,4 +344,28 @@ formatISTDateTime(dateInput):
      new Date(normalized_string)
      → toLocaleString("en-IN", {timeZone: "Asia/Kolkata", ...})
      Returns: e.g. "3 Sept 2026, 12:40:56 am"
+```
+
+---
+
+## Theme Persistence & Hydration Flow (Dark / Light Mode)
+
+```
+Initial Page Load (Anti-FOUC):
+  └─ Inline blocking <script> in <head> (layout.tsx)
+       ├─ Reads localStorage.getItem("tracefuse_theme")
+       ├─ Fallback: window.matchMedia("(prefers-color-scheme: dark)").matches
+       ├─ If dark → document.documentElement.classList.add("dark")
+       └─ If light → document.documentElement.classList.remove("dark")
+       (Executes synchronously before initial body render to prevent white flash)
+
+Interactive Theme Toggle:
+  └─ <ThemeToggle /> clicked in Navbar or /login
+       ├─ Reads current document.documentElement.classList.contains("dark")
+       ├─ Toggles: newTheme = isDark ? "light" : "dark"
+       ├─ Updates DOM: classList.toggle("dark")
+       ├─ Persists: localStorage.setItem("tracefuse_theme", newTheme)
+       ├─ Dispatches: window.dispatchEvent(new CustomEvent("themechange", { detail: { theme: newTheme } }))
+       └─ Component states and CSS variables (--background, --surface, --text-primary)
+          instantly transition via Tailwind class-based styles.
 ```

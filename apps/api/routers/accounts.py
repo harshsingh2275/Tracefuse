@@ -7,8 +7,13 @@ from sqlalchemy.orm import Session
 from apps.api.database import get_db
 from apps.api.models import Account, AccountDevice, Device, AccountIdentifier, Identifier, Transaction
 from apps.api.schemas import AccountSummaryResponse, AccountDeviceResponse, AccountIdentifierResponse
+from apps.api.auth import verify_session_token
 
-router = APIRouter(prefix="/accounts", tags=["Accounts"])
+router = APIRouter(
+    prefix="/accounts",
+    tags=["Accounts"],
+    dependencies=[Depends(verify_session_token)],
+)
 
 
 @router.get("/{account_id}", response_model=AccountSummaryResponse)

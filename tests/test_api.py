@@ -6,7 +6,100 @@ import pytest
 from fastapi.testclient import TestClient
 from apps.api.main import app
 
+unauth_client = TestClient(app)
+
 client = TestClient(app)
+# Authenticate the integration test client
+_login_res = client.post("/auth/login", json={"passcode": "demo2026"})
+assert _login_res.status_code == 200, f"Setup login failed: {_login_res.text}"
+_jwt_token = _login_res.json()["token"]
+client.cookies.set("tracefuse_jwt", _jwt_token)
+
+
+# -------------------------------------------------------------------------
+# 0. Authentication & Authorization Tests
+# -------------------------------------------------------------------------
+def test_unauthenticated_requests_return_401():
+    """Verify that unauthenticated requests to protected endpoints return 401."""
+    # Data endpoints
+    res_list = unauth_client.get("/investigations")
+    assert res_list.status_code == 401
+    assert "Authentication required" in res_list.json()["detail"]
+
+    res_detail = unauth_client.get("/investigations/inv_flagship_demo")
+    assert res_detail.status_code == 401
+
+    res_graph = unauth_client.get("/investigations/inv_flagship_demo/graph")
+    assert res_graph.status_code == 401
+
+    res_summary = unauth_client.get("/dashboard/summary")
+    assert res_summary.status_code == 401
+
+    # Mutating endpoints
+    res_note = unauth_client.post(
+        "/investigations/inv_flagship_demo/notes",
+        json={"note_text": "Unauthorized test note", "user_id": "usr_analyst_01"},
+    )
+    assert res_note.status_code == 401
+
+    res_status = unauth_client.patch(
+        "/investigations/inv_flagship_demo/status",
+        json={"status": "escalated_fiu", "user_id": "usr_analyst_01"},
+    )
+    assert res_status.status_code == 401
+
+    res_fm = unauth_client.post(
+        "/investigations/inv_flagship_demo/follow-money",
+        json={"source_account_id": "acc_flagship_origin"},
+    )
+    assert res_fm.status_code == 401
+
+    res_ask = unauth_client.post(
+        "/investigations/inv_flagship_demo/ask",
+        json={"question": "What is happening?"},
+    )
+    assert res_ask.status_code == 401
+
+
+def test_auth_login_invalid_passcode():
+    res = unauth_client.post("/auth/login", json={"passcode": "wrong_password"})
+    assert res.status_code == 401
+    assert "Invalid access passcode" in res.json()["detail"]
+
+
+def test_auth_login_valid_passcode_and_cookie():
+    temp_client = TestClient(app)
+    res = temp_client.post("/auth/login", json={"passcode": "demo2026"})
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "ok"
+    assert "token" in data
+
+    # Verify cookie is set on the response
+    assert "tracefuse_jwt" in res.cookies
+
+    # Verify that the temp_client can now access protected routes
+    res_protected = temp_client.get("/investigations")
+    assert res_protected.status_code == 200
+
+
+def test_bearer_token_authorization():
+    """Verify that Authorization: Bearer <token> fallback works for external clients / curl."""
+    res = unauth_client.get(
+        "/investigations",
+        headers={"Authorization": f"Bearer {_jwt_token}"},
+    )
+    assert res.status_code == 200
+    assert len(res.json()) >= 7
+
+
+def test_invalid_bearer_token_returns_401():
+    res = unauth_client.get(
+        "/investigations",
+        headers={"Authorization": "Bearer completely_invalid_token"},
+    )
+    assert res.status_code == 401
+    assert "Invalid session token" in res.json()["detail"]
 
 
 # -------------------------------------------------------------------------

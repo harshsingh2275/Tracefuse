@@ -1,4 +1,4 @@
-﻿# TraceFuse — Architecture Decision Record (ADR)
+# TraceFuse — Architecture Decision Record (ADR)
 
 Chronological log of every meaningful technical and design decision made during development.
 Append a new entry after every future change that involves a real tradeoff or choice.
@@ -287,3 +287,80 @@ relationship edges, rendering them as muted dashed strokes with a type label ins
 
 **Tradeoff accepted:** `TransactionEdge` handles two distinct visual modes in one component,
 adding conditional branching while keeping the edge-type registry simple.
+
+---
+
+## Server-side JWT authentication & HttpOnly cookie session architecture (replacing frontend-only gating)
+**Commit:** post-history update · 2026-09-09
+
+**Rationale:** The initial authentication mechanism was solely a Next.js edge middleware gate checking
+a static `tracefuse_session=authenticated_analyst` cookie. The FastAPI backend performed zero independent
+credential verification, allowing unauthenticated direct API requests to access and mutate forensic data.
+The architecture was upgraded:
+1. `POST /auth/login` on FastAPI validates passcodes server-side against `DEMO_PASSCODE` (or `ADMIN_PASSCODE`)
+   and issues a signed JWT (HS256, 12h expiry, secret from `JWT_SECRET` env var).
+2. A single reusable FastAPI dependency (`verify_session_token`) verifies the token on every data retrieval
+   and mutating endpoint, returning `401 Unauthorized` for missing/invalid/expired tokens.
+3. Tokens are transmitted and stored strictly via `HttpOnly`, `SameSite=Lax`, `Secure` cookies (`tracefuse_jwt`),
+   completely preventing access by client-side JavaScript or localStorage.
+4. Next.js App Router Route Handlers (`/api/auth/demo-login`, `/api/auth/login`, `/api/auth/logout`) execute
+   server-to-server calls to FastAPI, removing all hardcoded `"demo2026"` passcodes and `"Priya Sharma"`
+   references from client-side bundles while preserving the zero-friction, 1-click judge demo flow.
+5. Removed `useSearchParams()` and `<Suspense>` from `/login`, reading redirect targets via `window.location.search`
+   on submit so the login form renders directly in SSR without "Loading Auth Gate..." fallback delays; added
+   guarded 401 auto-redirect in `fetchJson` so expired sessions cleanly redirect to `/login` without looping.
+
+**Alternative(s) considered:** Full Role-Based Access Control (RBAC) with multi-role permissions tables
+(excessive complexity for demo scope), localStorage + Authorization Bearer header from client JS (vulnerable
+to XSS, violates security specs), basic HTTP auth (poor UX and cookie coordination).
+
+**Tradeoff accepted:** Single authenticated "analyst" role without granular multi-tenant permission layers;
+CORS middleware explicitly allows origin credentials rather than wildcard origins.
+
+---
+
+## Application-wide class-based dark mode design system & anti-FOUC hydration
+**Commit:** post-history update · 2026-09-09
+
+**Rationale:** Financial crime investigators frequently conduct multi-hour surveillance and network graph
+analysis in low-light environments. Adding a native dark mode required preserving the curated warm parchment /
+deep navy identity while providing a sleek high-contrast dark palette without breaking existing semantic tokens
+or graph rendering.
+1. Enabled `darkMode: 'class'` in Tailwind config.
+2. Mapped design system colors (canvas `#0B0F17`, surface `#131B26`, border `#223042`, text `#F1F5F9` / `#94A3B8`,
+   accent `#3874CB`, critical `#EF4444`, suspicious `#F59E0B`, normal `#94A3B8`) through CSS variable RGB triples
+   (`--surface-rgb: 19 27 38`), enabling Tailwind alpha modifiers (`bg-surface/95`, `border-navy/20`) to work seamlessly
+   across both themes.
+3. Implemented an anti-FOUC (flash of unstyled content) blocking script in `<head>` that reads `localStorage.getItem('tracefuse_theme')`
+   (falling back to `window.matchMedia('(prefers-color-scheme: dark)')`) and sets `document.documentElement.classList.add('dark')`
+   before initial body paint.
+4. Created `<ThemeToggle />` component with Sun/Moon icons in the top navigation bar and on `/login`, persisting
+   user preference in `localStorage` and dispatching custom `themechange` events.
+5. Converted React Flow canvas styling (background dot grid, node card containers, edge stroke contrast, controls, minimap)
+   and Recharts `<XAxis />`, `<YAxis />`, `<Tooltip />` to dynamic CSS variables, ensuring 100% theme consistency.
+
+**Alternative(s) considered:** Media query `prefers-color-scheme`-only (removes user control and toggle button),
+separate dark Tailwind utility classes on every single element (`dark:bg-slate-900 dark:text-white`) without CSS variables
+(leads to inconsistent hex colors and unmaintainable component overrides), CSS `filter: invert(1)` (breaks image/graph colors).
+
+**Tradeoff accepted:** CSS variables require defining RGB triples in `globals.css` for alpha channel support;
+accepted for perfect color family preservation and instant theme switching.
+
+---
+
+## Dynamic AI Copilot mode indicator (replacing static "Grounded" badge)
+**Commit:** post-history update · 2026-09-10
+
+**Rationale:** The AI Copilot panel previously rendered a static green "Grounded" badge in its header
+regardless of whether a live LLM response was generated or the deterministic offline fallback engine was used.
+This was misleading when running without a valid external LLM connection. The badge was updated to dynamically
+inspect the latest assistant response's `fallback_used` field:
+1. Displays green "Grounded" (`CheckCircle2`) strictly when a live LLM completion succeeded (`fallback_used === false`).
+2. Displays amber "Offline Deterministic Mode" (`AlertTriangle`) whenever the deterministic offline fallback engine
+   was invoked (due to missing API key, rate limits, or external provider model errors).
+
+**Alternative(s) considered:** Static text label without badge pill (reduces visual clarity), hiding badge entirely
+when offline (obscures engine transparency from investigators).
+
+**Tradeoff accepted:** Header status reflects the outcome of the most recent response rather than polling backend
+health proactively; avoids extraneous background health-check network requests.

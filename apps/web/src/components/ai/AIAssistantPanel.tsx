@@ -9,6 +9,7 @@ import {
   User,
   ShieldAlert,
   CheckCircle2,
+  AlertTriangle,
   HelpCircle,
   Maximize2,
   Minimize2,
@@ -120,6 +121,12 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
     }
   };
 
+  // Determine whether a live Groq response was actually used vs offline deterministic fallback
+  const latestAssistantMsg = [...messages]
+    .reverse()
+    .find((m) => m.sender === "assistant" && m.fallbackUsed !== undefined);
+  const isLiveResponse = latestAssistantMsg?.fallbackUsed === false;
+
   if (!isOpen) return null;
 
   return (
@@ -139,10 +146,17 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-serif text-sm font-bold text-ink-primary">Grounded AI Copilot</h3>
-              <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-sans font-medium flex items-center gap-1 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300">
-                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-700 dark:text-emerald-400" />
-                Grounded
-              </span>
+              {isLiveResponse ? (
+                <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-sans font-medium flex items-center gap-1 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300">
+                  <CheckCircle2 className="w-2.5 h-2.5 text-emerald-700 dark:text-emerald-400" />
+                  Grounded
+                </span>
+              ) : (
+                <span className="px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-700 border border-amber-500/30 text-[10px] font-sans font-medium flex items-center gap-1 dark:bg-amber-950/40 dark:border-amber-700/50 dark:text-amber-300">
+                  <AlertTriangle className="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" />
+                  Offline Deterministic Mode
+                </span>
+              )}
             </div>
             <p className="text-[10px] text-ink-secondary font-mono truncate max-w-[240px]">
               Case Scope: {formatCaseCode(investigationId)}

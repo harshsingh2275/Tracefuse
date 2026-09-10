@@ -7,8 +7,13 @@ from sqlalchemy.orm import Session
 from apps.api.database import get_db
 from apps.api.models import Transaction, Account
 from apps.api.schemas import TransactionResponse
+from apps.api.auth import verify_session_token
 
-router = APIRouter(prefix="/transactions", tags=["Transactions"])
+router = APIRouter(
+    prefix="/transactions",
+    tags=["Transactions"],
+    dependencies=[Depends(verify_session_token)],
+)
 
 
 @router.get("/{transaction_id}", response_model=TransactionResponse)

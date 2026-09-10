@@ -17,7 +17,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from apps.api.database import init_db
-from apps.api.routers import dashboard, investigations, accounts, transactions
+from apps.api.routers import auth, dashboard, investigations, accounts, transactions
 
 app = FastAPI(
     title="TraceFuse API",
@@ -31,10 +31,21 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# CORS configuration
+# CORS configuration with explicit credentials support
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "")
+allowed_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+if not allowed_origins:
+    allowed_origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,6 +62,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 # Include Feature Routers
+app.include_router(auth.router)
 app.include_router(dashboard.router)
 app.include_router(investigations.router)
 app.include_router(accounts.router)

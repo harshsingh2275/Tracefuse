@@ -8,8 +8,13 @@ from sqlalchemy import func
 from apps.api.database import get_db
 from apps.api.models import Investigation, Account, Transaction, InvestigationEntity
 from apps.api.schemas import DashboardSummaryResponse
+from apps.api.auth import verify_session_token
 
-router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
+router = APIRouter(
+    prefix="/dashboard",
+    tags=["Dashboard"],
+    dependencies=[Depends(verify_session_token)],
+)
 
 
 @router.get("/summary", response_model=DashboardSummaryResponse)
