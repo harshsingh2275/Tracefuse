@@ -27,9 +27,7 @@ function LoginForm() {
 
     try {
       await api.login(passcode.trim());
-      const search = typeof window !== "undefined" ? window.location.search : "";
-      const destination = new URLSearchParams(search).get("from") || "/dashboard";
-      router.push(destination);
+      router.push("/dashboard");
     } catch (err: unknown) {
       setLoading(false);
       const msg = err instanceof Error ? err.message : "Invalid access passcode.";
@@ -68,10 +66,7 @@ function LoginForm() {
 
       {/* Login Form */}
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleLogin();
-        }}
+        onSubmit={handleLogin}
         className="space-y-4 pt-2"
       >
         <div>
@@ -121,7 +116,7 @@ function LoginForm() {
         >
           <span className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-            Load Demo Investigation
+            Load Demo Investigation (1-Click Judge Access)
           </span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
